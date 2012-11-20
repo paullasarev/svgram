@@ -36,7 +36,7 @@ function CreateSvg(root, width, height, stroke)
     "fill": paperColor, "stroke": paperBorderColor, "stroke-width": stroke });
   SetAttrNS(border, {"filter":"url(#shadow)"}); 
   
-  var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.paper.grid"});
+  var grid = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.grid"});
   for(var x = gridStep ; x < width ; x += gridStep)
   {
     AddTagNS(grid, svgNS, "line", {x1:x, y1:stroke, x2:x, y2: height - stroke,
