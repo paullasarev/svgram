@@ -44,7 +44,7 @@ function CreateToolbar(root, svgNS, width, height, color)
   SetAttrNS(border, {"filter":"url(#shadow)"});
   
   var icons = {
-    "rect1": "M3.083,7.333v16.334h24.833V7.333H3.083z M19.333,20.668H6.083V10.332h13.25V20.668z",
+    "rect1": "M3.083,7.333v16.334h24.833V7.333H3.083z M19.333,20.668H6.083V10.332h18.25V20.668z",
     "rect2": "Inkscape_icons_draw_rectangle.svg",
     "line1": "M21.786,12.876l7.556-4.363l-7.556-4.363v2.598H2.813v3.5h18.973V12.876zM10.368,18.124l-7.556,4.362l7.556,4.362V24.25h18.974v-3.501H10.368V18.124z",
     "line2": "Inkscape_icons_connector_orthogonal.svg",
@@ -62,7 +62,10 @@ function CreateToolbar(root, svgNS, width, height, color)
     var iconBody = icons[icon];
     if (iconBody[0] == "M")
     {
-      AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
+      var path = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
+      SetAttrNS(path, {"stroke-width": 1, "fill-opacity": 1});
+      SetAttrNS(path, { "stroke" : "#333"});
+      SetAttrNS(path, { "fill": "#aaa"});
     }
     else
     {
