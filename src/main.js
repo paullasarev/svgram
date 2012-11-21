@@ -2,7 +2,16 @@ function SetAttrNS(element, attributes)
 {
   for(var name in attributes)
   {
-    element.setAttributeNS(null, name, attributes[name]);
+    //element.setAttributeNS(null, name, attributes[name]);
+    element.setAttribute(name, attributes[name]);
+  }
+}
+
+function SetAttrNS2(element, namespace, attributes)
+{
+  for(var name in attributes)
+  {
+    element.setAttributeNS(namespace, name, attributes[name]);
   }
 }
 
@@ -35,18 +44,33 @@ function CreateToolbar(root, svgNS, width, height, color)
   SetAttrNS(border, {"filter":"url(#shadow)"});
   
   var icons = {
-    "rect": "M3.083,7.333v16.334h24.833V7.333H3.083z M19.333,20.668H6.083V10.332h13.25V20.668z",
-    "line": "M21.786,12.876l7.556-4.363l-7.556-4.363v2.598H2.813v3.5h18.973V12.876zM10.368,18.124l-7.556,4.362l7.556,4.362V24.25h18.974v-3.501H10.368V18.124z",
+    "rect1": "M3.083,7.333v16.334h24.833V7.333H3.083z M19.333,20.668H6.083V10.332h13.25V20.668z",
+    "rect2": "Inkscape_icons_draw_rectangle.svg",
+    "line1": "M21.786,12.876l7.556-4.363l-7.556-4.363v2.598H2.813v3.5h18.973V12.876zM10.368,18.124l-7.556,4.362l7.556,4.362V24.25h18.974v-3.501H10.368V18.124z",
+    "line2": "Inkscape_icons_connector_orthogonal.svg",
+    "crop1": "crop.svg",
+    "crop2": "crop2.svg",
     "select":"M24.303,21.707V8.275l4.48-4.421l-2.021-2.048l-4.126,4.07H8.761V2.083H5.882v3.793H1.8v2.877h4.083v15.832h15.542v4.609h2.878v-4.609H29.2v-2.878H24.303zM19.72,8.753L8.761,19.565V8.753H19.72zM10.688,21.706l10.735-10.591l0.001,10.592L10.688,21.706z",
   };
 
+  var xlinkNS = "http://www.w3.org/1999/xlink";
   var columns = 2;
-  var col = 0, offsetX = 8, stepX = 40;
-  var row = 0, offsetY = 5, stepY = 30;
+  var col = 0, offsetX = 10, stepX = 40;
+  var row = 0, offsetY = 5, stepY = 40;
   for(icon in icons)
   {
     var iconBody = icons[icon];
-    var path = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
+    if (iconBody[0] == "M")
+    {
+      AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
+    }
+    else
+    {
+      var image = AddTagNS(toolbar, svgNS, "image", 
+      {x: (offsetX + col * stepX), y: (offsetY + row * stepY), height:32, width:32});
+      SetAttrNS2(image, xlinkNS, {"xlink:href" : "icons/" + iconBody});
+    }
+    
     ++col;
     if (col == columns)
     {
@@ -59,6 +83,7 @@ function CreateToolbar(root, svgNS, width, height, color)
 function CreateSvg(root, width, height, stroke)
 {
   var svgNS = "http://www.w3.org/2000/svg";
+  var xlinkNS = "http://www.w3.org/1999/xlink";
   var paperBorderColor = "blue";
   var paperColor = "GhostWhite";
   var gridStep = 20;
@@ -66,6 +91,7 @@ function CreateSvg(root, width, height, stroke)
   var paperOffset = 110;
   
   var svg = AddTagNS(root, svgNS, "svg", {id:"diagram", "version":"1.1" , "width": paperOffset + width + 50, "height": height + 50});
+  SetAttrNS(svg, {"xmlns:xlink": xlinkNS, "xmlns": svgNS});
 
   CreateShadowFilter(svg, svgNS);
   CreateToolbar(svg, svgNS, toolbarWidth, height, paperColor);
@@ -83,6 +109,7 @@ function CreateSvg(root, width, height, stroke)
     AddTagNS(grid, svgNS, "line", {x1:paperOffset + x, y1: stroke, x2:paperOffset + x, y2: height - stroke,
       "stroke":paperBorderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + gridStep});
   }
+
 }
 
 function Init(root)
