@@ -65,27 +65,24 @@ function CreateSvg(root, width, height, stroke)
   var toolbarWidth = 100;
   var paperOffset = 110;
   
-  
   var svg = AddTagNS(root, svgNS, "svg", {id:"diagram", "version":"1.1" , "width": paperOffset + width + 50, "height": height + 50});
 
   CreateShadowFilter(svg, svgNS);
   CreateToolbar(svg, svgNS, toolbarWidth, height, paperColor);
   
   var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
-
   
   var border = AddTagNS(paper, svgNS, "rect", {id:"diagram.paper.border", "x": paperOffset + stroke, "y": stroke, 
     "width": width - stroke * 2, "height": height - stroke * 2,
     "fill": paperColor, "stroke": paperBorderColor, "stroke-width": stroke });
   SetAttrNS(border, {"filter":"url(#shadow)"}); 
   
-  var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.paper.grid"});
+  var grid = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.grid"});
   for(var x = gridStep + stroke ; x < width ; x += gridStep)
   {
     AddTagNS(grid, svgNS, "line", {x1:paperOffset + x, y1: stroke, x2:paperOffset + x, y2: height - stroke,
       "stroke":paperBorderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + gridStep});
   }
-  
 }
 
 function Init(root)
