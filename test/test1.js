@@ -24,8 +24,8 @@ test("create diagram", function() {
   notEqual(border, null, "diagram should have border");
   
   equal(border.getAttribute("id"), "diagram.paper.border", "border");
-  equal(border.getAttribute("x"), "2", "border.x");
-  equal(border.getAttribute("y"), "32", "border.y");
+  equal(border.getAttribute("x"), "112", "border.x");
+  equal(border.getAttribute("y"), "2", "border.y");
   equal(border.getAttribute("width"), "596", "border.width");
   equal(border.getAttribute("height"), "796", "border.hight");
   
