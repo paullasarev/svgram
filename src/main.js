@@ -5,7 +5,6 @@ function SetAttr(element, attributes)
 {
   for(var name in attributes)
   {
-    //element.setAttributeNS(null, name, attributes[name]);
     element.setAttribute(name, attributes[name]);
   }
 }
