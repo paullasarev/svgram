@@ -27,20 +27,32 @@ function CreateToolbar(root, svgNS, width, height, color)
 {
   var stroke = 1;
 
-  var border = AddTagNS(root, svgNS, "rect", {id:"diagram.toolbar", "x": stroke, "y": stroke, 
+  var toolbar = AddTagNS(root, svgNS, "g", {id:"diagram.toolbar"});
+  
+  var border = AddTagNS(toolbar, svgNS, "rect", {id:"diagram.toolbar.border", "x": stroke, "y": stroke, 
     "width": width - stroke * 2, "height": height - stroke * 2,
     "fill": color, "stroke": "black", "stroke-width": 1 });
   SetAttrNS(border, {"filter":"url(#shadow)"});
   
   var icons = {
-  "rect": "M3.083,7.333v16.334h24.833V7.333H3.083z M19.333,20.668H6.083V10.332h13.25V20.668z",
-  "line": "M21.786,12.876l7.556-4.363l-7.556-4.363v2.598H2.813v3.5h18.973V12.876zM10.368,18.124l-7.556,4.362l7.556,4.362V24.25h18.974v-3.501H10.368V18.124z",
-  "line": "M21.786,12.876l7.556-4.363l-7.556-4.363v2.598H2.813v3.5h18.973V12.876zM10.368,18.124l-7.556,4.362l7.556,4.362V24.25h18.974v-3.501H10.368V18.124z",
-  "select":"M24.303,21.707V8.275l4.48-4.421l-2.021-2.048l-4.126,4.07H8.761V2.083H5.882v3.793H1.8v2.877h4.083v15.832h15.542v4.609h2.878v-4.609H29.2v-2.878H24.303zM19.72,8.753L8.761,19.565V8.753H19.72zM10.688,21.706l10.735-10.591l0.001,10.592L10.688,21.706z",
+    "rect": "M3.083,7.333v16.334h24.833V7.333H3.083z M19.333,20.668H6.083V10.332h13.25V20.668z",
+    "line": "M21.786,12.876l7.556-4.363l-7.556-4.363v2.598H2.813v3.5h18.973V12.876zM10.368,18.124l-7.556,4.362l7.556,4.362V24.25h18.974v-3.501H10.368V18.124z",
+    "select":"M24.303,21.707V8.275l4.48-4.421l-2.021-2.048l-4.126,4.07H8.761V2.083H5.882v3.793H1.8v2.877h4.083v15.832h15.542v4.609h2.878v-4.609H29.2v-2.878H24.303zM19.72,8.753L8.761,19.565V8.753H19.72zM10.688,21.706l10.735-10.591l0.001,10.592L10.688,21.706z",
   };
-  
+
+  var columns = 2;
+  var col = 0, offsetX = 8, stepX = 40;
+  var row = 0, offsetY = 5, stepY = 30;
   for(icon in icons)
   {
+    var iconBody = icons[icon];
+    var path = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
+    ++col;
+    if (col == columns)
+    {
+      col = 0;
+      ++row;
+    }
   }
 }
 
