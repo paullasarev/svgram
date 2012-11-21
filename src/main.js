@@ -57,8 +57,16 @@ function CreateToolbar(root, svgNS, width, height, color)
   var columns = 2;
   var col = 0, offsetX = 10, stepX = 40;
   var row = 0, offsetY = 5, stepY = 40;
+  var selectedIcon = "line2";
   for(icon in icons)
   {
+    if (icon == selectedIcon)
+    {
+      var back = AddTagNS(toolbar, svgNS, "rect", 
+      {x: (offsetX + col * stepX - 4), y: (offsetY + row * stepY - 2), height:36, width:40, rx:8, 
+      fill: "#ccc", "stroke-width": 1, "stroke": "#333", "stroke-opacity":0.5 });
+    }
+    
     var iconBody = icons[icon];
     if (iconBody[0] == "M")
     {
