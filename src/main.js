@@ -57,7 +57,7 @@ function CreateToolbar(root, width, height, color)
   var columns = 2;
   var col = 0, offsetX = 10, stepX = 40;
   var row = 0, offsetY = 5, stepY = 40;
-  var selectedIcon = "line2";
+  var selectedIcon = "crop2";
   for(icon in icons)
   {
     if (icon == selectedIcon)
