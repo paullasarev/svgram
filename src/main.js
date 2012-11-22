@@ -78,7 +78,7 @@ function CreateToolbar(root, width, height, color)
     else
     {
       var image = AddTagNS(toolbar, svgNS, "image", 
-      {x: (offsetX + col * stepX), y: (offsetY + row * stepY), height:32, width:32});
+      {x: (offsetX + col * stepX), y: (offsetY + row * stepY), height:32, width:32/*, preserveAspectRatio:"xMinYMin meet"*/});
       SetAttrNS2(image, xlinkNS, {"xlink:href" : "icons/" + iconBody});
     }
     
