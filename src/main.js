@@ -34,6 +34,22 @@ function CreateShadowFilter(paper)
   AddTagNS(filter, svgNS, "feBlend", {in:"SourceGraphic", in2:"blurOut", mode:"normal" });
 }
 
+function onmouseoverToolbarIcon(evt)
+{
+  var id = evt.target.getAttributeNS(null,"id");
+  var select = document.getElementById("diagram.toolbar.select");
+  var select_x = evt.target.getAttributeNS(null,"select_x");
+  var select_y = evt.target.getAttributeNS(null,"select_y");
+
+  SetAttr(select, {x: select_x, y: select_y, opacity: 1});
+}
+
+function onmouseoutToolbarIcon(evt)
+{
+  var select = document.getElementById("diagram.toolbar.select");
+  SetAttr(select, {opacity: 0});
+}
+
 function CreateToolbar(root, width, height, color)
 {
   var stroke = 1;
@@ -57,30 +73,36 @@ function CreateToolbar(root, width, height, color)
   var columns = 2;
   var col = 0, offsetX = 10, stepX = 40;
   var row = 0, offsetY = 5, stepY = 40;
-  var selectedIcon = "crop2";
+  var select_h = 36;
+  var select_w = 40;
+  var select_rx = 8;
+  var select = AddTagNS(toolbar, svgNS, "rect", {id: "diagram.toolbar.select", x:0, y:0, height:select_h, width:select_w, rx:select_rx, 
+    fill: "#eee", "stroke-width": 1, "stroke": "#333", "stroke-opacity":0.5, "opacity": 0 });
+
   for(icon in icons)
   {
-    if (icon == selectedIcon)
-    {
-      var back = AddTagNS(toolbar, svgNS, "rect", 
-      {x: (offsetX + col * stepX - 4), y: (offsetY + row * stepY - 2), height:36, width:40, rx:8, 
-      fill: "#ccc", "stroke-width": 1, "stroke": "#333", "stroke-opacity":0.5 });
-    }
+    var select_x = (offsetX + col * stepX - 4);
+    var select_y = (offsetY + row * stepY - 2);
     
     var iconBody = icons[icon];
+    var image;
     if (iconBody[0] == "M")
     {
-      var path = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
-      SetAttr(path, {"stroke-width": 1, "fill-opacity": 1});
-      SetAttr(path, { "stroke" : "#333"});
-      SetAttr(path, { "fill": "#aaa"});
+      image = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
+      SetAttr(image, {"stroke-width": 1, "fill-opacity": 1});
+      SetAttr(image, { "stroke" : "#333"});
+      SetAttr(image, { "fill": "#aaa"});
     }
     else
     {
-      var image = AddTagNS(toolbar, svgNS, "image", 
+      image = AddTagNS(toolbar, svgNS, "image", 
       {x: (offsetX + col * stepX), y: (offsetY + row * stepY), height:32, width:32});
       SetAttrNS2(image, xlinkNS, {"xlink:href" : "icons/" + iconBody});
     }
+    
+    SetAttr(image, { id: "toolbar.icon." + icon, 
+      onmouseover:"onmouseoverToolbarIcon(evt)", onmouseout:"onmouseoutToolbarIcon(evt)",
+      select_x:select_x, select_y:select_y});
     
     ++col;
     if (col == columns)
