@@ -81,22 +81,24 @@ function CreateToolbar(root, width, height, color)
 
   for(icon in icons)
   {
-    var select_x = (offsetX + col * stepX - 4);
-    var select_y = (offsetY + row * stepY - 2);
+    var pos_x = offsetX + col * stepX;
+    var pos_y = offsetY + row * stepY;
+    var select_x = pos_x - 4;
+    var select_y = pos_y - 2;
     
     var iconBody = icons[icon];
     var image;
     if (iconBody[0] == "M")
     {
-      image = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + (offsetX + col * stepX) + "," + (offsetY + row * stepY) + ")", d: iconBody});
-      SetAttr(image, {"stroke-width": 1, "fill-opacity": 1});
-      SetAttr(image, { "stroke" : "#333"});
-      SetAttr(image, { "fill": "#aaa"});
+      var path = AddTagNS(toolbar, svgNS, "path", {transform:"scale(1) translate(" + pos_x + "," + pos_y + ")", d: iconBody});
+      SetAttr(path, {"stroke-width": 1, "fill-opacity": 1});
+      SetAttr(path, { "stroke" : "#333"});
+      SetAttr(path, { "fill": "#aaa"});
+      image = AddTagNS(toolbar, svgNS, "rect", {x: pos_x, y: pos_y, height:32, width:32, "opacity": 0});
     }
     else
     {
-      image = AddTagNS(toolbar, svgNS, "image", 
-      {x: (offsetX + col * stepX), y: (offsetY + row * stepY), height:32, width:32});
+      image = AddTagNS(toolbar, svgNS, "image", {x: pos_x, y: pos_y, height:32, width:32});
       SetAttrNS2(image, xlinkNS, {"xlink:href" : "icons/" + iconBody});
     }
     
