@@ -65,7 +65,7 @@ function onmouseoutToolbarIcon(evt)
 function DragStart()
 {
   State = "dragTool";
-  var paper = document.getElementById("diagram.paper");
+  var paper = document.getElementById("diagram");
   SetAttr(paper, {cursor: "move"});
 }
 
@@ -84,7 +84,7 @@ function DragEnd()
     var select = document.getElementById("diagram.toolbar.select");
     SetAttr(select, {opacity: 0});
 
-    var paper = document.getElementById("diagram.paper");
+    var paper = document.getElementById("diagram");
     SetAttr(paper, {cursor: "default"});
   }
 }
