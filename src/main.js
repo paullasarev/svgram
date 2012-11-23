@@ -100,10 +100,15 @@ function onmouseupToolbarIcon(evt)
   onmouseoverToolbarIcon(evt);
 }
 
+function onmouseupToolbar(evt)
+{
+  DragEnd();
+}
+
 function CreateToolbar(root, width, height, color)
 {
   var stroke = 1;
-  var toolbar = AddTagNS(root, svgNS, "g", {id:"diagram.toolbar"});
+  var toolbar = AddTagNS(root, svgNS, "g", {id:"diagram.toolbar", onmouseup:"onmouseupToolbar(evt)"});
   
   var border = AddTagNS(toolbar, svgNS, "rect", {id:"diagram.toolbar.border", "x": stroke, "y": stroke, 
     "width": width - stroke * 2, "height": height - stroke * 2,
