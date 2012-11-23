@@ -34,8 +34,15 @@ function CreateShadowFilter(paper)
   AddTagNS(filter, svgNS, "feBlend", {in:"SourceGraphic", in2:"blurOut", mode:"normal" });
 }
 
+var State = "none";
+
 function onmouseoverToolbarIcon(evt)
 {
+  if (State == "dragTool")
+  {
+    return;
+  }
+  
   var id = evt.target.getAttributeNS(null,"id");
   var select = document.getElementById("diagram.toolbar.select");
   var select_x = evt.target.getAttributeNS(null,"select_x");
@@ -46,8 +53,51 @@ function onmouseoverToolbarIcon(evt)
 
 function onmouseoutToolbarIcon(evt)
 {
+  if (State == "dragTool")
+  {
+    return;
+  }
+  
   var select = document.getElementById("diagram.toolbar.select");
   SetAttr(select, {opacity: 0});
+}
+
+function DragStart()
+{
+  State = "dragTool";
+  var paper = document.getElementById("diagram.paper");
+  SetAttr(paper, {cursor: "move"});
+}
+
+function onmousedownToolbarIcon(evt)
+{
+  evt.preventDefault();
+  DragStart();
+}
+
+function DragEnd()
+{
+  if (State == "dragTool")
+  {
+    State = "none";
+    
+    var select = document.getElementById("diagram.toolbar.select");
+    SetAttr(select, {opacity: 0});
+
+    var paper = document.getElementById("diagram.paper");
+    SetAttr(paper, {cursor: "default"});
+  }
+}
+
+function onmouseupPaper(evt)
+{
+  DragEnd();
+}
+
+function onmouseupToolbarIcon(evt)
+{
+  DragEnd();
+  onmouseoverToolbarIcon(evt);
 }
 
 function CreateToolbar(root, width, height, color)
@@ -102,9 +152,11 @@ function CreateToolbar(root, width, height, color)
       SetAttrNS2(image, xlinkNS, {"xlink:href" : "icons/" + iconBody});
     }
     
-    SetAttr(image, { id: "toolbar.icon." + icon, 
-      onmouseover:"onmouseoverToolbarIcon(evt)", onmouseout:"onmouseoutToolbarIcon(evt)",
-      select_x:select_x, select_y:select_y});
+    SetAttr(image, { id: "toolbar.icon." + icon
+      , onmouseover:"onmouseoverToolbarIcon(evt)", onmouseout:"onmouseoutToolbarIcon(evt)"
+      , onmousedown:"onmousedownToolbarIcon(evt)", onmouseup:"onmouseupToolbarIcon(evt)"
+      , draggable:"false"
+      , select_x:select_x, select_y:select_y});
     
     ++col;
     if (col == columns)
@@ -123,13 +175,13 @@ function CreateSvg(root, width, height, stroke)
   var toolbarWidth = 100;
   var paperOffset = 110;
   
-  var svg = AddTagNS(root, svgNS, "svg", {id:"diagram", "version":"1.1" , "width": paperOffset + width + 50, "height": height + 50});
+  var svg = AddTagNS(root, svgNS, "svg", {id:"diagram", "version":"1.1" , "width": paperOffset + width + 50, "height": height + 50, draggable:"false"});
   SetAttr(svg, {"xmlns:xlink": xlinkNS, "xmlns": svgNS});
 
   CreateShadowFilter(svg);
   CreateToolbar(svg, toolbarWidth, height, paperColor);
   
-  var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
+  var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper", onmouseup:"onmouseupPaper(evt)"});
   
   var border = AddTagNS(paper, svgNS, "rect", {id:"diagram.paper.border", "x": paperOffset + stroke, "y": stroke, 
     "width": width - stroke * 2, "height": height - stroke * 2,
