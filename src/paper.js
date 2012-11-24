@@ -244,6 +244,15 @@ function PaperResizeShape(pos_x, pos_y) {
   }
 }
 
+function PaperDeleteSelectedShape() {
+  if (SelectedGroup == null)
+    return;
+
+  var parent = SelectedGroup.parentNode;
+  parent.removeChild(SelectedGroup);
+  SelectedGroup = null;
+}
+
 function onmousedownPaper(evt) {
   evt.preventDefault();
 

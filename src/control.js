@@ -72,5 +72,8 @@ function ControlDragEnd(pos_x, pos_y)
 
   var diagram = document.getElementById("diagram");
   SetAttr(diagram, {cursor: "default"});
+}
 
+function ControlDeleteShape() {
+  PaperDeleteSelectedShape();
 }
