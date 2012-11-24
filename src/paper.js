@@ -60,11 +60,6 @@ function DeselectPaper()
 
 function SelectPaperElement(spec) {
   DeselectPaper();
-  // if (SelectedGroup != null) {
-    // var oldspec = SelectedGroup.childNodes.item(1);
-    // SetAttr(oldspec, { "fill": "#aaa" });
-    // SetAttr(oldspec, { "opacity": 0 });
-  // }
 
   SelectedGroup = spec.parentNode;
   SetAttr(spec, { "fill": "yellow" });
@@ -78,6 +73,8 @@ function AddKnot(group, pos_x, pos_y)
     , "fill": "blue", "stroke": "blue", "stroke-width": 7
     , "onmouseup": "KnotMouseUp(evt)"
     , "id": KnotIDPrefix + Math.uuid(15)
+    , "class": "knot"
+    , "svgram": "knot"
     });
   return knot;
 }
