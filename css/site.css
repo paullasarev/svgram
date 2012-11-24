@@ -29,3 +29,15 @@ hr {
     background-color: #ddd;
 }
 
+.colorpickertable {
+    border: 0;
+    margin: 0;
+    border-spacing: 1px;
+    width: 140px;
+}
+.colorpickertile {
+    border: 0;
+    background-color: #888;
+    width: 8px; height: 10px;
+    padding: 0; margin: 0;
+}

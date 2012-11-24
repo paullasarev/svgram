@@ -12,6 +12,7 @@
     <script language="JavaScript" type="text/javascript" src="src/metro_toolbar.js"></script>
     <script language="JavaScript" type="text/javascript" src="src/paper.js"></script>
     <script language="JavaScript" type="text/javascript" src="src/metro_init.js"></script>
+    <script language="JavaScript" type="text/javascript" src="src/colorpicker.js"></script>
     <script>
      window.onload = function() {
         Init(document.body);
@@ -20,7 +21,7 @@
     
     <title>SVGRAM</title>
 </head>
-<body class="modern-ui" onload="Init(document.body)">
+<body class="modern-ui" onload="Init(document.body); PrepareColorPicker(document.getElementById('colorPicker'));">
 
 <div class="page">
 
@@ -54,8 +55,14 @@
                   <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.text"
                     ><img src="images/text.png"/>Text</button>
                 </div>
-                <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.export">
-                  Export SVG<img src="images/save.png"/></button>
+                <div class="toolbar-group">
+                  <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.export">
+                    Export SVG<img src="images/save.png"/></button>
+                </div>
+                <div class="toolbar-group">
+                  <button id="buttonColor" class="button" style="width:140px; background-color:#3333CC; color:white">Current Color</button>
+                  <div id="colorPicker"></div>
+                </div>
               </div>
             </div>
             <div class="span10 border-color-blue" style="height:600px">
