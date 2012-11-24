@@ -17,6 +17,7 @@ var ShapeColor = "black";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
 var ShapeHeight = 100;
+var SelectedGroup = null;
 var LineLength = 60;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
@@ -54,6 +55,11 @@ function GetShapeColor()
   return ShapeColor;
 }
 
+function SelectPaperElement(spec) {
+  SelectedGroup = spec.parentNode;
+  SetAttr(spec, { "fill": "yellow" });
+}
+
 function PaperCreateRect(pos_x, pos_y)
 {
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
@@ -66,18 +72,22 @@ function PaperCreateRect(pos_x, pos_y)
     "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
     "width": ShapeWidth, "height": ShapeHeight,
     "opacity": 0,
-    "fill":"none", "stroke": "blue", "stroke-width":10,
+    "fill": "none", "stroke": "blue", "stroke-width": 10,
     "onmouseover": "RectSpecMouseOver(evt)", "onmouseout": "RectSpecMouseOut(evt)",
+    "onclick": "RectSpecMouseClick(evt)"
   });
 }
 
 function RectSpecMouseOver(evt) {
   SetAttr(evt.target, { "opacity": 0.2 } );
 }
-
 function RectSpecMouseOut(evt) {
   SetAttr(evt.target, { "opacity": 0 });
 }
+function RectSpecMouseClick(evt) {
+  SelectPaperElement(evt.target);
+}
+
 
 function PaperCreateLine(pos_x, pos_y)
 {
