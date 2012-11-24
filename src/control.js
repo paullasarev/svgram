@@ -1,4 +1,5 @@
 var ControlMode = "none";
+var ControlToolId = "";
 
 function ControlDragToolActive()
 {
@@ -10,23 +11,25 @@ function ControlDragToolActive()
   return false;
 }
 
-function ControlDragToolStart()
+function ControlDragToolStart(toolId)
 {
   ControlMode = "dragTool";
-  var paper = document.getElementById("diagram");
-  SetAttr(paper, {cursor: "move"});
+  ControlToolId = toolId;
+  var diagram = document.getElementById("diagram");
+  SetAttr(diagram, {cursor: "move"});
 }
 
 function ControlDragToolEnd()
 {
-  if (ControlMode == "dragTool")
+  if (ControlMode != "dragTool")
   {
-    ControlMode = "none";
-    
-    var select = document.getElementById("diagram.toolbar.select");
-    SetAttr(select, {opacity: 0});
-
-    var paper = document.getElementById("diagram");
-    SetAttr(paper, {cursor: "default"});
+    return;
   }
+    
+  ControlMode = "none";
+  
+  ToolbarDragToolEnd();
+
+  var diagram = document.getElementById("diagram");
+  SetAttr(diagram, {cursor: "default"});
 }

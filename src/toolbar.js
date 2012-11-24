@@ -1,3 +1,19 @@
+function ToolbarDragToolBegin(icon)
+{
+  var id = icon.getAttributeNS(null,"id");
+  var select = document.getElementById("diagram.toolbar.select");
+  var select_x = icon.getAttributeNS(null,"select_x");
+  var select_y = icon.getAttributeNS(null,"select_y");
+
+  SetAttr(select, {x: select_x, y: select_y, opacity: 1});
+}
+
+function ToolbarDragToolEnd()
+{
+  var select = document.getElementById("diagram.toolbar.select");
+  SetAttr(select, {opacity: 0});
+}
+
 function onmouseoverToolbarIcon(evt)
 {
   if (ControlDragToolActive())
@@ -5,12 +21,7 @@ function onmouseoverToolbarIcon(evt)
     return;
   }
   
-  var id = evt.target.getAttributeNS(null,"id");
-  var select = document.getElementById("diagram.toolbar.select");
-  var select_x = evt.target.getAttributeNS(null,"select_x");
-  var select_y = evt.target.getAttributeNS(null,"select_y");
-
-  SetAttr(select, {x: select_x, y: select_y, opacity: 1});
+  ToolbarDragToolBegin(evt.target);
 }
 
 function onmouseoutToolbarIcon(evt)
@@ -20,14 +31,14 @@ function onmouseoutToolbarIcon(evt)
     return;
   }
   
-  var select = document.getElementById("diagram.toolbar.select");
-  SetAttr(select, {opacity: 0});
+  ToolbarDragToolEnd();
 }
 
 function onmousedownToolbarIcon(evt)
 {
   evt.preventDefault();
-  ControlDragToolStart();
+  var id = evt.target.getAttributeNS(null,"id");
+  ControlDragToolStart(id);
 }
 
 function onmouseupToolbarIcon(evt)
