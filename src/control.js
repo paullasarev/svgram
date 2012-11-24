@@ -88,6 +88,8 @@ function DeleteAllChildIfItHave_svgram(parent)
   for (var i = parent.childNodes.length-1; i >=0; i--) {
     var node = parent.childNodes[i];
     var attrSvgram = node.getAttribute('svgram');
+    if(node.tagName == "text")
+       continue;
     if (attrSvgram!= null && attrSvgram != "") {
       parent.removeChild(node);
       continue;
