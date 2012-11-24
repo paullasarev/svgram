@@ -8,6 +8,7 @@ var TextWidth = 100;
 var TextHeight = 40;
 var TextFontSize = 24;
 var LineLength = 60;
+var KnotIDPrefix = "knot";
 
 var PaperElement = null;
 var SelectedGroup = null;
@@ -63,8 +64,10 @@ function SelectPaperElement(spec) {
 function AddKnot(group, pos_x, pos_y)
 {
   var knot = AddTagNS(group, svgNS, "circle", {"cx": pos_x, "cy": pos_y, "r": 5
-    , "opacity": 1
-    , "fill": "blue", "stroke": "blue", "stroke-width": 10
+    , "opacity": 0.3
+    , "fill": "blue", "stroke": "blue", "stroke-width": 7
+    , "onmouseup": "KnotMouseUp(evt)"
+    , "id": KnotIDPrefix + Math.uuid(15)
     });
   return knot;
 }
@@ -126,6 +129,7 @@ function PaperCreateLine(pos_x, pos_y)
     , "fill": "blue", "stroke": "blue", "stroke-width": 10
     , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
     , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
+    , "id": KnotIDPrefix + Math.uuid(15)
   });
   // Resizer 2
   var resizerSize = 10;
@@ -136,6 +140,7 @@ function PaperCreateLine(pos_x, pos_y)
     , "fill": "blue", "stroke": "blue", "stroke-width": 10
     , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
     , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
+    , "id": KnotIDPrefix + Math.uuid(15)
   });
 }
 
@@ -174,6 +179,27 @@ function PaperCreateText(pos_x, pos_y)
   });
 }
 
+function ConnectKnots(knot1, knot2) {
+  var knot1id = knot1.getAttribute("id");
+  var knot2id = knot2.getAttribute("id");
+  //alert(knot1id + " " + knot2id);
+  knot1.setAttribute("connknot", knot2id);
+  knot2.setAttribute("connknot", knot1id);
+}
+
+function AdjustConnKnot(node, deltaX, deltaY) {
+  var connknot = node.getAttribute("connknot");
+  if (!connknot) return;
+  AdjustKnot(connknot, deltaX, deltaY);
+}
+
+function AdjustKnot(knotid, deltaX, deltaY) {
+  var knot = document.getElementById(knotid);
+  if (!knot) return;
+  
+  PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode);
+}
+
 function AddDelta(node, attr, delta) {
   var val = parseInt(node.getAttribute(attr));
   node.setAttribute(attr, val + delta);
@@ -194,6 +220,10 @@ function PaperMoveShape(pos_x, pos_y) {
     else if (tagName == "circle") {
       AddDelta(node, "cx", deltaX);
       AddDelta(node, "cy", deltaY);
+      var connknot = node.getAttribute("connknot");
+      if (connknot) {
+        AdjustKnot(connknot, deltaX, deltaY);
+      }
     } else {
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
@@ -201,47 +231,54 @@ function PaperMoveShape(pos_x, pos_y) {
   }
 }
 
-function PaperResizeShape(pos_x, pos_y) {
+function PaperResizeShape(pos_x, pos_y, target) {
   var deltaX = pos_x - DragX;
   var deltaY = pos_y - DragY;
-  var node = SelectedGroup.childNodes.item(0);
+  PaperResizeShapeDelta(deltaX, deltaY, SelectedGroup, target);
+}
+function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
+  var node = group.childNodes.item(0);
   var tagName = node.tagName;
   if (tagName == "rect") {
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
     //selector
-    node = SelectedGroup.childNodes.item(1);
+    node = group.childNodes.item(1);
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
     //resizer
-    node = SelectedGroup.childNodes.item(2);
+    node = group.childNodes.item(2);
     AddDelta(node, "x", deltaX);
     AddDelta(node, "y", deltaY);
     //knotes
-    node = SelectedGroup.childNodes.item(3);
-    AddDelta(node, "cy", deltaY/2);
-    node = SelectedGroup.childNodes.item(4);
+    node = group.childNodes.item(3);
+    AddDelta(node, "cy", deltaY / 2);
+    AdjustConnKnot(node, 0, deltaY / 2);
+    node = group.childNodes.item(4);
     AddDelta(node, "cx", deltaX);
     AddDelta(node, "cy", deltaY/2);
-    node = SelectedGroup.childNodes.item(5);
+    AdjustConnKnot(node, deltaX, deltaY / 2);
+    node = group.childNodes.item(5);
     AddDelta(node, "cx", deltaX/2);
-    node = SelectedGroup.childNodes.item(6);
+    AdjustConnKnot(node, deltaX/2, 0);
+    node = group.childNodes.item(6);
     AddDelta(node, "cx", deltaX/2);
     AddDelta(node, "cy", deltaY);
+    AdjustConnKnot(node, deltaX / 2, deltaY);
   }
   else if (tagName == "text") {
     var fontsize = parseInt(node.getAttribute("font-size"));
-    var specSize = parseInt(SelectedGroup.childNodes.item(1).getAttribute("height"));
+    var specSize = parseInt(group.childNodes.item(1).getAttribute("height"));
     var scale = (specSize + deltaY) / specSize.toFixed(2);
     fontsize = Math.round(fontsize * scale);
     node.setAttribute("font-size", fontsize);
     AddDelta(node, "x", deltaX/2);
     AddDelta(node, "y", deltaY/2);
 
-    node = SelectedGroup.childNodes.item(1);
+    node = group.childNodes.item(1);
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
-    node = SelectedGroup.childNodes.item(2);
+    node = group.childNodes.item(2);
     AddDelta(node, "x", deltaX);
     AddDelta(node, "y", deltaY);
   }
@@ -255,22 +292,30 @@ function PaperResizeShape(pos_x, pos_y) {
     if (dist1 < dist2) {
       node.setAttribute("x1", x1 + deltaX);
       node.setAttribute("y1", y1 + deltaY);
-      node = SelectedGroup.childNodes.item(1);  // Spec
+      node = group.childNodes.item(1);  // Spec
       AddDelta(node, "x1", deltaX);
       AddDelta(node, "y1", deltaY);
-      node = SelectedGroup.childNodes.item(2);  // Resizer 1
+      node = group.childNodes.item(2);  // Resizer 1
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
+      if (target && target.tagName == "circle") {
+        var knot = group.childNodes.item(2);
+        ConnectKnots(knot, target);
+      }
     }
     else {
       node.setAttribute("x2", x2 + deltaX);
       node.setAttribute("y2", y2 + deltaY);
-      node = SelectedGroup.childNodes.item(1);  // Spec
+      node = group.childNodes.item(1);  // Spec
       AddDelta(node, "x2", deltaX);
       AddDelta(node, "y2", deltaY);
-      node = SelectedGroup.childNodes.item(3);  // Resizer 1
+      node = group.childNodes.item(3);  // Resizer 1
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
+      if (target && target.tagName == "circle") {
+        var knot = group.childNodes.item(3);
+        ConnectKnots(knot, target);
+      }
     }
   }
 }
@@ -337,4 +382,9 @@ function ResizerMouseDown(evt) {
 function ResizerMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
+}
+
+function KnotMouseUp(evt) {
+  evt.preventDefault();
+  ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
 }

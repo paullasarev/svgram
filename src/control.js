@@ -39,7 +39,7 @@ function ControlDragAbort()
   SetAttr(diagram, { cursor: "default" });
 }
 
-function ControlDragEnd(pos_x, pos_y)
+function ControlDragEnd(pos_x, pos_y, target)
 {
   if (ControlMode == "none")
     return;
@@ -67,7 +67,7 @@ function ControlDragEnd(pos_x, pos_y)
     PaperMoveShape(pos_x, pos_y);
   }
   else if (mode == "dragSize") {
-    PaperResizeShape(pos_x, pos_y);
+    PaperResizeShape(pos_x, pos_y, target);
   }
 
   var diagram = document.getElementById("diagram");
