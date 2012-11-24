@@ -77,3 +77,7 @@ function ControlDragEnd(pos_x, pos_y)
 function ControlDeleteShape() {
   PaperDeleteSelectedShape();
 }
+
+function ControlExportSvg() {
+  alert("Export");
+}
