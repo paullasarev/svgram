@@ -92,6 +92,26 @@ function DeleteAllChildIfItHave_svgram(parent)
       parent.removeChild(node);
       continue;
     }
+    attrSvgram = node.getAttribute('onmouseover');
+    if (attrSvgram!= null && attrSvgram != "") {
+      parent.removeChild(node);
+      continue;
+    }
+    attrSvgram = node.getAttribute('onmouseup');
+    if (attrSvgram!= null && attrSvgram != "") {
+      parent.removeChild(node);
+      continue;
+    }
+    attrSvgram = node.getAttribute('onmousedown');
+    if (attrSvgram!= null && attrSvgram != "") {
+      parent.removeChild(node);
+      continue;
+    }
+    attrSvgram = node.getAttribute('onmouseout');
+    if (attrSvgram!= null && attrSvgram != "") {
+      parent.removeChild(node);
+      continue;
+    }
 
     DeleteAllChildIfItHave_svgram(parent.childNodes[i]);
   }
