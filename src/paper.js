@@ -75,6 +75,18 @@ function PaperCreateRect(pos_x, pos_y)
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
     , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
   });
+  // Resizer
+  var right = pos_x + ShapeWidth / 2;
+  var bottom = pos_y + ShapeHeight / 2;
+  var resizerSize = 10;
+  AddTagNS(group, svgNS, "rect", {
+    "x": right - resizerSize / 2, "y": bottom - resizerSize / 2,
+    "width": resizerSize, "height": resizerSize,
+    "opacity": 0
+    , "fill": "blue", "stroke": "blue", "stroke-width": 10
+    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
+    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
+  });
 }
 
 function PaperCreateLine(pos_x, pos_y)
@@ -105,6 +117,18 @@ function PaperCreateText(pos_x, pos_y)
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
     , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
   });
+  // Resizer
+  var right = pos_x + TextWidth / 2;
+  var bottom = pos_y + TextHeight / 2;
+  var resizerSize = 10;
+  AddTagNS(group, svgNS, "rect", {
+    "x": right - resizerSize / 2, "y": bottom - resizerSize / 2,
+    "width": resizerSize, "height": resizerSize,
+    "opacity": 0
+    , "fill": "blue", "stroke": "blue", "stroke-width": 10
+    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
+    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
+  });
 }
 
 function AddDelta(node, attr, delta) {
@@ -128,6 +152,25 @@ function PaperMoveShape(pos_x, pos_y) {
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
     }
+  }
+}
+
+function PaperResizeShape(pos_x, pos_y) {
+  var deltaX = pos_x - DragX;
+  var deltaY = pos_y - DragY;
+  var node = SelectedGroup.childNodes.item(0);
+  var tagName = node.tagName;
+  if (tagName == "rect" || tagName == "text") {
+    AddDelta(node, "width", deltaX);
+    AddDelta(node, "height", deltaY);
+    node = SelectedGroup.childNodes.item(1);
+    AddDelta(node, "width", deltaX);
+    AddDelta(node, "height", deltaY);
+    node = SelectedGroup.childNodes.item(2);
+    AddDelta(node, "x", deltaX);
+    AddDelta(node, "y", deltaY);
+  }
+  else {
   }
 }
 
@@ -165,3 +208,23 @@ function SpecMouseUp(evt) {
   ControlDragEnd(evt.offsetX, evt.offsetY);
 }
 
+function ResizerMouseOver(evt) {
+  SetAttr(evt.target, { "opacity": 0.5 });
+}
+
+function ResizerMouseOut(evt) {
+    SetAttr(evt.target, { "opacity": 0 });
+}
+
+function ResizerMouseDown(evt) {
+  evt.preventDefault();
+  SelectPaperElement(evt.target);
+
+  DragX = evt.offsetX; DragY = evt.offsetY;
+  ControlDragSizeStart();
+}
+
+function ResizerMouseUp(evt) {
+  evt.preventDefault();
+  ControlDragEnd(evt.offsetX, evt.offsetY);
+}

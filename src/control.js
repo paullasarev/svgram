@@ -25,13 +25,14 @@ function ControlDragShapeStart() {
   SetAttr(diagram, { cursor: "move" });
 }
 
+function ControlDragSizeStart() {
+  ControlMode = "dragSize";
+  var diagram = document.getElementById("diagram");
+  SetAttr(diagram, { cursor: "move" });
+}
+
 function ControlDragAbort()
 {
-  //if (ControlMode != "dragTool")
-  //{
-  //  return;
-  //}
-    
   ControlMode = "none";
 
   var diagram = document.getElementById("diagram");
@@ -64,7 +65,9 @@ function ControlDragEnd(pos_x, pos_y)
   }
   else if (mode == "dragShape") {
     PaperMoveShape(pos_x, pos_y);
-    //TODO
+  }
+  else if (mode == "dragSize") {
+    PaperResizeShape(pos_x, pos_y);
   }
 
   var diagram = document.getElementById("diagram");
