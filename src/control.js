@@ -19,7 +19,7 @@ function ControlDragToolStart(toolId)
   SetAttr(diagram, {cursor: "move"});
 }
 
-function ControlDragToolEnd()
+function ControlDragToolEnd(pos_x, pos_y)
 {
   if (ControlMode != "dragTool")
   {
@@ -32,4 +32,9 @@ function ControlDragToolEnd()
 
   var diagram = document.getElementById("diagram");
   SetAttr(diagram, {cursor: "default"});
+
+  if (ControlToolId == "toolbar.icon.rect")
+  {
+    PaperCreateRect(pos_x, pos_y);
+  }
 }
