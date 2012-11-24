@@ -56,8 +56,15 @@ function GetShapeColor()
 }
 
 function SelectPaperElement(spec) {
+  if (SelectedGroup != null) {
+    var oldspec = SelectedGroup.childNodes.item(1);
+    SetAttr(oldspec, { "fill": "none" });
+    SetAttr(oldspec, { "opacity": 0 });
+  }
+
   SelectedGroup = spec.parentNode;
   SetAttr(spec, { "fill": "yellow" });
+  SetAttr(spec, { "opacity": 0.3 });
 }
 
 function PaperCreateRect(pos_x, pos_y)
@@ -79,10 +86,13 @@ function PaperCreateRect(pos_x, pos_y)
 }
 
 function RectSpecMouseOver(evt) {
-  SetAttr(evt.target, { "opacity": 0.2 } );
+  SetAttr(evt.target, { "opacity": 0.5 } );
 }
 function RectSpecMouseOut(evt) {
-  SetAttr(evt.target, { "opacity": 0 });
+  if (SelectedGroup == evt.target.parentNode)
+    SetAttr(evt.target, { "opacity": 0.3 });
+  else
+    SetAttr(evt.target, { "opacity": 0 });
 }
 function RectSpecMouseClick(evt) {
   SelectPaperElement(evt.target);
