@@ -1,22 +1,12 @@
 
-function onmouseupPaper(evt)
-{
-  evt.preventDefault();
-  ControlDragToolEnd(evt.offsetX, evt.offsetY);
-}
-
-function onmousedownPaper(evt)
-{
-  evt.preventDefault();
-
-}
-
 var PaperOffsetX = 0, PaperOffsetY = 0;
 var PaperElement = null;
 var ShapeColor = "black";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
 var ShapeHeight = 100;
+var TextWidth = 100;
+var TextHeight = 50;
 var SelectedGroup = null;
 var LineLength = 60;
 
@@ -75,43 +65,79 @@ function PaperCreateRect(pos_x, pos_y)
     "width": ShapeWidth, "height": ShapeHeight,
     "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke
   });
+
   var rectSpec = AddTagNS(group, svgNS, "rect", {
     "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
     "width": ShapeWidth, "height": ShapeHeight,
-    "opacity": 0,
-    "fill": "none", "stroke": "blue", "stroke-width": 10,
-    "onmouseover": "RectSpecMouseOver(evt)", "onmouseout": "RectSpecMouseOut(evt)",
-    "onclick": "RectSpecMouseClick(evt)"
+    "opacity": 0
+    , "fill": "none", "stroke": "blue", "stroke-width": 10
+    , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
+    , "onclick": "SpecMouseClick(evt)"
   });
 }
 
-function RectSpecMouseOver(evt) {
-  SetAttr(evt.target, { "opacity": 0.5 } );
-}
-function RectSpecMouseOut(evt) {
-  if (SelectedGroup == evt.target.parentNode)
-    SetAttr(evt.target, { "opacity": 0.3 });
-  else
-    SetAttr(evt.target, { "opacity": 0 });
-}
-function RectSpecMouseClick(evt) {
-  SelectPaperElement(evt.target);
-}
-
-
 function PaperCreateLine(pos_x, pos_y)
 {
-  var line = AddTagNS(PaperElement, svgNS, "polyline", {"points": 
+  var group = AddTagNS(PaperElement, svgNS, "g", { } );
+  var line = AddTagNS(group, svgNS, "polyline", {"points": 
     "" + pos_x + "," + (pos_y - LineLength/2)
     + " " + pos_x + "," + (pos_y - LineLength/6)
     + " " + pos_x + "," + (pos_y + LineLength/6)
     + " " + pos_x + "," + (pos_y + LineLength/2)
     , "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke });
+
+  var line = AddTagNS(group, svgNS, "polyline", {"points": 
+    "" + pos_x + "," + (pos_y - LineLength/2)
+    + " " + pos_x + "," + (pos_y - LineLength/6)
+    + " " + pos_x + "," + (pos_y + LineLength/6)
+    + " " + pos_x + "," + (pos_y + LineLength/2)
+    , "fill": "none", "stroke": GetShapeColor(), "stroke-width": 10
+    , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
+    , "onclick": "SpecMouseClick(evt)"
+     });
 }
 
 function PaperCreateText(pos_x, pos_y)
 {
-  var text = AddTagNS(PaperElement, svgNS, "text", {x: pos_x, y: pos_y, "text-anchor":"middle"}); 
+  var group = AddTagNS(PaperElement, svgNS, "g", { } );
+  var text = AddTagNS(group, svgNS, "text", {x: pos_x, y: pos_y, "text-anchor":"middle"}); 
   var text_body = document.createTextNode("Text");
   text.appendChild(text_body); 
+  
+  var rectSpec = AddTagNS(group, svgNS, "rect", {
+    "x": pos_x - TextWidth/2, "y": pos_y  - TextHeight/2,
+    "width": TextWidth, "height": TextHeight,
+    "opacity": 0
+    , "fill": "none", "stroke": "blue", "stroke-width": 10
+    , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
+    , "onclick": "SpecMouseClick(evt)"
+  });
+  
 }
+
+function onmouseupPaper(evt)
+{
+  evt.preventDefault();
+  ControlDragToolEnd(evt.offsetX, evt.offsetY);
+}
+
+function onmousedownPaper(evt)
+{
+  evt.preventDefault();
+
+}
+
+function SpecMouseOver(evt) {
+  SetAttr(evt.target, { "opacity": 0.5 } );
+}
+
+function SpecMouseOut(evt) {
+  if (SelectedGroup == evt.target.parentNode)
+    SetAttr(evt.target, { "opacity": 0.3 });
+  else
+    SetAttr(evt.target, { "opacity": 0 });
+}
+function SpecMouseClick(evt) {
+  SelectPaperElement(evt.target);
+}
+
