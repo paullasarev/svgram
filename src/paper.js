@@ -1,14 +1,16 @@
 
 var PaperOffsetX = 0, PaperOffsetY = 0;
-var PaperElement = null;
 var ShapeColor = "black";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
 var ShapeHeight = 100;
 var TextWidth = 100;
-var TextHeight = 50;
-var SelectedGroup = null;
+var TextHeight = 40;
+var TextFontSize = 24;
 var LineLength = 60;
+
+var PaperElement = null;
+var SelectedGroup = null;
 var DragX = 0, DragY = 0;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
@@ -105,7 +107,10 @@ function PaperCreateLine(pos_x, pos_y)
 function PaperCreateText(pos_x, pos_y)
 {
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
-  var text = AddTagNS(group, svgNS, "text", {x: pos_x, y: pos_y, "text-anchor":"middle"}); 
+  var text = AddTagNS(group, svgNS, "text", {
+    x: pos_x, y: pos_y,
+    "text-anchor": "middle", "font-size": TextFontSize
+  });
   var text_body = document.createTextNode("Text");
   text.appendChild(text_body); 
   
@@ -160,7 +165,7 @@ function PaperResizeShape(pos_x, pos_y) {
   var deltaY = pos_y - DragY;
   var node = SelectedGroup.childNodes.item(0);
   var tagName = node.tagName;
-  if (tagName == "rect" || tagName == "text") {
+  if (tagName == "rect") {
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
     node = SelectedGroup.childNodes.item(1);
@@ -170,7 +175,19 @@ function PaperResizeShape(pos_x, pos_y) {
     AddDelta(node, "x", deltaX);
     AddDelta(node, "y", deltaY);
   }
-  else {
+  else if (tagName == "text") {
+    var fontsize = parseInt(node.getAttribute("font-size"));
+    var specSize = parseInt(SelectedGroup.childNodes.item(1).getAttribute("height"));
+    var scale = (specSize + deltaY) / specSize.toFixed(2);
+    fontsize = Math.round(fontsize * scale);
+    node.setAttribute("font-size", fontsize);
+
+    node = SelectedGroup.childNodes.item(1);
+    AddDelta(node, "width", deltaX);
+    AddDelta(node, "height", deltaY);
+    node = SelectedGroup.childNodes.item(2);
+    AddDelta(node, "x", deltaX);
+    AddDelta(node, "y", deltaY);
   }
 }
 
