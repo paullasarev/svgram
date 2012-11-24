@@ -43,13 +43,13 @@ function onmousedownToolbarIcon(evt)
 
 function onmouseupToolbarIcon(evt)
 {
-  ControlDragToolEnd();
+  ControlDragEnd();
   onmouseoverToolbarIcon(evt);
 }
 
 function onmouseupToolbar(evt)
 {
-  ControlDragToolEnd();
+  ControlDragEnd();
 }
 
 function CreateToolbar(root, width, height, color)
