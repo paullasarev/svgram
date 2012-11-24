@@ -60,6 +60,15 @@ function SelectPaperElement(spec) {
   SetAttr(spec, { "opacity": 0.3 });
 }
 
+function AddKnot(group, pos_x, pos_y)
+{
+  var knot = AddTagNS(group, svgNS, "circle", {"cx": pos_x, "cy": pos_y, "r": 5
+    , "opacity": 1
+    , "fill": "blue", "stroke": "blue", "stroke-width": 10
+    });
+  return knot;
+}
+
 function PaperCreateRect(pos_x, pos_y)
 {
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
@@ -70,13 +79,14 @@ function PaperCreateRect(pos_x, pos_y)
   });
 
   var rectSpec = AddTagNS(group, svgNS, "rect", {
-    "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
+    "x": pos_x - ShapeWidth/2, "y": pos_y - ShapeHeight/2,
     "width": ShapeWidth, "height": ShapeHeight,
     "opacity": 0
     , "fill": "#aaa", "stroke": "blue", "stroke-width": 10
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
     , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
   });
+  
   // Resizer
   var right = pos_x + ShapeWidth / 2;
   var bottom = pos_y + ShapeHeight / 2;
@@ -89,6 +99,11 @@ function PaperCreateRect(pos_x, pos_y)
     , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
     , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
   });
+  
+  AddKnot(group, pos_x - ShapeWidth/2, pos_y);
+  AddKnot(group, pos_x + ShapeWidth/2, pos_y);
+  AddKnot(group, pos_x, pos_y - ShapeHeight/2);
+  AddKnot(group, pos_x, pos_y + ShapeHeight/2);
 }
 
 function PaperCreateLine(pos_x, pos_y)
@@ -176,7 +191,10 @@ function PaperMoveShape(pos_x, pos_y) {
       AddDelta(node, "x2", deltaX);
       AddDelta(node, "y2", deltaY);
     }
-    else {
+    else if (tagName == "circle") {
+      AddDelta(node, "cx", deltaX);
+      AddDelta(node, "cy", deltaY);
+    } else {
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
     }
@@ -191,12 +209,25 @@ function PaperResizeShape(pos_x, pos_y) {
   if (tagName == "rect") {
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
+    //selector
     node = SelectedGroup.childNodes.item(1);
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
+    //resizer
     node = SelectedGroup.childNodes.item(2);
     AddDelta(node, "x", deltaX);
     AddDelta(node, "y", deltaY);
+    //knotes
+    node = SelectedGroup.childNodes.item(3);
+    AddDelta(node, "cy", deltaY/2);
+    node = SelectedGroup.childNodes.item(4);
+    AddDelta(node, "cx", deltaX);
+    AddDelta(node, "cy", deltaY/2);
+    node = SelectedGroup.childNodes.item(5);
+    AddDelta(node, "cx", deltaX/2);
+    node = SelectedGroup.childNodes.item(6);
+    AddDelta(node, "cx", deltaX/2);
+    AddDelta(node, "cy", deltaY);
   }
   else if (tagName == "text") {
     var fontsize = parseInt(node.getAttribute("font-size"));
