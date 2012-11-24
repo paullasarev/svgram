@@ -3,6 +3,8 @@ function CreateSvg(root, width, height, stroke)
 {
   var paperBorderColor = "blue";
   var paperColor = "GhostWhite";
+  paperHeight = height;
+  paperWidth = width;
   
   var svg = document.getElementById("diagram");
 
@@ -11,6 +13,8 @@ function CreateSvg(root, width, height, stroke)
   CreatePaper(svg, width, height, 0, 0, 0, paperColor, paperBorderColor);
 }
 
+var paperWidth;
+var paperHeight;
 function Init(root)
 {
   CreateSvg(root, 800, 600, 1);
