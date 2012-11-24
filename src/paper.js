@@ -15,6 +15,8 @@ var PaperOffsetX = 0, PaperOffsetY = 0;
 var PaperElement;
 var ShapeColor = "black";
 var ShapeStroke = 2;
+var ShapeWidth = 200;
+var ShapeHeight = 100;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
@@ -40,9 +42,28 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
 
 }
 
+function GetShapeColor()
+{
+  var colorButton = document.getElementById('buttonColor');
+  if (colorButton != null)
+  {
+    ShapeColor = colorButton.style.backgroundColor;
+  }
+  
+  return ShapeColor;
+}
+
 function PaperCreateRect(pos_x, pos_y)
 {
-  var rect = AddTagNS(PaperElement, svgNS, "rect", {"x": 0 + pos_x, "y": 0 + pos_y, 
-    "width": 200, "height": 100,
-    "fill": "none", "stroke": ShapeColor, "stroke-width": ShapeStroke });
+  var rect = AddTagNS(PaperElement, svgNS, "rect", {"x": 0 + pos_x - ShapeWidth/2, "y": 0 + pos_y  - ShapeHeight/2, 
+    "width": ShapeWidth, "height": ShapeHeight,
+    "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke });
+}
+
+function PaperCreateLine(pos_x, pos_y)
+{
+}
+
+function PaperCreateText(pos_x, pos_y)
+{
 }

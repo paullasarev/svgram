@@ -6,8 +6,8 @@ function CreateSvg(root, width, height, stroke)
   
   var svg = document.getElementById("diagram");
 
-  CreateShadowFilter(svg);
-  CreateToolbar(svg, 100, height, paperColor);
+  // CreateShadowFilter(svg);
+  // CreateToolbar(svg, 100, height, paperColor);
   CreatePaper(svg, width, height, 0, 0, 0, paperColor, paperBorderColor);
 }
 

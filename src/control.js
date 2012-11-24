@@ -47,6 +47,14 @@ function ControlDragToolEnd(pos_x, pos_y)
   {
     PaperCreateRect(pos_x, pos_y);
   }
+  else if (ControlToolId == "toolbar.icon.line")
+  {
+    PaperCreateLine(pos_x, pos_y);
+  }
+  else if (ControlToolId == "toolbar.icon.text")
+  {
+    PaperCreateText(pos_x, pos_y);
+  }
   else
   {
     alert(ControlToolId);
