@@ -9,6 +9,7 @@ var TextWidth = 100;
 var TextHeight = 50;
 var SelectedGroup = null;
 var LineLength = 60;
+var DragX = 0, DragY = 0;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
@@ -48,7 +49,7 @@ function GetShapeColor()
 function SelectPaperElement(spec) {
   if (SelectedGroup != null) {
     var oldspec = SelectedGroup.childNodes.item(1);
-    SetAttr(oldspec, { "fill": "none" });
+    SetAttr(oldspec, { "fill": "#aaa" });
     SetAttr(oldspec, { "opacity": 0 });
   }
 
@@ -70,9 +71,9 @@ function PaperCreateRect(pos_x, pos_y)
     "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
     "width": ShapeWidth, "height": ShapeHeight,
     "opacity": 0
-    , "fill": "none", "stroke": "blue", "stroke-width": 10
+    , "fill": "#aaa", "stroke": "blue", "stroke-width": 10
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
-    , "onclick": "SpecMouseClick(evt)"
+    , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
   });
 }
 
@@ -91,9 +92,9 @@ function PaperCreateLine(pos_x, pos_y)
     + " " + pos_x + "," + (pos_y - LineLength/6)
     + " " + pos_x + "," + (pos_y + LineLength/6)
     + " " + pos_x + "," + (pos_y + LineLength/2)
-    , "fill": "none", "stroke": GetShapeColor(), "stroke-width": 10
+    , "fill": "#aaa", "stroke": GetShapeColor(), "stroke-width": 10
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
-    , "onclick": "SpecMouseClick(evt)"
+    , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
      });
 }
 
@@ -108,23 +109,32 @@ function PaperCreateText(pos_x, pos_y)
     "x": pos_x - TextWidth/2, "y": pos_y  - TextHeight/2,
     "width": TextWidth, "height": TextHeight,
     "opacity": 0
-    , "fill": "none", "stroke": "blue", "stroke-width": 10
+    , "fill": "#aaa", "stroke": "blue", "stroke-width": 10
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
-    , "onclick": "SpecMouseClick(evt)"
+    , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
   });
-  
 }
 
+function PaperMoveShape(pos_x, pos_y) {
+  var deltaX = pos_x - DragX;
+  var deltaY = pos_y - DragY;
+  for (var i = 0; i < SelectedGroup.childNodes.length; i++) {
+    var node = SelectedGroup.childNodes.item(i);
+    var x = parseInt(node.getAttribute("x"));
+    node.setAttribute("x", x + deltaX);
+    var y = parseInt(node.getAttribute("y"));
+    node.setAttribute("y", y + deltaY);
+  }
+}
+
+function onmousedownPaper(evt) {
+  evt.preventDefault();
+
+}
 function onmouseupPaper(evt)
 {
   evt.preventDefault();
-  ControlDragToolEnd(evt.offsetX, evt.offsetY);
-}
-
-function onmousedownPaper(evt)
-{
-  evt.preventDefault();
-
+  ControlDragEnd(evt.offsetX, evt.offsetY);
 }
 
 function SpecMouseOver(evt) {
@@ -137,7 +147,15 @@ function SpecMouseOut(evt) {
   else
     SetAttr(evt.target, { "opacity": 0 });
 }
-function SpecMouseClick(evt) {
+function SpecMouseDown(evt) {
+  evt.preventDefault();
   SelectPaperElement(evt.target);
+
+  DragX = evt.offsetX; DragY = evt.offsetY;
+  ControlDragShapeStart();
+}
+function SpecMouseUp(evt) {
+  evt.preventDefault();
+  ControlDragEnd(evt.offsetX, evt.offsetY);
 }
 
