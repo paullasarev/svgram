@@ -85,14 +85,16 @@ function ControlExportSvg() {
 
 function DeleteAllChildIfItHave_svgram(parent)
 {
-	for (var i = 0; i < parent.childNodes.length; i++) {
-		if ( parent.childNodes[i].hasOwnProperty('svgram') ) {
-			parent.childNodes[i]. DELETE
-			continue;
-		}	
-		//recursia		
-		DeleteAllChildIfItHave_svgram(parent.childNodes[i]);
-	}
+  for (var i = parent.childNodes.length-1; i >=0; i--) {
+    var node = parent.childNodes[i];
+    var attrSvgram = node.getAttribute('svgram');
+    if (attrSvgram!= null && attrSvgram != "") {
+      parent.removeChild(node);
+      continue;
+    }
+
+    DeleteAllChildIfItHave_svgram(parent.childNodes[i]);
+  }
 }
 
 var copySvg;
@@ -101,10 +103,6 @@ function OpenSavePrintWindow()
 	var svg = document.getElementById('diagram');
 	copySvg = svg.cloneNode(false);
 	copySvg.id = 'newDiagram';
-	//clear all childs (if var copySvg = svg.cloneNode(true))
-	//while (copySvg.hasChildNodes()) {
-		//copySvg.removeChild(copySvg.firstChild);
-	//}
 	var svg_paper_root = document.getElementById('diagram.paper').cloneNode(true);
 	DeleteAllChildIfItHave_svgram(svg_paper_root);	
 	copySvg.appendChild(svg_paper_root);	
