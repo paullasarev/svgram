@@ -80,18 +80,10 @@ function PaperCreateRect(pos_x, pos_y)
 function PaperCreateLine(pos_x, pos_y)
 {
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
-  var line = AddTagNS(group, svgNS, "polyline", {"points": 
-    "" + pos_x + "," + (pos_y - LineLength/2)
-    + " " + pos_x + "," + (pos_y - LineLength/6)
-    + " " + pos_x + "," + (pos_y + LineLength/6)
-    + " " + pos_x + "," + (pos_y + LineLength/2)
+  AddTagNS(group, svgNS, "line", {"x1": pos_x, "y1":pos_y - LineLength/2, "x2": pos_x, "y2": pos_y + LineLength/2
     , "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke });
 
-  var line = AddTagNS(group, svgNS, "polyline", {"points": 
-    "" + pos_x + "," + (pos_y - LineLength/2)
-    + " " + pos_x + "," + (pos_y - LineLength/6)
-    + " " + pos_x + "," + (pos_y + LineLength/6)
-    + " " + pos_x + "," + (pos_y + LineLength/2)
+  AddTagNS(group, svgNS, "line", {"x1": pos_x, "y1":pos_y - LineLength/2, "x2": pos_x, "y2": pos_y + LineLength/2
     , "fill": "#aaa", "stroke": GetShapeColor(), "stroke-width": 10
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
     , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
@@ -115,15 +107,27 @@ function PaperCreateText(pos_x, pos_y)
   });
 }
 
+function AddDelta(node, attr, delta) {
+  var val = parseInt(node.getAttribute(attr));
+  node.setAttribute(attr, val + delta);
+}
+
 function PaperMoveShape(pos_x, pos_y) {
   var deltaX = pos_x - DragX;
   var deltaY = pos_y - DragY;
   for (var i = 0; i < SelectedGroup.childNodes.length; i++) {
     var node = SelectedGroup.childNodes.item(i);
-    var x = parseInt(node.getAttribute("x"));
-    node.setAttribute("x", x + deltaX);
-    var y = parseInt(node.getAttribute("y"));
-    node.setAttribute("y", y + deltaY);
+    var tagName = node.tagName;
+    if (tagName == "line") {
+      AddDelta(node, "x1", deltaX);
+      AddDelta(node, "y1", deltaY);
+      AddDelta(node, "x2", deltaX);
+      AddDelta(node, "y2", deltaY);
+    }
+    else {
+      AddDelta(node, "x", deltaX);
+      AddDelta(node, "y", deltaY);
+    }
   }
 }
 
@@ -147,6 +151,7 @@ function SpecMouseOut(evt) {
   else
     SetAttr(evt.target, { "opacity": 0 });
 }
+
 function SpecMouseDown(evt) {
   evt.preventDefault();
   SelectPaperElement(evt.target);
@@ -154,6 +159,7 @@ function SpecMouseDown(evt) {
   DragX = evt.offsetX; DragY = evt.offsetY;
   ControlDragShapeStart();
 }
+
 function SpecMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
