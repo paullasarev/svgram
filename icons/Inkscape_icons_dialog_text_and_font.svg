@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="18"
+   height="18"
+   viewBox = "0 0 18 18" 
+   id="svg5968">
+  <defs
+     id="defs5970">
+    <linearGradient
+       id="linearGradient1610">
+      <stop
+         id="stop1611"
+         style="stop-color:#000000;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3053"
+         style="stop-color:#7f7f7f;stop-opacity:1"
+         offset="0.35076979" />
+      <stop
+         id="stop3054"
+         style="stop-color:#bfbfbf;stop-opacity:1"
+         offset="0.59668732" />
+      <stop
+         id="stop3055"
+         style="stop-color:#dfdfdf;stop-opacity:1"
+         offset="0.78382427" />
+      <stop
+         id="stop1612"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="148"
+       y1="214.81735"
+       x2="143.22507"
+       y2="215.9465"
+       id="linearGradient5996"
+       xlink:href="#linearGradient1610"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       x1="148"
+       y1="214.81735"
+       x2="143.22507"
+       y2="215.9465"
+       id="linearGradient2994"
+       xlink:href="#linearGradient1610"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(132,305.07647)" />
+  </defs>
+  <metadata
+     id="metadata5973">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-271,-509.07647)"
+     id="layer1">
+    <path
+       d="m 276,525.07647 2,-2 0,-11 -3,0 -2,2 -1,0 0,-4 16,0 0,4 -1,0 -2,-2 -3,0 0,11 2,2 0,1 -8,0 0,-1 z"
+       id="path10616"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+    <path
+       d="m 278,525.07647 1,-1 0,-12 2,0 0,12 1,1 -4,0 z"
+       id="asda"
+       style="fill:url(#linearGradient2994);fill-opacity:1;fill-rule:evenodd;stroke:none" />
+  </g>
+</svg>
