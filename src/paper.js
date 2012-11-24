@@ -102,6 +102,26 @@ function PaperCreateLine(pos_x, pos_y)
     , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
     , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
      });
+  // Resizer 1
+  var resizerSize = 10;
+  AddTagNS(group, svgNS, "rect", {
+    "x": pos_x - resizerSize / 2, "y": pos_y - LineLength / 2 - resizerSize / 2,
+    "width": resizerSize, "height": resizerSize,
+    "opacity": 0
+    , "fill": "blue", "stroke": "blue", "stroke-width": 10
+    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
+    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
+  });
+  // Resizer 2
+  var resizerSize = 10;
+  AddTagNS(group, svgNS, "rect", {
+    "x": pos_x - resizerSize / 2, "y": pos_y + LineLength / 2 - resizerSize / 2,
+    "width": resizerSize, "height": resizerSize,
+    "opacity": 0
+    , "fill": "blue", "stroke": "blue", "stroke-width": 10
+    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
+    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
+  });
 }
 
 function PaperCreateText(pos_x, pos_y)
@@ -193,6 +213,34 @@ function PaperResizeShape(pos_x, pos_y) {
     node = SelectedGroup.childNodes.item(2);
     AddDelta(node, "x", deltaX);
     AddDelta(node, "y", deltaY);
+  }
+  else if (tagName == "line") {
+    var x1 = parseInt(node.getAttribute("x1"));
+    var y1 = parseInt(node.getAttribute("y1"));
+    var x2 = parseInt(node.getAttribute("x2"));
+    var y2 = parseInt(node.getAttribute("y2"));
+    var dist1 = (DragX - x1) * (DragX - x1) + (DragY - y1) * (DragY - y1);
+    var dist2 = (DragX - x2) * (DragX - x2) + (DragY - y2) * (DragY - y2);
+    if (dist1 < dist2) {
+      node.setAttribute("x1", x1 + deltaX);
+      node.setAttribute("y1", y1 + deltaY);
+      node = SelectedGroup.childNodes.item(1);  // Spec
+      AddDelta(node, "x1", deltaX);
+      AddDelta(node, "y1", deltaY);
+      node = SelectedGroup.childNodes.item(2);  // Resizer 1
+      AddDelta(node, "x", deltaX);
+      AddDelta(node, "y", deltaY);
+    }
+    else {
+      node.setAttribute("x2", x2 + deltaX);
+      node.setAttribute("y2", y2 + deltaY);
+      node = SelectedGroup.childNodes.item(1);  // Spec
+      AddDelta(node, "x2", deltaX);
+      AddDelta(node, "y2", deltaY);
+      node = SelectedGroup.childNodes.item(3);  // Resizer 1
+      AddDelta(node, "x", deltaX);
+      AddDelta(node, "y", deltaY);
+    }
   }
 }
 
