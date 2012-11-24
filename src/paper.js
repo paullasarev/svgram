@@ -55,9 +55,26 @@ function GetShapeColor()
 
 function PaperCreateRect(pos_x, pos_y)
 {
-  var rect = AddTagNS(PaperElement, svgNS, "rect", {"x": 0 + pos_x - ShapeWidth/2, "y": 0 + pos_y  - ShapeHeight/2, 
-    "width": ShapeWidth, "height": ShapeHeight,
-    "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke });
+  var group = AddTagNS(PaperElement, svgNS, "g", { } );
+  var rect = AddTagNS(group, svgNS, "rect", {
+    "x": 0 + pos_x, "y": 0 + pos_y,
+    "width": 200, "height": 100,
+    "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke
+  });
+  var rectSpec = AddTagNS(group, svgNS, "rect", {
+    "x": 0 + pos_x, "y": 0 + pos_y,
+    "width": 200, "height": 100, "opacity": 0,
+    "fill":"none", "stroke": "blue", "stroke-width":10,
+    "onmouseover": "RectSpecMouseOver(evt)", "onmouseout": "RectSpecMouseOut(evt)",
+  });
+}
+
+function RectSpecMouseOver(evt) {
+  SetAttr(evt.target, { "opacity": 0.2 } );
+}
+
+function RectSpecMouseOut(evt) {
+  SetAttr(evt.target, { "opacity": 0 });
 }
 
 function PaperCreateLine(pos_x, pos_y)
