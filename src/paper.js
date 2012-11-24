@@ -109,7 +109,10 @@ function PaperCreateText(pos_x, pos_y)
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
   var text = AddTagNS(group, svgNS, "text", {
     x: pos_x, y: pos_y,
-    "text-anchor": "middle", "font-size": TextFontSize
+    "text-anchor": "middle",
+    "alignment-baseline": "middle",
+    "text-align": "start",
+    "font-size": TextFontSize
   });
   var text_body = document.createTextNode("Text");
   text.appendChild(text_body); 
@@ -181,6 +184,8 @@ function PaperResizeShape(pos_x, pos_y) {
     var scale = (specSize + deltaY) / specSize.toFixed(2);
     fontsize = Math.round(fontsize * scale);
     node.setAttribute("font-size", fontsize);
+    AddDelta(node, "x", deltaX/2);
+    AddDelta(node, "y", deltaY/2);
 
     node = SelectedGroup.childNodes.item(1);
     AddDelta(node, "width", deltaX);
