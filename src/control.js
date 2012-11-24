@@ -19,6 +19,16 @@ function ControlDragToolStart(toolId)
   SetAttr(diagram, {cursor: "move"});
 }
 
+function ControlDragToolAbort()
+{
+  if (ControlMode != "dragTool")
+  {
+    return;
+  }
+    
+  ControlMode = "none";
+}
+
 function ControlDragToolEnd(pos_x, pos_y)
 {
   if (ControlMode != "dragTool")
@@ -36,5 +46,9 @@ function ControlDragToolEnd(pos_x, pos_y)
   if (ControlToolId == "toolbar.icon.rect")
   {
     PaperCreateRect(pos_x, pos_y);
+  }
+  else
+  {
+    alert(ControlToolId);
   }
 }
