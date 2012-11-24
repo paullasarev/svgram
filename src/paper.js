@@ -22,7 +22,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   SetAttr(border, {"filter":"url(#shadow)"}); 
   SetAttr(border, {onmouseup:"onmouseupPaper(evt)", onmouseup:"onmouseupPaper(evt)"});
   
-  var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.paper.grid"});
+  var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas.grid"});
   for(var x = gridStep + stroke ; x < width ; x += gridStep)
   {
     AddTagNS(grid, svgNS, "line", {x1: offset_x + x, y1: offset_y + stroke, x2:offset_x + x, y2: offset_y + height - stroke,
