@@ -197,7 +197,7 @@ function AdjustKnot(knotid, deltaX, deltaY) {
   var knot = document.getElementById(knotid);
   if (!knot) return;
   
-  PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode);
+  PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode, knot);
 }
 
 function AddDelta(node, attr, delta) {
@@ -287,8 +287,13 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
     var y1 = parseInt(node.getAttribute("y1"));
     var x2 = parseInt(node.getAttribute("x2"));
     var y2 = parseInt(node.getAttribute("y2"));
-    var dist1 = (DragX - x1) * (DragX - x1) + (DragY - y1) * (DragY - y1);
-    var dist2 = (DragX - x2) * (DragX - x2) + (DragY - y2) * (DragY - y2);
+    var sourceX = DragX, sourceY = DragY;
+    //if (target) {
+    //  sourceX = parseInt(target.getAttribute("x"));
+    //  sourceY = parseInt(target.getAttribute("y"));
+    //}
+    var dist1 = (sourceX - x1) * (sourceX - x1) + (sourceY - y1) * (sourceY - y1);
+    var dist2 = (sourceX - x2) * (sourceX - x2) + (sourceY - y2) * (sourceY - y2);
     if (dist1 < dist2) {
       node.setAttribute("x1", x1 + deltaX);
       node.setAttribute("y1", y1 + deltaY);
@@ -381,7 +386,7 @@ function ResizerMouseDown(evt) {
 
 function ResizerMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(evt.offsetX, evt.offsetY);
+  ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
 }
 
 function KnotMouseUp(evt) {
