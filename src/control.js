@@ -79,6 +79,7 @@ function ControlDeleteShape() {
 }
 
 function ControlExportSvg() {
+  DeselectPaper();
   OpenSavePrintWindow();
 }
 

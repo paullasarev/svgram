@@ -49,12 +49,22 @@ function GetShapeColor()
   return ShapeColor;
 }
 
-function SelectPaperElement(spec) {
+function DeselectPaper()
+{
   if (SelectedGroup != null) {
     var oldspec = SelectedGroup.childNodes.item(1);
     SetAttr(oldspec, { "fill": "#aaa" });
     SetAttr(oldspec, { "opacity": 0 });
   }
+}
+
+function SelectPaperElement(spec) {
+  DeselectPaper();
+  // if (SelectedGroup != null) {
+    // var oldspec = SelectedGroup.childNodes.item(1);
+    // SetAttr(oldspec, { "fill": "#aaa" });
+    // SetAttr(oldspec, { "opacity": 0 });
+  // }
 
   SelectedGroup = spec.parentNode;
   SetAttr(spec, { "fill": "yellow" });
