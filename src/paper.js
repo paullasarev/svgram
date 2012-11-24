@@ -12,11 +12,12 @@ function onmousedownPaper(evt)
 }
 
 var PaperOffsetX = 0, PaperOffsetY = 0;
-var PaperElement;
+var PaperElement = null;
 var ShapeColor = "black";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
 var ShapeHeight = 100;
+var LineLength = 60;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
@@ -57,13 +58,14 @@ function PaperCreateRect(pos_x, pos_y)
 {
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
   var rect = AddTagNS(group, svgNS, "rect", {
-    "x": 0 + pos_x, "y": 0 + pos_y,
-    "width": 200, "height": 100,
+    "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
+    "width": ShapeWidth, "height": ShapeHeight,
     "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke
   });
   var rectSpec = AddTagNS(group, svgNS, "rect", {
-    "x": 0 + pos_x, "y": 0 + pos_y,
-    "width": 200, "height": 100, "opacity": 0,
+    "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
+    "width": ShapeWidth, "height": ShapeHeight,
+    "opacity": 0,
     "fill":"none", "stroke": "blue", "stroke-width":10,
     "onmouseover": "RectSpecMouseOver(evt)", "onmouseout": "RectSpecMouseOut(evt)",
   });
@@ -79,8 +81,17 @@ function RectSpecMouseOut(evt) {
 
 function PaperCreateLine(pos_x, pos_y)
 {
+  var line = AddTagNS(PaperElement, svgNS, "polyline", {"points": 
+    "" + pos_x + "," + (pos_y - LineLength/2)
+    + " " + pos_x + "," + (pos_y - LineLength/6)
+    + " " + pos_x + "," + (pos_y + LineLength/6)
+    + " " + pos_x + "," + (pos_y + LineLength/2)
+    , "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke });
 }
 
 function PaperCreateText(pos_x, pos_y)
 {
+  var text = AddTagNS(PaperElement, svgNS, "text", {x: pos_x, y: pos_y, "text-anchor":"middle"}); 
+  var text_body = document.createTextNode("Text");
+  text.appendChild(text_body); 
 }
