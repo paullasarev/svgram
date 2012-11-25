@@ -192,6 +192,17 @@ function ConnectKnots(resizer, knot2, line_end) {
   knot2.setAttribute("connend", line_end);
 }
 
+function AdjustDelta(resizer, knot, deltaX, deltaY)
+{
+  var x = parseInt(resizer.getAttribute("x")) + ResizerSize/2;
+  var y = parseInt(resizer.getAttribute("y")) + ResizerSize/2;
+  var cx = parseInt(knot.getAttribute("cx"));
+  var cy = parseInt(knot.getAttribute("cy"));
+  
+  return {deltaX: cx - x, deltaY: cy - y};
+}
+
+
 function AdjustConnKnot(node, deltaX, deltaY) {
   var connknot = node.getAttribute("connknot");
   if (!connknot) 
@@ -342,6 +353,13 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
     }
     
     if (is_line_begin) {
+      if (target && target.tagName == "circle") {
+        var resizer = group.childNodes.item(2);
+        ConnectKnots(resizer, target, "begin");
+        newVal = AdjustDelta(resizer, target, deltaX, deltaY);
+        deltaX = newVal.deltaX;
+        deltaY = newVal.deltaY;
+      }
       node.setAttribute("x1", x1 + deltaX);
       node.setAttribute("y1", y1 + deltaY);
       node = group.childNodes.item(1);  // Spec
@@ -350,12 +368,15 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
       node = group.childNodes.item(2);  // Resizer 1
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
-      if (target && target.tagName == "circle") {
-        var resizer = group.childNodes.item(2);
-        ConnectKnots(resizer, target, "begin");
-      }
     }
     else {
+      if (target && target.tagName == "circle") {
+        var resizer = group.childNodes.item(3);
+        ConnectKnots(resizer, target, "end");
+        newVal = AdjustDelta(resizer, target, deltaX, deltaY);
+        deltaX = newVal.deltaX;
+        deltaY = newVal.deltaY;
+      }
       node.setAttribute("x2", x2 + deltaX);
       node.setAttribute("y2", y2 + deltaY);
       node = group.childNodes.item(1);  // Spec
@@ -364,10 +385,6 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
       node = group.childNodes.item(3);  // Resizer 1
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
-      if (target && target.tagName == "circle") {
-        var resizer = group.childNodes.item(3);
-        ConnectKnots(resizer, target, "end");
-      }
     }
   }
 }
