@@ -3,7 +3,7 @@
 var PaperOffsetX = 0, PaperOffsetY = 0;
 var PaperWidth = 0, PaperHeight = 0;
 var GridStep = 20;
-var ShapeColor = "black";
+var ShapeColor = "rgb(51, 51, 204)";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
 var ShapeHeight = 100;
@@ -219,16 +219,6 @@ function AdjustKnot(knotid, deltaX, deltaY) {
   PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode, knot, connend);
 }
 
-function AdjustToGrig(pos)
-{
-  var rest = pos % GridStep;
-  var grids = Math.round(pos / GridStep);
-  if (rest >= GridStep / 2)
-    grids++;
-    
-  return grids * GridStep;
-}
-
 function AddDelta(node, attr, delta) {
   var val = parseInt(node.getAttribute(attr));
   node.setAttribute(attr, val + delta);
@@ -335,8 +325,10 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
 
     //spec
     node = group.childNodes.item(1);
-    AddDelta(node, "width", deltaX);
-    AddDelta(node, "height", deltaY);
+    AddDelta(node, "x", -deltaX);
+    AddDelta(node, "y", -deltaY);
+    AddDelta(node, "width", deltaX * 2);
+    AddDelta(node, "height", deltaY * 2);
     var x = parseInt(node.getAttribute("x"));
     var y = parseInt(node.getAttribute("y"));
     var width = parseInt(node.getAttribute("width"));
