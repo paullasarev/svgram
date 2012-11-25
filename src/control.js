@@ -26,7 +26,7 @@ function ControlDragToolStart(toolId)
   ControlMode = "dragTool";
   ControlToolId = toolId;
   var diagram = document.getElementById("diagram");
-  SetAttr(diagram, {cursor: "pointer"});
+  SetAttr(diagram, {cursor: "move"});
 }
 
 function ControlDragShapeStart() {

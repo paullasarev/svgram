@@ -408,22 +408,26 @@ function PaperDeleteSelectedShape() {
 
 function PaperMouseUp(evt)
 {
+  evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
   DeselectPaper();
 }
 
 function PaperMouseMove(evt)
 {
+  evt.preventDefault();
   ControlDragMove(evt.offsetX, evt.offsetY);
 }
 
 function SpecMouseMove(evt) {
+  evt.preventDefault();
   if (ControlInDragMode()) {
     ControlDragMove(evt.offsetX, evt.offsetY);
   }
 }
 
 function SpecMouseDown(evt) {
+  evt.preventDefault();
   SelectPaperElement(evt.target);
 
   DragX = evt.offsetX;
@@ -432,16 +436,19 @@ function SpecMouseDown(evt) {
 }
 
 function SpecMouseUp(evt) {
+  evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
 }
 
 function ResizerMouseMove(evt) {
+  evt.preventDefault();
   if (ControlInDragMode()) {
     ControlDragMove(evt.offsetX, evt.offsetY);
   }
 }
 
 function ResizerMouseDown(evt) {
+  evt.preventDefault();
   SelectPaperElement(evt.target);
 
   DragX = evt.offsetX;
@@ -451,14 +458,17 @@ function ResizerMouseDown(evt) {
 }
 
 function ResizerMouseUp(evt) {
+  evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
 }
 
 function KnotMouseUp(evt) {
+  evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
 }
 
 function KnotMouseMove(evt) {
+  evt.preventDefault();
   if (ControlInDragMode()) {
     ControlDragMove(evt.offsetX, evt.offsetY);
   }
