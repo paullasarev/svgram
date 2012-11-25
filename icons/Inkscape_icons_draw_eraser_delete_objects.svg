@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="18" height="18" id="svg5960">
+  <defs id="defs5962"/>
+  <metadata id="metadata5965">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g transform="translate(-304.47232,-546.28573)" id="layer1">
+    <use transform="translate(348.57941,540.55881)" id="draw-polygon" x="0" y="0" width="1250" height="1250" xlink:href="#g6790"/>
+    <path d="m 306.88846,551.84823 0,9.9375 10.0937,0 0,-4.125 c -0.206,0.0234 -0.3814,0.125 -0.5937,0.125 -3.036,0 -5.5,-2.464 -5.5,-5.5 0,-0.1565 0.0809,-0.2843 0.0937,-0.4375 l -4.0937,0 z" id="path6882" style="color:#000000;fill:none;stroke:#c80000;stroke-width:1.00000024;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker:none;display:inline"/>
+    <g transform="translate(-661.06868,378.74661)" id="use5777">
+      <path d="m 972,171 1,-1 7,0 1,1 0,7 -1,1 -7,0 -1,-1 0,-7 z" id="path7427" style="fill:#aa0000;fill-opacity:1;fill-rule:evenodd;stroke:#aa0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+      <path d="m 974,171.85 5,5" id="path7429" style="fill:none;stroke:#ffffff;stroke-width:1.70000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"/>
+      <path d="m 979,171.85 -5,5" id="path7431" style="fill:none;stroke:#ffffff;stroke-width:1.79999995;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"/>
+    </g>
+  </g>
+</svg>

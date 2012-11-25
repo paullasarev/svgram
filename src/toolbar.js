@@ -38,18 +38,29 @@ function onmousedownToolbarIcon(evt)
 {
   evt.preventDefault();
   var id = evt.target.getAttributeNS(null,"id");
-  ControlDragToolStart(id);
+  if (id == "toolbar.icon.delete") {
+  } else if (id == "toolbar.icon.export") {
+  } else {
+    ControlDragToolStart(id);
+  }
 }
 
 function onmouseupToolbarIcon(evt)
 {
-  ControlDragEnd();
+  var id = evt.target.getAttributeNS(null, "id");
+  if (id == "toolbar.icon.delete") {
+    ControlDeleteShape();
+  } else if (id == "toolbar.icon.export") {
+    ControlExportSvg();
+  } else {
+    ControlDragAbort();
+  }
   onmouseoverToolbarIcon(evt);
 }
 
 function onmouseupToolbar(evt)
 {
-  ControlDragEnd();
+  ControlDragAbort();
 }
 
 function CreateToolbar(root, width, height, color)
@@ -66,9 +77,10 @@ function CreateToolbar(root, width, height, color)
     "rect": "Inkscape_icons_draw_rectangle.svg",
     "line": "Inkscape_icons_connector_orthogonal.svg",
     "text": "Inkscape_icons_dialog_text_and_font.svg",
-    "crop": "crop.svg",
+    //"crop": "crop.svg",
     "export": "Inkscape_icons_document_export.svg",
-    "import": "Inkscape_icons_document_import.svg",
+    //"import": "Inkscape_icons_document_import.svg",
+    "delete": "Inkscape_icons_draw_eraser_delete_objects.svg",
   };
 
   var columns = 2;
@@ -117,3 +129,4 @@ function CreateToolbar(root, width, height, color)
     }
   }
 }
+

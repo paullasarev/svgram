@@ -97,11 +97,13 @@ function ControlDragMove(pos_x, pos_y, target)
 
 function ControlDeleteShape() {
   PaperDeleteSelectedShape();
+  ControlDragAbort();
 }
 
 function ControlExportSvg() {
   DeselectPaper();
   OpenSavePrintWindow();
+  ControlDragAbort();
 }
 
 function FilterSvgNodes(parent)
