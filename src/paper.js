@@ -2,6 +2,7 @@
 
 var PaperOffsetX = 0, PaperOffsetY = 0;
 var PaperWidth = 0, PaperHeight = 0;
+var GridStep = 20;
 var ShapeColor = "black";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
@@ -24,7 +25,6 @@ var DragLine = "";
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
-  var gridStep = 20;
   var canvas = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas"});
   PaperOffsetX = offset_x;
   PaperOffsetE = offset_y;
@@ -38,10 +38,10 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   SetAttr(border, {onmouseup:"PaperMouseUp(evt)", onmousemove:"PaperMouseMove(evt)"});
   
   var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas.grid"});
-  for(var x = gridStep + stroke ; x < width ; x += gridStep)
+  for(var x = GridStep + stroke ; x < width ; x += GridStep)
   {
     AddTagNS(grid, svgNS, "line", {x1: offset_x + x, y1: offset_y + stroke, x2:offset_x + x, y2: offset_y + height - stroke,
-      "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + gridStep});
+      "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + GridStep});
   }
 
   var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
@@ -219,6 +219,16 @@ function AdjustKnot(knotid, deltaX, deltaY) {
   PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode, knot, connend);
 }
 
+function AdjustToGrig(pos)
+{
+  var rest = pos % GridStep;
+  var grids = Math.round(pos / GridStep);
+  if (rest >= GridStep / 2)
+    grids++;
+    
+  return grids * GridStep;
+}
+
 function AddDelta(node, attr, delta) {
   var val = parseInt(node.getAttribute(attr));
   node.setAttribute(attr, val + delta);
@@ -273,13 +283,16 @@ function PaperResizeShape(pos_x, pos_y, target) {
   DragX = pos_x;
   DragY = pos_y;
 }
+
 function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
   var node = group.childNodes.item(0);
   var tagName = node.tagName;
   if (tagName == "rect") {
  
-    AddDelta(node, "width", deltaX);
-    AddDelta(node, "height", deltaY);
+    AddDelta(node, "x", -deltaX);
+    AddDelta(node, "y", -deltaY);
+    AddDelta(node, "width", deltaX * 2);
+    AddDelta(node, "height", deltaY * 2);
     
     var x = parseInt(node.getAttribute("x"));
     var y = parseInt(node.getAttribute("y"));
@@ -287,8 +300,10 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
     var height = parseInt(node.getAttribute("height"));
     //selector
     node = group.childNodes.item(1);
-    AddDelta(node, "width", deltaX);
-    AddDelta(node, "height", deltaY);
+    AddDelta(node, "x", -deltaX);
+    AddDelta(node, "y", -deltaY);
+    AddDelta(node, "width", deltaX * 2);
+    AddDelta(node, "height", deltaY * 2);
     //resizer
     node = group.childNodes.item(2);
     AddDelta(node, "x", deltaX);
@@ -296,14 +311,16 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
     //knotes
     node = group.childNodes.item(3);
     var deltaY2 = AddHalfDelta(node, "cy", y, height);
-    AdjustConnKnot(node, 0, deltaY2);
+    AddDelta(node, "cx", -deltaX);
+    AdjustConnKnot(node, -deltaX, deltaY2);
     node = group.childNodes.item(4);
     AddDelta(node, "cx", deltaX);
     AddDelta(node, "cy", deltaY2);
     AdjustConnKnot(node, deltaX, deltaY2);
     node = group.childNodes.item(5);
+    AddDelta(node, "cy", -deltaY);
     var deltaX2 = AddHalfDelta(node, "cx", x, width);
-    AdjustConnKnot(node, deltaX2, 0);
+    AdjustConnKnot(node, deltaX2, -deltaY);
     node = group.childNodes.item(6);
     AddDelta(node, "cx", deltaX2);
     AddDelta(node, "cy", deltaY);
