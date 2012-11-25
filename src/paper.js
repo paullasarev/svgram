@@ -13,14 +13,13 @@ var LineLength = 60;
 var ResizerSize = 8;
 var KnotRadius = 4;
 var KnotIDPrefix = "knot";
-var SpecOpacity = 0.3;
+var SpecOpacity = 0.15;
 var SpecStrokeWidth = 8;
 
 var PaperElement = null;
 var PaperLinesElement = null;
 var SelectedGroup = null;
 var DragX = 0, DragY = 0;
-//var KnotNode = null;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
@@ -64,7 +63,6 @@ function DeselectPaper()
 {
   if (SelectedGroup != null) {
     var oldspec = SelectedGroup.childNodes.item(1);
-    //SetAttr(oldspec, { "fill": "#aaa" });
     SetAttr(oldspec, { "opacity": 0 });
   }
 }
@@ -73,7 +71,6 @@ function SelectPaperElement(spec) {
   DeselectPaper();
 
   SelectedGroup = spec.parentNode;
-  //SetAttr(spec, { "fill": "yellow" });
   SetAttr(spec, { "opacity": SpecOpacity });
 }
 
@@ -84,17 +81,12 @@ function AddKnot(group, pos_x, pos_y)
     , "fill": "blue", "stroke": "blue", "stroke-width": 7
     , "onmouseup": "KnotMouseUp(evt)"
     , "onmousemove": "KnotMouseMove(evt)"
-    //, "onmouseout": "KnotMouseOut(evt)"
     , "pointer-events": "painted"
     , "id": KnotIDPrefix + Math.uuid(15)
     , "class": "knot"
     , "svgram": "knot"
     });
     
-  //node.addEventListener("mouseup", KnotMouseUp, true);
-  //node.addEventListener("mousemove", KnotMouseMove, true);
-  //node.addEventListener("mouseout", KnotMouseOut, true);
-  //node.addEventListener("mouseover", KnotMouseMove, true);
   return node;
 }
 
@@ -105,15 +97,12 @@ function AddResizer(group, pos_x, pos_y)
     "width": ResizerSize, "height": ResizerSize,
     "opacity": SpecOpacity
     , "fill": "blue", "stroke": "blue", "stroke-width": SpecStrokeWidth
-    //, "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
     , "onmousemove": "ResizerMouseMove(evt)"
     , "onmousedown": "ResizerMouseDown(evt)"
     , "onmouseup": "ResizerMouseUp(evt)"
     , "id": KnotIDPrefix + Math.uuid(15)
   });
   
-  //node.addEventListener("mouseup", ResizerMouseUp, false);
-  //node.addEventListener("mousemove", ResizerMouseMove, false);
   return node;
 }
 
@@ -123,7 +112,6 @@ function AddSpecAttr(spec)
   SetAttr(spec, { 
     "fill": color, "opacity": 0
     , "stroke": color, "stroke-width": SpecStrokeWidth
-    //, "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
     , "onmousemove": "SpecMouseMove(evt)"
     , "onmousedown": "SpecMouseDown(evt)"
     , "onmouseup": "SpecMouseUp(evt)"
@@ -352,49 +340,24 @@ function PaperDeleteSelectedShape() {
   SelectedGroup = null;
 }
 
-function onmousedownPaper(evt) {
-  evt.preventDefault();
-}
-
 function PaperMouseUp(evt)
 {
-  //evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
   DeselectPaper();
 }
 
 function PaperMouseMove(evt)
 {
-  //evt.preventDefault();
   ControlDragMove(evt.offsetX, evt.offsetY);
 }
 
 function SpecMouseMove(evt) {
-  //evt.preventDefault();
   if (ControlInDragMode()) {
     ControlDragMove(evt.offsetX, evt.offsetY);
   }
 }
 
-// function SpecMouseOver(evt) {
-  // //evt.preventDefault();
-  // if (ControlInDragMode())
-    // return;
-  // //SetAttr(evt.target, { "opacity": SpecOpacity } ); //0.5
-// }
-
-function SpecMouseOut(evt) {
-  //evt.preventDefault();
-  if (ControlInDragMode())
-    return;
-  //if (SelectedGroup == evt.target.parentNode)
-  //  SetAttr(evt.target, { "opacity": SpecOpacity });
-  ///else
-  //SetAttr(evt.target, { "opacity": 0 });
-}
-
 function SpecMouseDown(evt) {
-  //evt.preventDefault();
   SelectPaperElement(evt.target);
 
   DragX = evt.offsetX;
@@ -403,29 +366,16 @@ function SpecMouseDown(evt) {
 }
 
 function SpecMouseUp(evt) {
-  //evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
 }
 
-// function ResizerMouseOver(evt) {
-  // //evt.preventDefault();
-  // //SetAttr(evt.target, { "opacity": SpecOpacity });
-// }
-
-function ResizerMouseOut(evt) {
-  //evt.preventDefault();
-  //SetAttr(evt.target, { "opacity": 0 });
-}
-
 function ResizerMouseMove(evt) {
-  //evt.preventDefault();
   if (ControlInDragMode()) {
     ControlDragMove(evt.offsetX, evt.offsetY);
   }
 }
 
 function ResizerMouseDown(evt) {
-  //evt.preventDefault();
   SelectPaperElement(evt.target);
 
   DragX = evt.offsetX;
@@ -434,33 +384,15 @@ function ResizerMouseDown(evt) {
 }
 
 function ResizerMouseUp(evt) {
-  //evt.preventDefault();
-  //  alert("ResizerMouseUp");
-  //alert("ResizerMouseUp");
-  // if (KnotNode == null)
-    // alert("KnotNode null");
-  // else
-    // alert("KnotNode set");
   ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
-  //KnotNode = null;
 }
 
 function KnotMouseUp(evt) {
-  //evt.preventDefault();
-  //alert('KnotMouseUp');
-    
   ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
 }
 
-// function KnotMouseOut(evt) {
-  // KnotNode = null;
-// }
-
 function KnotMouseMove(evt) {
-  //evt.preventDefault();
-  //alert('KnotMouseMove');
   if (ControlInDragMode()) {
-//    KnotNode = evt.target;
     ControlDragMove(evt.offsetX, evt.offsetY);
   }
 }
