@@ -11,12 +11,22 @@ function ControlDragToolActive()
   return false;
 }
 
+function ControlInDragMode()
+{
+  if (ControlMode != "none")
+  {
+    return true;
+  }
+
+  return false;
+}
+
 function ControlDragToolStart(toolId)
 {
   ControlMode = "dragTool";
   ControlToolId = toolId;
   var diagram = document.getElementById("diagram");
-  SetAttr(diagram, {cursor: "move"});
+  SetAttr(diagram, {cursor: "pointer"});
 }
 
 function ControlDragShapeStart() {
@@ -28,7 +38,7 @@ function ControlDragShapeStart() {
 function ControlDragSizeStart() {
   ControlMode = "dragSize";
   var diagram = document.getElementById("diagram");
-  SetAttr(diagram, { cursor: "move" });
+  SetAttr(diagram, { cursor: "se-resize" });
 }
 
 function ControlDragAbort()
@@ -45,8 +55,6 @@ function ControlDragEnd(pos_x, pos_y, target)
     return;
 
   var mode = ControlMode;
-  ControlMode = "none";
-
   if (mode == "dragTool") {
     ToolbarDragToolEnd();
 
@@ -63,15 +71,28 @@ function ControlDragEnd(pos_x, pos_y, target)
       alert(ControlToolId);
     }
   }
-  else if (mode == "dragShape") {
+  
+  ControlDragMove(pos_x, pos_y, target);
+
+  var diagram = document.getElementById("diagram");
+  SetAttr(diagram, {cursor: "default"});
+  
+  ControlMode = "none";
+}
+
+function ControlDragMove(pos_x, pos_y, target)
+{
+  if (ControlMode == "none")
+    return;
+
+  var mode = ControlMode;
+
+  if (mode == "dragShape") {
     PaperMoveShape(pos_x, pos_y);
   }
   else if (mode == "dragSize") {
     PaperResizeShape(pos_x, pos_y, target);
   }
-
-  var diagram = document.getElementById("diagram");
-  SetAttr(diagram, {cursor: "default"});
 }
 
 function ControlDeleteShape() {
@@ -83,53 +104,49 @@ function ControlExportSvg() {
   OpenSavePrintWindow();
 }
 
-function DeleteAllChildIfItHave_svgram(parent)
+function FilterSvgNodes(parent)
 {
-  for (var i = parent.childNodes.length-1; i >=0; i--) {
+  var attr = parent.getAttribute('cursor');
+  if (attr) {
+     parent.removeAttribute('cursor');
+  }
+  
+  var attributesToRemove = {svgram:"", onmouseover:"", onmouseup:"", onmousedown:"", onmouseout:""};
+  next_node:
+  for (var i = parent.childNodes.length - 1 ; i >= 0 ; i--) 
+  {
     var node = parent.childNodes[i];
-    var attrSvgram = node.getAttribute('svgram');
+    
     if(node.tagName == "text")
-       continue;
-    if (attrSvgram!= null && attrSvgram != "") {
-      parent.removeChild(node);
       continue;
-    }
-    attrSvgram = node.getAttribute('onmouseover');
-    if (attrSvgram!= null && attrSvgram != "") {
-      parent.removeChild(node);
-      continue;
-    }
-    attrSvgram = node.getAttribute('onmouseup');
-    if (attrSvgram!= null && attrSvgram != "") {
-      parent.removeChild(node);
-      continue;
-    }
-    attrSvgram = node.getAttribute('onmousedown');
-    if (attrSvgram!= null && attrSvgram != "") {
-      parent.removeChild(node);
-      continue;
-    }
-    attrSvgram = node.getAttribute('onmouseout');
-    if (attrSvgram!= null && attrSvgram != "") {
-      parent.removeChild(node);
-      continue;
+    
+    for(var name in attributesToRemove)
+    {
+      attr = node.getAttribute(name);
+      if (attr) {
+        parent.removeChild(node);
+        continue next_node;
+      }
     }
 
-    DeleteAllChildIfItHave_svgram(parent.childNodes[i]);
+    FilterSvgNodes(parent.childNodes[i]);
   }
 }
 
-var copySvg;
 function OpenSavePrintWindow()
 {
 	var svg = document.getElementById('diagram');
-	copySvg = svg.cloneNode(false);
+	var copySvg = svg.cloneNode(false);
 	copySvg.id = 'newDiagram';
+  
 	var svg_paper_root = document.getElementById('diagram.paper').cloneNode(true);
-	DeleteAllChildIfItHave_svgram(svg_paper_root);	
 	copySvg.appendChild(svg_paper_root);	
+	FilterSvgNodes(copySvg);	
+  
 	var serializer = new XMLSerializer();
-	copySvgString = serializer.serializeToString(copySvg);	
-	copySvgBase64 = Base64.encode(copySvgString);	
-	var wnd = window.open("data:image/svg+xml;base64,\n" + copySvgBase64, "Save_Print", "menubar,width="+ paperWidth +",height=" + paperHeight);
+  var copySvgString = vkbeautify.xml(serializer.serializeToString(copySvg));
+	var copySvgBase64 = Base64.encode(copySvgString);	
+	var wnd = window.open("data:image/svg+xml;base64,\n" + copySvgBase64, "Save_Print", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
+	// var wnd = window.open("data:image/svg+xml", "Svg diagram", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
+  // wnd.document.write(copySvgString);
 }

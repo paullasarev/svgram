@@ -1,5 +1,7 @@
+// $Id$
 
 var PaperOffsetX = 0, PaperOffsetY = 0;
+var PaperWidth = 0, PaperHeight = 0;
 var ShapeColor = "black";
 var ShapeStroke = 2;
 var ShapeWidth = 200;
@@ -8,11 +10,17 @@ var TextWidth = 100;
 var TextHeight = 40;
 var TextFontSize = 24;
 var LineLength = 60;
+var ResizerSize = 8;
+var KnotRadius = 4;
 var KnotIDPrefix = "knot";
+var SpecOpacity = 0.3;
+var SpecStrokeWidth = 8;
 
 var PaperElement = null;
+var PaperLinesElement = null;
 var SelectedGroup = null;
 var DragX = 0, DragY = 0;
+//var KnotNode = null;
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
@@ -20,12 +28,14 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   var canvas = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas"});
   PaperOffsetX = offset_x;
   PaperOffsetE = offset_y;
-  
+  PaperWidth = width;
+  PaperHeight = height;
+
   var border = AddTagNS(canvas, svgNS, "rect", {id:"diagram.canvas.border", "x": offset_x + stroke, "y": offset_y + stroke, 
     "width": width - stroke * 2, "height": height - stroke * 2,
     "fill": paperColor, "stroke": borderColor, "stroke-width": stroke });
   SetAttr(border, {"filter":"url(#shadow)"}); 
-  SetAttr(border, {onmouseup:"onmouseupPaper(evt)", onmouseup:"onmouseupPaper(evt)"});
+  SetAttr(border, {onmouseup:"PaperMouseUp(evt)", onmousemove:"PaperMouseMove(evt)"});
   
   var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas.grid"});
   for(var x = gridStep + stroke ; x < width ; x += gridStep)
@@ -34,8 +44,9 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
       "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + gridStep});
   }
 
-  PaperElement = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
-
+  var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
+  PaperLinesElement = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.lines"});
+  PaperElement = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.shapes"});
 }
 
 function GetShapeColor()
@@ -53,7 +64,7 @@ function DeselectPaper()
 {
   if (SelectedGroup != null) {
     var oldspec = SelectedGroup.childNodes.item(1);
-    SetAttr(oldspec, { "fill": "#aaa" });
+    //SetAttr(oldspec, { "fill": "#aaa" });
     SetAttr(oldspec, { "opacity": 0 });
   }
 }
@@ -62,128 +73,122 @@ function SelectPaperElement(spec) {
   DeselectPaper();
 
   SelectedGroup = spec.parentNode;
-  SetAttr(spec, { "fill": "yellow" });
-  SetAttr(spec, { "opacity": 0.3 });
+  //SetAttr(spec, { "fill": "yellow" });
+  SetAttr(spec, { "opacity": SpecOpacity });
 }
 
 function AddKnot(group, pos_x, pos_y)
 {
-  var knot = AddTagNS(group, svgNS, "circle", {"cx": pos_x, "cy": pos_y, "r": 5
-    , "opacity": 0.3
+  var node = AddTagNS(group, svgNS, "circle", {"cx": pos_x, "cy": pos_y, "r": KnotRadius
+    , "opacity": SpecOpacity
     , "fill": "blue", "stroke": "blue", "stroke-width": 7
     , "onmouseup": "KnotMouseUp(evt)"
+    , "onmousemove": "KnotMouseMove(evt)"
+    //, "onmouseout": "KnotMouseOut(evt)"
+    , "pointer-events": "painted"
     , "id": KnotIDPrefix + Math.uuid(15)
     , "class": "knot"
     , "svgram": "knot"
     });
-  return knot;
+    
+  //node.addEventListener("mouseup", KnotMouseUp, true);
+  //node.addEventListener("mousemove", KnotMouseMove, true);
+  //node.addEventListener("mouseout", KnotMouseOut, true);
+  //node.addEventListener("mouseover", KnotMouseMove, true);
+  return node;
+}
+
+function AddResizer(group, pos_x, pos_y)
+{
+  var node = AddTagNS(group, svgNS, "rect", {
+    "x": pos_x - ResizerSize / 2, "y": pos_y - ResizerSize / 2,
+    "width": ResizerSize, "height": ResizerSize,
+    "opacity": SpecOpacity
+    , "fill": "blue", "stroke": "blue", "stroke-width": SpecStrokeWidth
+    //, "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
+    , "onmousemove": "ResizerMouseMove(evt)"
+    , "onmousedown": "ResizerMouseDown(evt)"
+    , "onmouseup": "ResizerMouseUp(evt)"
+    , "id": KnotIDPrefix + Math.uuid(15)
+  });
+  
+  //node.addEventListener("mouseup", ResizerMouseUp, false);
+  //node.addEventListener("mousemove", ResizerMouseMove, false);
+  return node;
+}
+
+function AddSpecAttr(spec)
+{
+  var color = GetShapeColor();
+  SetAttr(spec, { 
+    "fill": color, "opacity": 0
+    , "stroke": color, "stroke-width": SpecStrokeWidth
+    //, "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
+    , "onmousemove": "SpecMouseMove(evt)"
+    , "onmousedown": "SpecMouseDown(evt)"
+    , "onmouseup": "SpecMouseUp(evt)"
+    });
 }
 
 function PaperCreateRect(pos_x, pos_y)
 {
+  var left = pos_x - ShapeWidth / 2;
+  var top = pos_y - ShapeHeight / 2;
+  var right = pos_x + ShapeWidth / 2;
+  var bottom = pos_y + ShapeHeight / 2;
+  
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
   var rect = AddTagNS(group, svgNS, "rect", {
-    "x": pos_x - ShapeWidth/2, "y": pos_y  - ShapeHeight/2,
-    "width": ShapeWidth, "height": ShapeHeight,
+    "x": left, "y": top, "width": ShapeWidth, "height": ShapeHeight,
     "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke
   });
 
-  var rectSpec = AddTagNS(group, svgNS, "rect", {
-    "x": pos_x - ShapeWidth/2, "y": pos_y - ShapeHeight/2,
-    "width": ShapeWidth, "height": ShapeHeight,
-    "opacity": 0
-    , "fill": "#aaa", "stroke": "blue", "stroke-width": 10
-    , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
-    , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
-  });
+  var spec = AddTagNS(group, svgNS, "rect", {"x": left, "y": top, "width": ShapeWidth, "height": ShapeHeight});
+  AddSpecAttr(spec);
+
+  AddResizer(group, right, bottom);
   
-  // Resizer
-  var right = pos_x + ShapeWidth / 2;
-  var bottom = pos_y + ShapeHeight / 2;
-  var resizerSize = 10;
-  AddTagNS(group, svgNS, "rect", {
-    "x": right - resizerSize / 2, "y": bottom - resizerSize / 2,
-    "width": resizerSize, "height": resizerSize,
-    "opacity": 0
-    , "fill": "blue", "stroke": "blue", "stroke-width": 10
-    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
-    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
-  });
-  
-  AddKnot(group, pos_x - ShapeWidth/2, pos_y);
-  AddKnot(group, pos_x + ShapeWidth/2, pos_y);
-  AddKnot(group, pos_x, pos_y - ShapeHeight/2);
-  AddKnot(group, pos_x, pos_y + ShapeHeight/2);
+  AddKnot(group, left, pos_y);
+  AddKnot(group, right, pos_y);
+  AddKnot(group, pos_x, top);
+  AddKnot(group, pos_x, bottom);
 }
 
 function PaperCreateLine(pos_x, pos_y)
 {
-  var group = AddTagNS(PaperElement, svgNS, "g", { } );
-  AddTagNS(group, svgNS, "line", {"x1": pos_x, "y1":pos_y - LineLength/2, "x2": pos_x, "y2": pos_y + LineLength/2
+  var left = pos_x;
+  var top = pos_y - LineLength / 2;
+  var right = pos_x;
+  var bottom = pos_y + LineLength / 2;
+  
+  var group = AddTagNS(PaperLinesElement, svgNS, "g", { } );
+  AddTagNS(group, svgNS, "line", {"x1": left, "y1":top, "x2": right, "y2": bottom
     , "fill": "none", "stroke": GetShapeColor(), "stroke-width": ShapeStroke });
 
-  AddTagNS(group, svgNS, "line", {"x1": pos_x, "y1":pos_y - LineLength/2, "x2": pos_x, "y2": pos_y + LineLength/2
-    , "fill": "#aaa", "stroke": GetShapeColor(), "stroke-width": 10
-    , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
-    , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
-     });
-  // Resizer 1
-  var resizerSize = 10;
-  AddTagNS(group, svgNS, "rect", {
-    "x": pos_x - resizerSize / 2, "y": pos_y - LineLength / 2 - resizerSize / 2,
-    "width": resizerSize, "height": resizerSize,
-    "opacity": 0
-    , "fill": "blue", "stroke": "blue", "stroke-width": 10
-    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
-    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
-    , "id": KnotIDPrefix + Math.uuid(15)
-  });
-  // Resizer 2
-  var resizerSize = 10;
-  AddTagNS(group, svgNS, "rect", {
-    "x": pos_x - resizerSize / 2, "y": pos_y + LineLength / 2 - resizerSize / 2,
-    "width": resizerSize, "height": resizerSize,
-    "opacity": 0
-    , "fill": "blue", "stroke": "blue", "stroke-width": 10
-    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
-    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
-    , "id": KnotIDPrefix + Math.uuid(15)
-  });
+  var spec = AddTagNS(group, svgNS, "line", {"x1": left, "y1":top, "x2": right, "y2": bottom});
+  AddSpecAttr(spec);
+
+  AddResizer(group, left, top);
+  AddResizer(group, right, bottom);
 }
 
 function PaperCreateText(pos_x, pos_y)
 {
+  var left = pos_x - TextWidth / 2;
+  var top = pos_y - TextHeight / 2;
+  var right = pos_x + TextWidth / 2;
+  var bottom = pos_y + TextHeight / 2;
+  
   var group = AddTagNS(PaperElement, svgNS, "g", { } );
-  var text = AddTagNS(group, svgNS, "text", {
-    x: pos_x, y: pos_y,
-    "text-anchor": "middle",
-    "alignment-baseline": "middle",
-    "text-align": "start",
-    "font-size": TextFontSize
-  });
+  var text = AddTagNS(group, svgNS, "text", {x: pos_x, y: pos_y, "text-anchor": "middle", "font-size": TextFontSize});
+  
   var text_body = document.createTextNode("Text");
   text.appendChild(text_body); 
   
-  var rectSpec = AddTagNS(group, svgNS, "rect", {
-    "x": pos_x - TextWidth/2, "y": pos_y  - TextHeight/2,
-    "width": TextWidth, "height": TextHeight,
-    "opacity": 0
-    , "fill": "#aaa", "stroke": "blue", "stroke-width": 10
-    , "onmouseover": "SpecMouseOver(evt)", "onmouseout": "SpecMouseOut(evt)"
-    , "onmousedown": "SpecMouseDown(evt)", "onmouseup": "SpecMouseUp(evt)"
-  });
-  // Resizer
-  var right = pos_x + TextWidth / 2;
-  var bottom = pos_y + TextHeight / 2;
-  var resizerSize = 10;
-  AddTagNS(group, svgNS, "rect", {
-    "x": right - resizerSize / 2, "y": bottom - resizerSize / 2,
-    "width": resizerSize, "height": resizerSize,
-    "opacity": 0
-    , "fill": "blue", "stroke": "blue", "stroke-width": 10
-    , "onmouseover": "ResizerMouseOver(evt)", "onmouseout": "ResizerMouseOut(evt)"
-    , "onmousedown": "ResizerMouseDown(evt)", "onmouseup": "ResizerMouseUp(evt)"
-  });
+  var spec = AddTagNS(group, svgNS, "rect", {"x": left, "y": top, "width": TextWidth, "height": TextHeight});
+  AddSpecAttr(spec);
+
+  AddResizer(group, right, bottom);
 }
 
 function ConnectKnots(knot1, knot2) {
@@ -202,7 +207,8 @@ function AdjustConnKnot(node, deltaX, deltaY) {
 
 function AdjustKnot(knotid, deltaX, deltaY) {
   var knot = document.getElementById(knotid);
-  if (!knot) return;
+  if (!knot) 
+    return;
   
   PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode, knot);
 }
@@ -212,10 +218,13 @@ function AddDelta(node, attr, delta) {
   node.setAttribute(attr, val + delta);
 }
 
-function PaperMoveShape(pos_x, pos_y) {
+function PaperMoveShape(pos_x, pos_y)
+{
   var deltaX = pos_x - DragX;
   var deltaY = pos_y - DragY;
-  for (var i = 0; i < SelectedGroup.childNodes.length; i++) {
+  
+  for (var i = 0; i < SelectedGroup.childNodes.length; i++)
+  {
     var node = SelectedGroup.childNodes.item(i);
     var tagName = node.tagName;
     if (tagName == "line") {
@@ -236,12 +245,18 @@ function PaperMoveShape(pos_x, pos_y) {
       AddDelta(node, "y", deltaY);
     }
   }
+  
+  DragX = pos_x;
+  DragY = pos_y;
 }
 
 function PaperResizeShape(pos_x, pos_y, target) {
   var deltaX = pos_x - DragX;
   var deltaY = pos_y - DragY;
   PaperResizeShapeDelta(deltaX, deltaY, SelectedGroup, target);
+ 
+  DragX = pos_x;
+  DragY = pos_y;
 }
 function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
   var node = group.childNodes.item(0);
@@ -294,11 +309,8 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
     var y1 = parseInt(node.getAttribute("y1"));
     var x2 = parseInt(node.getAttribute("x2"));
     var y2 = parseInt(node.getAttribute("y2"));
-    var sourceX = DragX, sourceY = DragY;
-    //if (target) {
-    //  sourceX = parseInt(target.getAttribute("x"));
-    //  sourceY = parseInt(target.getAttribute("y"));
-    //}
+    var sourceX = DragX;
+    var sourceY = DragY;
     var dist1 = (sourceX - x1) * (sourceX - x1) + (sourceY - y1) * (sourceY - y1);
     var dist2 = (sourceX - x2) * (sourceX - x2) + (sourceY - y2) * (sourceY - y2);
     if (dist1 < dist2) {
@@ -333,8 +345,7 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
 }
 
 function PaperDeleteSelectedShape() {
-  if (SelectedGroup == null)
-    return;
+  if (SelectedGroup == null) return;
 
   var parent = SelectedGroup.parentNode;
   parent.removeChild(SelectedGroup);
@@ -343,60 +354,114 @@ function PaperDeleteSelectedShape() {
 
 function onmousedownPaper(evt) {
   evt.preventDefault();
-
 }
-function onmouseupPaper(evt)
+
+function PaperMouseUp(evt)
 {
-  evt.preventDefault();
+  //evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
+  DeselectPaper();
 }
 
-function SpecMouseOver(evt) {
-  SetAttr(evt.target, { "opacity": 0.5 } );
+function PaperMouseMove(evt)
+{
+  //evt.preventDefault();
+  ControlDragMove(evt.offsetX, evt.offsetY);
 }
+
+function SpecMouseMove(evt) {
+  //evt.preventDefault();
+  if (ControlInDragMode()) {
+    ControlDragMove(evt.offsetX, evt.offsetY);
+  }
+}
+
+// function SpecMouseOver(evt) {
+  // //evt.preventDefault();
+  // if (ControlInDragMode())
+    // return;
+  // //SetAttr(evt.target, { "opacity": SpecOpacity } ); //0.5
+// }
 
 function SpecMouseOut(evt) {
-  if (SelectedGroup == evt.target.parentNode)
-    SetAttr(evt.target, { "opacity": 0.3 });
-  else
-    SetAttr(evt.target, { "opacity": 0 });
+  //evt.preventDefault();
+  if (ControlInDragMode())
+    return;
+  //if (SelectedGroup == evt.target.parentNode)
+  //  SetAttr(evt.target, { "opacity": SpecOpacity });
+  ///else
+  //SetAttr(evt.target, { "opacity": 0 });
 }
 
 function SpecMouseDown(evt) {
-  evt.preventDefault();
+  //evt.preventDefault();
   SelectPaperElement(evt.target);
 
-  DragX = evt.offsetX; DragY = evt.offsetY;
+  DragX = evt.offsetX;
+  DragY = evt.offsetY;
   ControlDragShapeStart();
 }
 
 function SpecMouseUp(evt) {
-  evt.preventDefault();
+  //evt.preventDefault();
   ControlDragEnd(evt.offsetX, evt.offsetY);
 }
 
-function ResizerMouseOver(evt) {
-  SetAttr(evt.target, { "opacity": 0.5 });
-}
+// function ResizerMouseOver(evt) {
+  // //evt.preventDefault();
+  // //SetAttr(evt.target, { "opacity": SpecOpacity });
+// }
 
 function ResizerMouseOut(evt) {
-    SetAttr(evt.target, { "opacity": 0 });
+  //evt.preventDefault();
+  //SetAttr(evt.target, { "opacity": 0 });
+}
+
+function ResizerMouseMove(evt) {
+  //evt.preventDefault();
+  if (ControlInDragMode()) {
+    ControlDragMove(evt.offsetX, evt.offsetY);
+  }
 }
 
 function ResizerMouseDown(evt) {
-  evt.preventDefault();
+  //evt.preventDefault();
   SelectPaperElement(evt.target);
 
-  DragX = evt.offsetX; DragY = evt.offsetY;
+  DragX = evt.offsetX;
+  DragY = evt.offsetY;
   ControlDragSizeStart();
 }
 
 function ResizerMouseUp(evt) {
-  evt.preventDefault();
+  //evt.preventDefault();
+  //  alert("ResizerMouseUp");
+  //alert("ResizerMouseUp");
+  // if (KnotNode == null)
+    // alert("KnotNode null");
+  // else
+    // alert("KnotNode set");
   ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
+  //KnotNode = null;
 }
 
 function KnotMouseUp(evt) {
-  evt.preventDefault();
+  //evt.preventDefault();
+  //alert('KnotMouseUp');
+    
   ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
 }
+
+// function KnotMouseOut(evt) {
+  // KnotNode = null;
+// }
+
+function KnotMouseMove(evt) {
+  //evt.preventDefault();
+  //alert('KnotMouseMove');
+  if (ControlInDragMode()) {
+//    KnotNode = evt.target;
+    ControlDragMove(evt.offsetX, evt.offsetY);
+  }
+}
+

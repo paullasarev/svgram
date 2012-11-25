@@ -9,7 +9,6 @@ function OnmousedownToolbarIcon(evt)
 function OnmouseupToolbarIcon(evt)
 {
   ControlDragAbort();
-//  onmouseoverToolbarIcon(evt);
 }
 
 function OnclickToolbarIcon(evt) {
