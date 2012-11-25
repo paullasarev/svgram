@@ -20,6 +20,7 @@ var PaperElement = null;
 var PaperLinesElement = null;
 var SelectedGroup = null;
 var DragX = 0, DragY = 0;
+var DragLine = "";
 
 function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
 {
@@ -156,8 +157,10 @@ function PaperCreateLine(pos_x, pos_y)
   var spec = AddTagNS(group, svgNS, "line", {"x1": left, "y1":top, "x2": right, "y2": bottom});
   AddSpecAttr(spec);
 
-  AddResizer(group, left, top);
-  AddResizer(group, right, bottom);
+  var node = AddResizer(group, left, top);
+  SetAttr(node, {"line_end":"begin"});
+  node = AddResizer(group, right, bottom);
+  SetAttr(node, {"line_end":"end"});
 }
 
 function PaperCreateText(pos_x, pos_y)
@@ -254,7 +257,7 @@ function PaperMoveShape(pos_x, pos_y)
 function PaperResizeShape(pos_x, pos_y, target) {
   var deltaX = pos_x - DragX;
   var deltaY = pos_y - DragY;
-  PaperResizeShapeDelta(deltaX, deltaY, SelectedGroup, target);
+  PaperResizeShapeDelta(deltaX, deltaY, SelectedGroup, target, DragLine);
  
   DragX = pos_x;
   DragY = pos_y;
@@ -331,11 +334,11 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
     var is_line_begin = false;
     if (connend) {
       is_line_begin = (connend == "begin");
-      //alert(connend);
     } else {
       var dist1 = (sourceX - x1) * (sourceX - x1) + (sourceY - y1) * (sourceY - y1);
       var dist2 = (sourceX - x2) * (sourceX - x2) + (sourceY - y2) * (sourceY - y2);
       is_line_begin = (dist1 < dist2);
+      alert(" " + dist1 + " " + dist2);
     }
     
     if (is_line_begin) {
@@ -417,6 +420,7 @@ function ResizerMouseDown(evt) {
 
   DragX = evt.offsetX;
   DragY = evt.offsetY;
+  DragLine = evt.target.getAttribute("line_end");
   ControlDragSizeStart();
 }
 
