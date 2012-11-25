@@ -7,7 +7,7 @@ var ShapeStroke = 2;
 var ShapeWidth = 200;
 var ShapeHeight = 100;
 var TextWidth = 100;
-var TextHeight = 40;
+var TextHeight = 32 ;
 var TextFontSize = 24;
 var LineLength = 60;
 var ResizerSize = 8;
@@ -179,12 +179,12 @@ function PaperCreateText(pos_x, pos_y)
   AddResizer(group, right, bottom);
 }
 
-function ConnectKnots(knot1, knot2, line_end) {
-  var knot1id = knot1.getAttribute("id");
+function ConnectKnots(resizer, knot2, line_end) {
+  var knot1id = resizer.getAttribute("id");
   var knot2id = knot2.getAttribute("id");
   //alert(knot1id + " " + knot2id);
-  knot1.setAttribute("connknot", knot2id);
-  knot1.setAttribute("connend", line_end);
+  resizer.setAttribute("connknot", knot2id);
+  resizer.setAttribute("connend", line_end);
   knot2.setAttribute("connknot", knot1id);
   knot2.setAttribute("connend", line_end);
 }
@@ -301,15 +301,25 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
     var scale = (specSize + deltaY) / specSize.toFixed(2);
     fontsize = Math.round(fontsize * scale);
     node.setAttribute("font-size", fontsize);
-    AddDelta(node, "x", deltaX/2);
-    AddDelta(node, "y", deltaY/2);
 
+    //spec
     node = group.childNodes.item(1);
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
+    var x = parseInt(node.getAttribute("x"));
+    var y = parseInt(node.getAttribute("y"));
+    var width = parseInt(node.getAttribute("width"));
+    var height = parseInt(node.getAttribute("height"));
+
+    //resizer
     node = group.childNodes.item(2);
     AddDelta(node, "x", deltaX);
     AddDelta(node, "y", deltaY);
+
+    //text
+    node = group.childNodes.item(0);
+    AddHalfDelta(node, "x", x, width);
+    AddHalfDelta(node, "y", y, height);
   }
   else if (tagName == "line") {
     var x1 = parseInt(node.getAttribute("x1"));
@@ -338,8 +348,8 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
       if (target && target.tagName == "circle") {
-        var knot = group.childNodes.item(2);
-        ConnectKnots(knot, target, "begin");
+        var resizer = group.childNodes.item(2);
+        ConnectKnots(resizer, target, "begin");
       }
     }
     else {
@@ -352,8 +362,8 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
       AddDelta(node, "x", deltaX);
       AddDelta(node, "y", deltaY);
       if (target && target.tagName == "circle") {
-        var knot = group.childNodes.item(3);
-        ConnectKnots(knot, target, "end");
+        var resizer = group.childNodes.item(3);
+        ConnectKnots(resizer, target, "end");
       }
     }
   }
