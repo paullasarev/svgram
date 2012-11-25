@@ -179,17 +179,20 @@ function PaperCreateText(pos_x, pos_y)
   AddResizer(group, right, bottom);
 }
 
-function ConnectKnots(knot1, knot2) {
+function ConnectKnots(knot1, knot2, line_end) {
   var knot1id = knot1.getAttribute("id");
   var knot2id = knot2.getAttribute("id");
   //alert(knot1id + " " + knot2id);
   knot1.setAttribute("connknot", knot2id);
+  knot1.setAttribute("connend", line_end);
   knot2.setAttribute("connknot", knot1id);
+  knot2.setAttribute("connend", line_end);
 }
 
 function AdjustConnKnot(node, deltaX, deltaY) {
   var connknot = node.getAttribute("connknot");
-  if (!connknot) return;
+  if (!connknot) 
+    return;
   AdjustKnot(connknot, deltaX, deltaY);
 }
 
@@ -198,12 +201,21 @@ function AdjustKnot(knotid, deltaX, deltaY) {
   if (!knot) 
     return;
   
-  PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode, knot);
+  var connend = knot.getAttribute("connend");
+  PaperResizeShapeDelta(deltaX, deltaY, knot.parentNode, knot, connend);
 }
 
 function AddDelta(node, attr, delta) {
   var val = parseInt(node.getAttribute(attr));
   node.setAttribute(attr, val + delta);
+}
+
+function AddHalfDelta(node, attr, base, range)
+{
+  var val = parseInt(node.getAttribute(attr));
+  var need = base + range / 2;
+  node.setAttribute(attr, need);
+  return need - val;
 }
 
 function PaperMoveShape(pos_x, pos_y)
@@ -226,6 +238,7 @@ function PaperMoveShape(pos_x, pos_y)
       AddDelta(node, "cy", deltaY);
       var connknot = node.getAttribute("connknot");
       if (connknot) {
+        var connend = node.getAttribute("connend");
         AdjustKnot(connknot, deltaX, deltaY);
       }
     } else {
@@ -246,12 +259,18 @@ function PaperResizeShape(pos_x, pos_y, target) {
   DragX = pos_x;
   DragY = pos_y;
 }
-function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
+function PaperResizeShapeDelta(deltaX, deltaY, group, target, connend) {
   var node = group.childNodes.item(0);
   var tagName = node.tagName;
   if (tagName == "rect") {
+ 
     AddDelta(node, "width", deltaX);
     AddDelta(node, "height", deltaY);
+    
+    var x = parseInt(node.getAttribute("x"));
+    var y = parseInt(node.getAttribute("y"));
+    var width = parseInt(node.getAttribute("width"));
+    var height = parseInt(node.getAttribute("height"));
     //selector
     node = group.childNodes.item(1);
     AddDelta(node, "width", deltaX);
@@ -262,19 +281,19 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
     AddDelta(node, "y", deltaY);
     //knotes
     node = group.childNodes.item(3);
-    AddDelta(node, "cy", deltaY / 2);
-    AdjustConnKnot(node, 0, deltaY / 2);
+    var deltaY2 = AddHalfDelta(node, "cy", y, height);
+    AdjustConnKnot(node, 0, deltaY2);
     node = group.childNodes.item(4);
     AddDelta(node, "cx", deltaX);
-    AddDelta(node, "cy", deltaY/2);
-    AdjustConnKnot(node, deltaX, deltaY / 2);
+    AddDelta(node, "cy", deltaY2);
+    AdjustConnKnot(node, deltaX, deltaY2);
     node = group.childNodes.item(5);
-    AddDelta(node, "cx", deltaX/2);
-    AdjustConnKnot(node, deltaX/2, 0);
+    var deltaX2 = AddHalfDelta(node, "cx", x, width);
+    AdjustConnKnot(node, deltaX2, 0);
     node = group.childNodes.item(6);
-    AddDelta(node, "cx", deltaX/2);
+    AddDelta(node, "cx", deltaX2);
     AddDelta(node, "cy", deltaY);
-    AdjustConnKnot(node, deltaX / 2, deltaY);
+    AdjustConnKnot(node, deltaX2, deltaY);
   }
   else if (tagName == "text") {
     var fontsize = parseInt(node.getAttribute("font-size"));
@@ -299,9 +318,17 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
     var y2 = parseInt(node.getAttribute("y2"));
     var sourceX = DragX;
     var sourceY = DragY;
-    var dist1 = (sourceX - x1) * (sourceX - x1) + (sourceY - y1) * (sourceY - y1);
-    var dist2 = (sourceX - x2) * (sourceX - x2) + (sourceY - y2) * (sourceY - y2);
-    if (dist1 < dist2) {
+    var is_line_begin = false;
+    if (connend) {
+      is_line_begin = (connend == "begin");
+      //alert(connend);
+    } else {
+      var dist1 = (sourceX - x1) * (sourceX - x1) + (sourceY - y1) * (sourceY - y1);
+      var dist2 = (sourceX - x2) * (sourceX - x2) + (sourceY - y2) * (sourceY - y2);
+      is_line_begin = (dist1 < dist2);
+    }
+    
+    if (is_line_begin) {
       node.setAttribute("x1", x1 + deltaX);
       node.setAttribute("y1", y1 + deltaY);
       node = group.childNodes.item(1);  // Spec
@@ -312,7 +339,7 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
       AddDelta(node, "y", deltaY);
       if (target && target.tagName == "circle") {
         var knot = group.childNodes.item(2);
-        ConnectKnots(knot, target);
+        ConnectKnots(knot, target, "begin");
       }
     }
     else {
@@ -326,7 +353,7 @@ function PaperResizeShapeDelta(deltaX, deltaY, group, target/*optional*/) {
       AddDelta(node, "y", deltaY);
       if (target && target.tagName == "circle") {
         var knot = group.childNodes.item(3);
-        ConnectKnots(knot, target);
+        ConnectKnots(knot, target, "end");
       }
     }
   }
