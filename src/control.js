@@ -51,6 +51,7 @@ function ControlDragAbort()
 
 function ControlDragEnd(pos_x, pos_y, target)
 {
+  //alert(" pos_x=" + pos_x + "pos_y=" + pos_y);
   if (ControlMode == "none")
     return;
 

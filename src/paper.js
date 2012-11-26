@@ -16,6 +16,7 @@ var KnotRadius = 4;
 var KnotIDPrefix = "knot";
 var SpecOpacity = 0.15;
 var SpecStrokeWidth = 8;
+var PaperClientOffsetX = 0; PaperClientOffsetY = 0;
 
 var PaperElement = null;
 var PaperLinesElement = null;
@@ -47,6 +48,22 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
   PaperLinesElement = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.lines"});
   PaperElement = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.shapes"});
+
+  CalculatePaperClientOffset(paper);
+}
+
+function CalculatePaperClientOffset(element)
+{
+  var rect = element.getBoundingClientRect();
+  PaperClientOffsetX = rect.left;
+  PaperClientOffsetY = rect.top;
+	// var elem = element;
+  // PaperClientOffsetX = 0;
+  // PaperClientOffsetY = 0;
+	// do {
+		// PaperClientOffsetX += elem.offsetLeft ;
+		// PaperClientOffsetY += elem.offsetTop;
+	// } while (elem = elem.offsetParent);
 }
 
 function GetShapeColor()
@@ -406,23 +423,33 @@ function PaperDeleteSelectedShape() {
   SelectedGroup = null;
 }
 
+function EventOffsetX(evt)
+{
+  return evt.clientX - PaperClientOffsetX;
+}
+
+function EventOffsetY(evt)
+{
+  return evt.clientY - PaperClientOffsetY;
+}
+
 function PaperMouseUp(evt)
 {
   evt.preventDefault();
-  ControlDragEnd(evt.offsetX, evt.offsetY);
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
   DeselectPaper();
 }
 
 function PaperMouseMove(evt)
 {
   evt.preventDefault();
-  ControlDragMove(evt.offsetX, evt.offsetY);
+  ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
 }
 
 function SpecMouseMove(evt) {
   evt.preventDefault();
   if (ControlInDragMode()) {
-    ControlDragMove(evt.offsetX, evt.offsetY);
+    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
   }
 }
 
@@ -430,20 +457,20 @@ function SpecMouseDown(evt) {
   evt.preventDefault();
   SelectPaperElement(evt.target);
 
-  DragX = evt.offsetX;
-  DragY = evt.offsetY;
+  DragX = EventOffsetX(evt);
+  DragY = EventOffsetY(evt);
   ControlDragShapeStart();
 }
 
 function SpecMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(evt.offsetX, evt.offsetY);
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
 }
 
 function ResizerMouseMove(evt) {
   evt.preventDefault();
   if (ControlInDragMode()) {
-    ControlDragMove(evt.offsetX, evt.offsetY);
+    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
   }
 }
 
@@ -451,26 +478,26 @@ function ResizerMouseDown(evt) {
   evt.preventDefault();
   SelectPaperElement(evt.target);
 
-  DragX = evt.offsetX;
-  DragY = evt.offsetY;
+  DragX = EventOffsetX(evt);
+  DragY = EventOffsetY(evt);
   DragLine = evt.target.getAttribute("line_end");
   ControlDragSizeStart();
 }
 
 function ResizerMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), evt.target);
 }
 
 function KnotMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(evt.offsetX, evt.offsetY, evt.target);
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), evt.target);
 }
 
 function KnotMouseMove(evt) {
   evt.preventDefault();
   if (ControlInDragMode()) {
-    ControlDragMove(evt.offsetX, evt.offsetY);
+    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
   }
 }
 
