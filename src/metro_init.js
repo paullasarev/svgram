@@ -1,3 +1,8 @@
+var browserName=navigator.appName; 
+if (browserName=="Microsoft Internet Explorer")
+{
+  alert("Sorry, Internet Explorer is not fully supported now. Please use instead Chrome or Firefox.");
+}
 
 function CreateSvg(root, width, height, stroke)
 {
