@@ -1,21 +1,22 @@
-function Shape() {
-  this.shape = "unknown";
+//function Shape() {
+function Shape(id, group, node, x, y) {
+  if (!id)
+    return;
+  this.id = id;
+  this.node = node;
+  this.group = group;
+  this.x = x;
+  this.y = y;
 }
 
 Shape.prototype = {
   Classes: {},
+  shape: "unknown",
   Attr: function(name, val) {
     if (val != null)
       this.node.setAttribute(name, val);
     else
       return this.node.getAttribute(name);
-  },
-  shape_init: function(id, group, node, x, y) {
-    this.id = id;
-    this.node = node;
-    this.group = group;
-    this.x = x;
-    this.y = y;
   },
   LoadById: function (id) {
     var group = document.getElementById(id);
@@ -51,7 +52,8 @@ Rect.prototype.shape = "rect";
 Rect.prototype.load = function(id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
-    this.shape_init(id, group, node, x, y);
+    //this.shape_init(id, group, node, x, y);
+    Shape.call(this, id, group, node, x, y);
   };
 
 Shape.prototype.Classes[Rect.prototype.shape] = function() { return new Rect(); };
