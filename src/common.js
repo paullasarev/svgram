@@ -29,9 +29,9 @@ function CreateShadowFilter(svg)
 {
   var defs = AddTagNS(svg, svgNS, "defs");
   var filter = AddTagNS(defs, svgNS, "filter", {id:"shadow", width:"200%", height:"200%"});
-  AddTagNS(filter, svgNS, "feOffset", {in:"SourceAlpha", result:"offOut", dx:"8", dy:"8" });
-  AddTagNS(filter, svgNS, "feGaussianBlur", {in:"offOut", result:"blurOut", stdDeviation:"8"});
-  AddTagNS(filter, svgNS, "feBlend", {in:"SourceGraphic", in2:"blurOut", mode:"normal" });
+  AddTagNS(filter, svgNS, "feOffset", {"in":"SourceAlpha", result:"offOut", dx:"8", dy:"8" });
+  AddTagNS(filter, svgNS, "feGaussianBlur", {"in":"offOut", result:"blurOut", stdDeviation:"8"});
+  AddTagNS(filter, svgNS, "feBlend", {"in":"SourceGraphic", in2:"blurOut", mode:"normal" });
 }
 
 
