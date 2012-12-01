@@ -2,11 +2,9 @@ var test_svg;
 
 module("shapes", {
   setup: function() {
-    // prepare something for all following tests
     test_svg = TestMakeSvg(800, 600);
   },
   teardown: function() {
-      // clean up after each test
   }
 });
 

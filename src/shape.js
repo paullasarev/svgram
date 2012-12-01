@@ -51,7 +51,6 @@ Rect.prototype.shape = "rect";
 Rect.prototype.load = function(id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
-    //this.shape_init(id, group, node, x, y);
     Shape.call(this, id, group, node, x, y);
   };
 
