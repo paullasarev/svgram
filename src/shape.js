@@ -1,4 +1,5 @@
 function Shape() {
+  this.shape = "unknown";
 }
 
 Shape.prototype = {
@@ -9,8 +10,7 @@ Shape.prototype = {
     else
       return this.node.getAttribute(name);
   },
-  shape_init: function(shape, id, group, node, x, y) {
-    this.shape = shape;
+  shape_init: function(id, group, node, x, y) {
     this.id = id;
     this.node = node;
     this.group = group;
@@ -20,11 +20,11 @@ Shape.prototype = {
   LoadById: function (id) {
     var group = document.getElementById(id);
     var node = group.childNodes[0];
-    var shape_class = group.getAttribute("shape");
+    var shape = group.getAttribute("shape");
     
-    var shape = Shape.prototype.Classes[shape_class]();
-    shape.load(id, group, node);
-    return shape;
+    var concreteShape = Shape.prototype.Classes[shape]();
+    concreteShape.load(id, group, node);
+    return concreteShape;
   }
 }
 
@@ -47,11 +47,11 @@ function Rect(root, x, y) {
 
 Rect.prototype = new Shape;
 Rect.prototype.constructor = Rect;
-Rect.prototype.shape_class = "rect";
+Rect.prototype.shape = "rect";
 Rect.prototype.load = function(id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
-    this.shape_init(this.shape_class, id, group, node, x, y);
+    this.shape_init(id, group, node, x, y);
   };
 
-Shape.prototype.Classes[Rect.prototype.shape_class] = function() { return new Rect(); };
+Shape.prototype.Classes[Rect.prototype.shape] = function() { return new Rect(); };
