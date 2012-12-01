@@ -2,6 +2,13 @@ function Shape() {
 }
 
 Shape.prototype = {
+  Classes: {},
+  Attr: function(name, val) {
+    if (val != null)
+      this.node.setAttribute(name, val);
+    else
+      return this.node.getAttribute(name);
+  },
   shape_init: function(shape, id, group, node, x, y) {
     this.shape = shape;
     this.id = id;
@@ -10,26 +17,18 @@ Shape.prototype = {
     this.x = x;
     this.y = y;
   },
-  attr: function(name, val) {
-    if (val != null)
-      this.node.setAttribute(name, val);
-    else
-      return this.node.getAttribute(name);
+  LoadById: function (id) {
+    var group = document.getElementById(id);
+    var node = group.childNodes[0];
+    var shape_class = group.getAttribute("shape");
+    
+    var shape = Shape.prototype.Classes[shape_class]();
+    shape.load(id, group, node);
+    return shape;
   }
 }
 
-var ShapeClasses = {};
-
-function LoadShape(id) {
-  var group = document.getElementById(id);
-  var node = group.childNodes[0];
-  var shape = group.getAttribute("shape");
-  
-  var shapeObject = ShapeClasses[shape]();
-  shapeObject.load(shape, id, group, node);
-  return shapeObject;
-}
-
+// Rect shape
 function Rect(root, x, y) {
   if (!root) 
     return;
@@ -43,16 +42,16 @@ function Rect(root, x, y) {
     //"stroke": GetShapeColor(), "stroke-width": ShapeStroke,
   });
 
-  this.load("rect", id, group, node);
+  this.load(id, group, node);
 }
 
 Rect.prototype = new Shape;
 Rect.prototype.constructor = Rect;
-
-Rect.prototype.load = function(shape, id, group, node) {
+Rect.prototype.shape_class = "rect";
+Rect.prototype.load = function(id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
-    this.shape_init(shape, id, group, node, x, y);
+    this.shape_init(this.shape_class, id, group, node, x, y);
   };
 
-ShapeClasses["rect"] = function() { return new Rect(); };
+Shape.prototype.Classes[Rect.prototype.shape_class] = function() { return new Rect(); };

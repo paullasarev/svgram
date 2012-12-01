@@ -46,16 +46,16 @@ test("rect shape", function() {
   equal(rect.id, rect.id);
   equal(rect.shape, "rect");
   
-  equal(rect.attr("x"), 100);
-  rect.attr("x", 200);
-  equal(rect.attr("x"), 200);
+  equal(rect.Attr("x"), 100);
+  rect.Attr("x", 200);
+  equal(rect.Attr("x"), 200);
 });
 
 test("load rect", function() {
   var rect = new Rect(test_svg, 100, 200);
   var id = rect.id;
   
-  var rect2 = LoadShape(id);
+  var rect2 = Shape.prototype.LoadById(id);
   notEqual(rect2, rect);
   ok(rect2 instanceof Rect); 
   ok(rect2 instanceof Shape); 
@@ -65,7 +65,7 @@ test("load rect", function() {
   equal(rect2.y, rect.y);
   equal(rect2.shape, "rect");
 
-  notEqual(rect.attr("tagName"), "rect");
-  notEqual(rect2.attr("tagName"), "rect");
+  notEqual(rect.Attr("tagName"), "rect");
+  notEqual(rect2.Attr("tagName"), "rect");
   notEqual(rect2.group, null);
 });
