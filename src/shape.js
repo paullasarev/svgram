@@ -1,4 +1,3 @@
-//function Shape() {
 function Shape(id, group, node, x, y) {
   if (!id)
     return;
