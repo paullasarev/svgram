@@ -47,6 +47,9 @@ test("rect shape", function() {
   equal(rect.Attr("x"), 100);
   rect.Attr("x", 200);
   equal(rect.Attr("x"), 200);
+
+  ok(rect instanceof Rect); 
+  ok(rect instanceof Shape); 
 });
 
 test("load rect", function() {
