@@ -17,6 +17,12 @@ Shape.prototype = {
     else
       return this.node.getAttribute(name);
   },
+  NewID: function() {
+    return Math.uuid(15);
+  },
+  AddGroup: function(root, id) {
+    return AddTagNS(root, svgNS, "g", { "id": id, "shape": this.shape } );
+  },
   LoadById: function (id) {
     var group = document.getElementById(id);
     var node = group.childNodes[0];
@@ -33,8 +39,8 @@ function Rect(root, x, y) {
   if (!root) 
     return;
 
-  var id = Math.uuid(15);
-  var group = AddTagNS(root, svgNS, "g", { "id": id, "shape": this.shape } );
+  var id = this.NewID();
+  var group = this.AddGroup(root, id);
   var node = AddTagNS(group, svgNS, "rect", {
     "x": x, "y": y,
     //"width": width, "height": height,
