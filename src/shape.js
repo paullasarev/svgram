@@ -34,7 +34,7 @@ function Rect(root, x, y) {
     return;
 
   var id = Math.uuid(15);
-  var group = AddTagNS(root, svgNS, "g", { "id": id, "shape": "rect" } );
+  var group = AddTagNS(root, svgNS, "g", { "id": id, "shape": this.shape } );
   var node = AddTagNS(group, svgNS, "rect", {
     "x": x, "y": y,
     //"width": width, "height": height,
