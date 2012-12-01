@@ -40,23 +40,15 @@ test("create rect", function() {
 
 test("rect shape", function() {
   var rect = new Rect(test_svg, 100, 200);
-  var shape = rect.shape;
-  
-  equal(shape.x, 100);
-  equal(shape.y, 200);
-  equal(shape.node, rect.node);
-  equal(shape.id, rect.id);
-  equal(shape.shape_class, "rect");
-  equal(rect.shape_class, "rect");
+  equal(rect.x, 100);
+  equal(rect.y, 200);
+  equal(rect.node, rect.node);
+  equal(rect.id, rect.id);
+  equal(rect.shape, "rect");
   
   equal(rect.attr("x"), 100);
-  equal(shape.attr("x"), 100);
-  
-  shape.attr("x", 200);
-  equal(shape.attr("x"), 200);
-  
-  rect.attr("x", 300);
-  equal(shape.attr("x"), 300);
+  rect.attr("x", 200);
+  equal(rect.attr("x"), 200);
 });
 
 test("load rect", function() {
@@ -65,14 +57,15 @@ test("load rect", function() {
   
   var rect2 = LoadShape(id);
   notEqual(rect2, rect);
+  ok(rect2 instanceof Rect); 
+  ok(rect2 instanceof Shape); 
+  
   equal(rect2.id, rect.id);
   equal(rect2.x, rect.x);
   equal(rect2.y, rect.y);
-  equal(rect2.shape_class, "rect");
+  equal(rect2.shape, "rect");
 
-  //alert(rect.node.tagName);
   notEqual(rect.attr("tagName"), "rect");
   notEqual(rect2.attr("tagName"), "rect");
   notEqual(rect2.group, null);
-  notEqual(rect2.shape, null);
 });

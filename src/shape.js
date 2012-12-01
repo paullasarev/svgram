@@ -1,15 +1,12 @@
-function Shape(shape_class, id, group, node, x, y) {
-  this.shape_class = shape_class;
-  this.id = id;
-  this.node = node;
-  this.group = group;
-  this.x = x;
-  this.y = y;
+function Shape() {
 }
 
 Shape.prototype = {
-  init: function(id, x, y) {
+  shape_init: function(shape, id, group, node, x, y) {
+    this.shape = shape;
     this.id = id;
+    this.node = node;
+    this.group = group;
     this.x = x;
     this.y = y;
   },
@@ -26,11 +23,11 @@ var ShapeClasses = {};
 function LoadShape(id) {
   var group = document.getElementById(id);
   var node = group.childNodes[0];
-  var shape_class = group.getAttribute("shape");
+  var shape = group.getAttribute("shape");
   
-  var shape = ShapeClasses[shape_class]();
-  shape.load(shape_class, id, group, node);
-  return shape;
+  var shapeObject = ShapeClasses[shape]();
+  shapeObject.load(shape, id, group, node);
+  return shapeObject;
 }
 
 function Rect(root, x, y) {
@@ -49,29 +46,13 @@ function Rect(root, x, y) {
   this.load("rect", id, group, node);
 }
 
-Rect.prototype = {
-  //shape_class: "rect",
-  create: function() {
-    return new Rect();
-  },
-  load: function(shape_class, id, group, node) {
-    //var rect = new Rect();
+Rect.prototype = new Shape;
+Rect.prototype.constructor = Rect;
+
+Rect.prototype.load = function(shape, id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
-    this.shape = new Shape(shape_class, id, group, node, x, y);
-    //return rect;
-  }, 
-  attr: function(name, val) {
-    return this.shape.attr(name, val);
-  }
-}
+    this.shape_init(shape, id, group, node, x, y);
+  };
 
-ShapeClasses["rect"] = Rect.prototype.create;
-
-//shape delegation
-Object.defineProperty(Rect.prototype, "node", {get: function () {return this.shape.node;}});
-Object.defineProperty(Rect.prototype, "group", {get: function () {return this.shape.group;}});
-Object.defineProperty(Rect.prototype, "shape_class", {get: function () {return this.shape.shape_class;}});
-Object.defineProperty(Rect.prototype, "id", {get: function () {return this.shape.id;}});
-Object.defineProperty(Rect.prototype, "x", {get: function () {return this.shape.x;}});
-Object.defineProperty(Rect.prototype, "y", {get: function () {return this.shape.y;}});
+ShapeClasses["rect"] = function() { return new Rect(); };
