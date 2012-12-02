@@ -78,6 +78,13 @@ test("load rect", function() {
 });
 
 test("width and height", function() {
+  equal(TestContext.width, 160);
+  equal(TestContext.height, 100);
+
+  var rect1 = new Rect(TestContext, 100, 200);
+  equal(rect1.width, 160);
+  equal(rect1.height, 100);
+  
   var rect = new Rect(TestContext, 100, 200, 800, 600);
   equal(rect.x, 100);
   equal(rect.y, 200);

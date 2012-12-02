@@ -36,6 +36,8 @@ function ShapeContext()
   this.svgNS = "http://www.w3.org/2000/svg";
   
   //shape style defaults
+  this.width = 160;
+  this.height = 100;
   this.stroke_color = "black";
   this.stroke_width = 2;
   this.fill = "none";
@@ -67,7 +69,8 @@ function Rect(context, x, y, width, height) {
   var group = Shape.AddGroup(context, id, this.shape);
   var node = AddTagNS(group, context.svgNS, "rect", {
     "x": x, "y": y,
-    "width": width, "height": height,
+    "width": width ? width : context.width,
+    "height": height ? height : context.height,
     "fill": context.fill,
     "stroke": context.stroke_color,
     "stroke-width": context.stroke_width,
