@@ -17,6 +17,7 @@ function Shape(id, group, node, spec, left, top, width, height) {
   this.bottom = this.top + this.height;
   this.x = Math.round(this.left + this.width / 2);
   this.y = Math.round(this.top + this.height / 2);
+  this.resizers = [];
 }
 
 Shape.prototype = {
@@ -55,6 +56,32 @@ Shape.AddSpecAttr = function(context, spec)
   }
 }
 
+Shape.AddResizer = function(context, group, pos_x, pos_y)
+{
+  var node = AddTagNS(group, context.svgNS, "rect", {
+    "x": Math.round(pos_x - context.resizer_size / 2),
+    "y": Math.round(pos_y - context.resizer_size / 2),
+    "width": context.resizer_size,
+    "height": context.resizer_size,
+    "opacity": context.spec_opacity_initial,
+    "fill": context.resizer_color,
+    "stroke": context.resizer_color,
+    "stroke-width": context.stroke_width,
+    "id": Shape.NewID(),
+  });
+
+  for(var event in context.resizer_event) {
+    var handler = context.resizer_event[event];
+    if (typeof(handler) === "string")
+      node.setAttribute(event, handler);
+    else if (typeof(handler) === "function")
+      node.addEventListener(event.substring(2), handler, false);
+  }
+
+  return node;
+}
+
+
 // ShapeContext
 function ShapeContext()
 {
@@ -70,7 +97,12 @@ function ShapeContext()
   //spec defaults
   this.spec_opacity_initial = 0;
   this.spec_event = {};
-  
+
+  //resizer defaults
+  this.resizer_size = 8;
+  this.resizer_color = "blue";
+  this.resizer_event = {};
+
   this.Classes = {
   };
 
@@ -95,10 +127,12 @@ function Rect(context, x, y, width, height) {
   if (!context) 
     return;
 
-  width = width ? width : context.width;
-  height = height ? height : context.height;
+  width = parseInt(width ? width : context.width);
+  height = parseInt(height ? height : context.height);
   var left = Math.round(x - width / 2);
   var top = Math.round(y - height / 2);  
+  var right = left + width;
+  var bottom = top + height;
   
   var id = Shape.NewID();
   var group = Shape.AddGroup(context, id, this.shape);
@@ -116,6 +150,8 @@ function Rect(context, x, y, width, height) {
   });
   Shape.AddSpecAttr(context, spec);
 
+  Shape.AddResizer(context, group, right, bottom);
+
   this.load(id, group, node, spec);
 }
 
@@ -131,5 +167,7 @@ Rect.prototype.load = function(id, group, node, spec) {
   var width = node.getAttribute("width");
   var height = node.getAttribute("height");
   Shape.call(this, id, group, node, spec, left, top, width, height);
+  var resizer = group.childNodes[2];
+  this.resizers.push(resizer);
 };
 

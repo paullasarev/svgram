@@ -135,7 +135,6 @@ test("rect spec", function() {
   equal(rect.spec.getAttribute("opacity"), "0.33");
   equal(rect.spec.getAttribute("stroke"), TestContext.stroke_color);
   equal(rect.spec.getAttribute("stroke-width"), TestContext.stroke_width);
-
 });
 
 test("spec script events", function() {
@@ -154,6 +153,14 @@ test("spec script events", function() {
   equal(rect.spec.getAttribute("onmousemove"), "SpecMouseMove");
 });
 
+function testEvent(node, eventType, requred) {
+  TestEvtCounter = 0;
+  var event = document.createEvent ("MouseEvents");
+  event.initMouseEvent(eventType, true, false);
+  node.dispatchEvent(event);
+  equal(TestEvtCounter, requred);
+}
+
 test("spec function events", function() {
   TestContext.spec_event.onmousedown = function(evt) {TestEvtCounter++;};
   TestContext.spec_event.onmouseup = function(evt) {TestEvtCounter++;};
@@ -165,27 +172,71 @@ test("spec function events", function() {
   equal(rect.spec.getAttribute("onmouseup"), null);
   equal(rect.spec.getAttribute("onmousemove"), null);
   
-  TestEvtCounter = 0;
-  var event = document.createEvent ("MouseEvents");
-  event.initMouseEvent("mousedown", true, false);
-  rect.spec.dispatchEvent(event);
-  equal(TestEvtCounter, 1);
-  
-  TestEvtCounter = 0;
-  event = document.createEvent ("MouseEvents");
-  event.initMouseEvent("mouseup", true, false);
-  rect.spec.dispatchEvent(event);
-  equal(TestEvtCounter, 1);
-
-  TestEvtCounter = 0;
-  event = document.createEvent ("MouseEvents");
-  event.initMouseEvent("mousemove", true, false);
-  rect.spec.dispatchEvent(event);
-  equal(TestEvtCounter, 1);
-
-  TestEvtCounter = 0;
-  event = document.createEvent ("MouseEvents");
-  event.initMouseEvent("contextmenu", true, false);
-  rect.spec.dispatchEvent(event);
-  equal(TestEvtCounter, 0);
+  testEvent(rect.spec, "mousedown", 1);
+  testEvent(rect.spec, "mouseup", 1);
+  testEvent(rect.spec, "mousemove", 1);
+  testEvent(rect.spec, "contextmenu", 0);
 });
+
+test("rect resizer", function() {
+  equal(TestContext.resizer_size, 8);
+  equal(TestContext.resizer_color, "blue");
+  var rsize = 10;
+  TestContext.resizer_size = rsize;
+  TestContext.spec_opacity_initial = 0.33;
+  TestContext.resizer_color = "red";
+
+  var rect = new Rect(TestContext, 100, 200);
+  notEqual(rect.spec, undefined);
+
+  equal(rect.resizers.length, 1);
+  var resizer = rect.resizers[0];
+  
+  equal(resizer.getAttribute("x"), rect.right - rsize / 2);
+  equal(resizer.getAttribute("y"), rect.bottom - rsize / 2);
+  equal(resizer.getAttribute("width"), rsize);
+  equal(resizer.getAttribute("height"), rsize);
+
+  equal(resizer.getAttribute("fill"), TestContext.resizer_color);
+  equal(resizer.getAttribute("opacity"), "0.33");
+  equal(resizer.getAttribute("stroke"), TestContext.resizer_color);
+  equal(resizer.getAttribute("stroke-width"), TestContext.stroke_width);
+  
+  equal(resizer.getAttribute("id").length, 15);
+});
+
+test("resizer script events", function() {
+  strictEqual(TestContext.resizer_event.onmouseup, undefined);
+  strictEqual(TestContext.resizer_event.onmousemove, undefined);
+  strictEqual(TestContext.resizer_event.onmousedown, undefined);
+
+  TestContext.resizer_event.onmousedown = "ResizerMouseDown";
+  TestContext.resizer_event.onmousemove = "ResizerMouseMove";
+  TestContext.resizer_event.onmouseup = "ResizerMouseUp";
+
+  var rect = new Rect(TestContext, 110, 200);
+
+  var resizer = rect.resizers[0];
+  equal(resizer.getAttribute("onmousedown"), "ResizerMouseDown");
+  equal(resizer.getAttribute("onmousemove"), "ResizerMouseMove");
+  equal(resizer.getAttribute("onmouseup"), "ResizerMouseUp");
+});
+
+test("resizer function events", function() {
+  TestContext.resizer_event.onmousedown = function(evt) {TestEvtCounter++;};
+  TestContext.resizer_event.onmousemove = function(evt) {TestEvtCounter++;};
+  TestContext.resizer_event.onmouseup = function(evt) {TestEvtCounter++;};
+
+  var rect = new Rect(TestContext, 110, 200);
+  var resizer = rect.resizers[0];
+
+  equal(resizer.getAttribute("onmousedown"), null);
+  equal(resizer.getAttribute("onmouseup"), null);
+  equal(resizer.getAttribute("onmousemove"), null);
+  
+  testEvent(resizer, "mousedown", 1);
+  testEvent(resizer, "mouseup", 1);
+  testEvent(resizer, "mousemove", 1);
+  testEvent(resizer, "contextmenu", 0);
+});
+
