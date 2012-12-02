@@ -1,14 +1,16 @@
 // $Author$
 // $Id$
 
-var TestContext = new ShapeContext;
-TestContext.Register(Rect);
+var TestContext;
 
 module("shapes", {
   setup: function() {
+    TestContext = new ShapeContext;
+    TestContext.Register(Rect);
     TestContext.root = TestMakeSvg(800, 600);
   },
   teardown: function() {
+    TextContext = null;
   }
 });
 
@@ -83,8 +85,18 @@ test("width and height", function() {
   equal(rect.height, 600);
 });
 
-// test("context", function() {
-  // Shape.Context.svg = TestContext;
-  // var rect = new Rect(Shape.Context, 100, 200, 800, 600);
-  // equal(rect.x, 100);
-// });
+test("rect properties", function() {
+  equal(TestContext.stroke_color, "black");
+  equal(TestContext.stroke_width, 2);
+  equal(TestContext.fill, "none");
+  
+  TestContext.stroke_color = "blue"
+  TestContext.stroke_width = 4;
+  TestContext.fill = "red";
+  
+  var rect = new Rect(TestContext, 100, 200, 800, 600);
+  
+  equal(rect.Attr("stroke"), "blue");
+  equal(rect.Attr("stroke-width"), "4");
+  equal(rect.Attr("fill"), "red");
+});

@@ -35,6 +35,11 @@ function ShapeContext()
 {
   this.svgNS = "http://www.w3.org/2000/svg";
   
+  //shape style defaults
+  this.stroke_color = "black";
+  this.stroke_width = 2;
+  this.fill = "none";
+  
   this.Classes = {
   };
 
@@ -63,8 +68,9 @@ function Rect(context, x, y, width, height) {
   var node = AddTagNS(group, context.svgNS, "rect", {
     "x": x, "y": y,
     "width": width, "height": height,
-    "fill": "none"
-    //"stroke": GetShapeColor(), "stroke-width": ShapeStroke,
+    "fill": context.fill,
+    "stroke": context.stroke_color,
+    "stroke-width": context.stroke_width,
   });
 
   this.load(id, group, node);
@@ -77,10 +83,10 @@ Rect.prototype = new Shape;
 Rect.prototype.constructor = Rect;
 Rect.prototype.shape = Rect.shape;
 Rect.prototype.load = function(id, group, node) {
-    var x = node.getAttribute("x");
-    var y = node.getAttribute("y");
-    var width = node.getAttribute("width");
-    var height = node.getAttribute("height");
-    Shape.call(this, id, group, node, x, y, width, height);
-  };
+  var x = node.getAttribute("x");
+  var y = node.getAttribute("y");
+  var width = node.getAttribute("width");
+  var height = node.getAttribute("height");
+  Shape.call(this, id, group, node, x, y, width, height);
+};
 
