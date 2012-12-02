@@ -11,6 +11,9 @@ function Shape(id, group, node, x, y) {
 Shape.prototype = {
   Classes: {},
   shape: "unknown",
+  Register: function(shape, create) {
+    Shape.prototype.Classes[shape] = create;
+  },
   Attr: function(name, val) {
     if (val != null)
       this.node.setAttribute(name, val);
@@ -60,4 +63,4 @@ Rect.prototype.load = function(id, group, node) {
     Shape.call(this, id, group, node, x, y);
   };
 
-Shape.prototype.Classes[Rect.prototype.shape] = function() { return new Rect(); };
+Shape.prototype.Register(Rect.prototype.shape, function() { return new Rect(); });
