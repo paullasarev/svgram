@@ -23,6 +23,11 @@ function ShapeContext()
   this.resizer_color = "blue";
   this.resizer_event = {};
 
+  //knot defaults
+  this.knot_size = 8;
+  this.knot_color = "blue";
+  this.knot_event = {};
+  
   this.Classes = {
   };
 
@@ -59,6 +64,7 @@ function Shape(id, group, node, spec, left, top, width, height) {
   this.x = Math.round(this.left + this.width / 2);
   this.y = Math.round(this.top + this.height / 2);
   this.resizers = [];
+  this.knots = [];
 }
 
 Shape.prototype = {
@@ -79,6 +85,16 @@ Shape.AddGroup = function(context, id, shape) {
   return AddTagNS(context.root, context.svgNS, "g", { "id": id, "shape": shape } );
 };
 
+Shape.AddEventHandlers = function(node, eventMap) {
+  for(var event in eventMap) {
+    var handler = eventMap[event];
+    if (typeof(handler) === "string")
+      node.setAttribute(event, handler);
+    else if (typeof(handler) === "function")
+      node.addEventListener(event.substring(2), handler, false);
+  }
+};
+
 Shape.AddSpecAttr = function(context, spec)
 {
   SetAttr(spec, { 
@@ -89,13 +105,7 @@ Shape.AddSpecAttr = function(context, spec)
     "svgram": "spec",
   });
   
-  for(var event in context.spec_event) {
-    var handler = context.spec_event[event];
-    if (typeof(handler) === "string")
-      spec.setAttribute(event, handler);
-    else if (typeof(handler) === "function")
-      spec.addEventListener(event.substring(2), handler, false);
-  }
+  Shape.AddEventHandlers(spec, context.spec_event);
 }
 
 Shape.AddResizer = function(context, group, pos_x, pos_y)
@@ -113,14 +123,27 @@ Shape.AddResizer = function(context, group, pos_x, pos_y)
     "svgram": "resizer",
   });
 
-  for(var event in context.resizer_event) {
-    var handler = context.resizer_event[event];
-    if (typeof(handler) === "string")
-      node.setAttribute(event, handler);
-    else if (typeof(handler) === "function")
-      node.addEventListener(event.substring(2), handler, false);
-  }
+  Shape.AddEventHandlers(node, context.resizer_event);
 
+  return node;
+}
+
+Shape.AddKnot = function(context, group, pos_x, pos_y)
+{
+  var node = AddTagNS(group, context.svgNS, "circle", {
+    "cx": pos_x,
+    "cy": pos_y,
+    "r": context.knot_size / 2,
+    "opacity": context.spec_opacity,
+    "fill": context.knot_color,
+    "stroke": context.knot_color, 
+    "stroke-width": context.stroke_width,
+    "id": Shape.NewID(),
+    "svgram": "knot",
+  });
+
+  Shape.AddEventHandlers(node, context.knot_event);
+  
   return node;
 }
 

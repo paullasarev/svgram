@@ -6,6 +6,8 @@ function Rect(context, x, y, width, height) {
   if (!context) 
     return;
 
+  x = parseInt(x);
+  y = parseInt(y);
   width = parseInt(width ? width : context.width);
   height = parseInt(height ? height : context.height);
   var left = Math.round(x - width / 2);
@@ -30,6 +32,11 @@ function Rect(context, x, y, width, height) {
   Shape.AddSpecAttr(context, spec);
 
   Shape.AddResizer(context, group, right, bottom);
+  
+  Shape.AddKnot(context, group, left, y);
+  Shape.AddKnot(context, group, right, y);
+  Shape.AddKnot(context, group, x, top);
+  Shape.AddKnot(context, group, x, bottom);
 
   this.load(id, group, node, spec);
 }
@@ -46,7 +53,10 @@ Rect.prototype.load = function(id, group, node, spec) {
   var width = node.getAttribute("width");
   var height = node.getAttribute("height");
   Shape.call(this, id, group, node, spec, left, top, width, height);
-  var resizer = group.childNodes[2];
-  this.resizers.push(resizer);
+  this.resizers.push(group.childNodes[2]);
+  this.knots.push(group.childNodes[3]);
+  this.knots.push(group.childNodes[4]);
+  this.knots.push(group.childNodes[5]);
+  this.knots.push(group.childNodes[6]);
 };
 

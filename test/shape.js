@@ -144,6 +144,8 @@ test("rect spec", function() {
   notEqual(rect.spec, undefined);
 
   var spec = rect.spec;
+  equal(spec.tagName, "rect");
+  
   equal(spec.getAttribute("x"), rect.left);
   equal(spec.getAttribute("y"), rect.top);
   equal(spec.getAttribute("width"), rect.width);
@@ -193,7 +195,6 @@ test("rect resizer", function() {
   equal(TestContext.resizer_color, "blue");
   var rsize = 10;
   TestContext.resizer_size = rsize;
-  TestContext.spec_opacity_initial = 0.33;
   TestContext.resizer_color = "red";
 
   var rect = new Rect(TestContext, 100, 200);
@@ -201,6 +202,8 @@ test("rect resizer", function() {
 
   equal(rect.resizers.length, 1);
   var resizer = rect.resizers[0];
+
+  equal(resizer.tagName, "rect");
   
   equal(resizer.getAttribute("x"), rect.right - rsize / 2);
   equal(resizer.getAttribute("y"), rect.bottom - rsize / 2);
@@ -247,5 +250,80 @@ test("resizer function events", function() {
   testEvent(resizer, "mouseup", 1);
   testEvent(resizer, "mousemove", 1);
   testEvent(resizer, "contextmenu", 0);
+});
+
+function checkKnot(knot, cx, cy, rsize) {
+  equal(knot.tagName, "circle");
+  
+  equal(knot.getAttribute("cx"), cx);
+  equal(knot.getAttribute("cy"), cy);
+  equal(knot.getAttribute("r"), rsize / 2);
+
+  equal(knot.getAttribute("fill"), TestContext.knot_color);
+  equal(knot.getAttribute("opacity"), TestContext.spec_opacity);
+  equal(knot.getAttribute("stroke"), TestContext.knot_color);
+  equal(knot.getAttribute("stroke-width"), TestContext.stroke_width);
+  
+  equal(knot.getAttribute("id").length, 15);
+  equal(knot.getAttribute("svgram"), "knot");
+}
+
+test("rect knots", function() {
+  equal(TestContext.knot_size, 8);
+  equal(TestContext.knot_color, "blue");
+  var rsize = 10;
+  TestContext.knot_size = rsize;
+  TestContext.knot_color = "red";
+
+  var rect = new Rect(TestContext, 100, 200);
+  notEqual(rect.spec, undefined);
+
+  equal(rect.knots.length, 4);
+  checkKnot(rect.knots[0], rect.left, rect.y, rsize);
+  checkKnot(rect.knots[1], rect.right, rect.y, rsize);
+  checkKnot(rect.knots[2], rect.x, rect.top, rsize);
+  checkKnot(rect.knots[3], rect.x, rect.bottom, rsize);
+});
+
+function checkKnotScriptEvent(knot)
+{
+  equal(knot.getAttribute("onmousemove"), "KnotMouseMove");
+  equal(knot.getAttribute("onmouseup"), "KnotMouseUp");
+}
+
+test("knot script events", function() {
+  equal(MapSize(TestContext.knot_event), 0);
+
+  TestContext.knot_event.onmousemove = "KnotMouseMove";
+  TestContext.knot_event.onmouseup = "KnotMouseUp";
+
+  var rect = new Rect(TestContext, 110, 200);
+
+  checkKnotScriptEvent(rect.knots[0]);
+  checkKnotScriptEvent(rect.knots[1]);
+  checkKnotScriptEvent(rect.knots[2]);
+  checkKnotScriptEvent(rect.knots[3]);
+});
+
+function checkKnotFunctionEvent(knot)
+{
+  equal(knot.getAttribute("onmousemove"), null);
+  equal(knot.getAttribute("onmouseup"), null);
+  
+  testEvent(knot, "mousemove", 1);
+  testEvent(knot, "mouseup", 1);
+  testEvent(knot, "contextmenu", 0);
+}
+
+test("knot function events", function() {
+  TestContext.knot_event.onmousemove = function(evt) {TestEvtCounter++;};
+  TestContext.knot_event.onmouseup = function(evt) {TestEvtCounter++;};
+
+  var rect = new Rect(TestContext, 110, 200);
+  
+  checkKnotFunctionEvent(rect.knots[0]);
+  checkKnotFunctionEvent(rect.knots[1]);
+  checkKnotFunctionEvent(rect.knots[2]);
+  checkKnotFunctionEvent(rect.knots[3]);
 });
 
