@@ -58,13 +58,6 @@ function CalculatePaperClientOffset(element)
   var rect = element.getBoundingClientRect();
   PaperClientOffsetX = rect.left;
   PaperClientOffsetY = rect.top;
-	// var elem = element;
-  // PaperClientOffsetX = 0;
-  // PaperClientOffsetY = 0;
-	// do {
-		// PaperClientOffsetX += elem.offsetLeft ;
-		// PaperClientOffsetY += elem.offsetTop;
-	// } while (elem = elem.offsetParent);
 }
 
 function GetShapeColor()
