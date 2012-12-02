@@ -30,14 +30,18 @@ test("create svg", function() {
 });
 
 test("create rect", function() {
-  var rect = new Rect(TestContext, 100, 200);
+  var rect = new Rect(TestContext, 100, 200, 160, 120);
   notEqual(rect, null);
   
   equal(rect.x, 100);
   equal(rect.y, 200);
+  equal(rect.left, 100 - 160/2);
+  equal(rect.right, 100 + 160/2);
+  equal(rect.top, 200 - 120/2);
+  equal(rect.bottom, 200 + 120/2);
   equal("rect", rect.node.tagName);
-  equal(rect.node.getAttribute("x"), 100);
-  equal(rect.node.getAttribute("y"), 200);
+  equal(rect.node.getAttribute("x"), rect.left);
+  equal(rect.node.getAttribute("y"), rect.top);
   ok(rect.id);
 
   notEqual(rect.group, null);
@@ -53,7 +57,7 @@ test("rect shape", function() {
   equal(rect.id, rect.id);
   equal(rect.shape, "rect");
   
-  equal(rect.Attr("x"), 100);
+  equal(rect.Attr("x"), rect.left);
   rect.Attr("x", 200);
   equal(rect.Attr("x"), 200);
 
@@ -93,6 +97,10 @@ test("width and height", function() {
   equal(rect.y, 200);
   equal(rect.width, 800);
   equal(rect.height, 600);
+  equal(rect.left, 100 - 800/2);
+  equal(rect.right, 100 + 800/2);
+  equal(rect.top, 200 - 600/2);
+  equal(rect.bottom, 200 + 600/2);
 });
 
 test("rect properties", function() {
@@ -118,10 +126,10 @@ test("rect spec", function() {
   var rect = new Rect(TestContext, 110, 200);
   notEqual(rect.spec, undefined);
 
-  equal(rect.spec.getAttribute("x"), 110);
-  equal(rect.spec.getAttribute("y"), 200);
-  equal(rect.spec.getAttribute("width"), 160);
-  equal(rect.spec.getAttribute("height"), 100);
+  equal(rect.spec.getAttribute("x"), rect.left);
+  equal(rect.spec.getAttribute("y"), rect.top);
+  equal(rect.spec.getAttribute("width"), rect.width);
+  equal(rect.spec.getAttribute("height"), rect.height);
 
   equal(rect.spec.getAttribute("fill"), TestContext.stroke_color);
   equal(rect.spec.getAttribute("opacity"), "0.33");

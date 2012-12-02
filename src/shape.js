@@ -1,17 +1,22 @@
 // $Author$
 // $Id$
 
-function Shape(id, group, node, spec, x, y, width, height) {
+function Shape(id, group, node, spec, left, top, width, height) {
   if (!id)
     return;
+
   this.id = id;
   this.node = node;
   this.group = group;
   this.spec = spec;
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
+  this.width = parseInt(width);
+  this.height = parseInt(height);
+  this.left = parseInt(left);
+  this.top = parseInt(top);
+  this.right = this.left + this.width;
+  this.bottom = this.top + this.height;
+  this.x = Math.round(this.left + this.width / 2);
+  this.y = Math.round(this.top + this.height / 2);
 }
 
 Shape.prototype = {
@@ -50,18 +55,19 @@ Shape.AddSpecAttr = function(context, spec)
   }
 }
 
-
+// ShapeContext
 function ShapeContext()
 {
   this.svgNS = "http://www.w3.org/2000/svg";
   
-  //shape style defaults
+  //shape defaults
   this.width = 160;
   this.height = 100;
   this.stroke_color = "black";
   this.stroke_width = 2;
   this.fill = "none";
   
+  //spec defaults
   this.spec_opacity_initial = 0;
   this.spec_event = {};
   
@@ -91,11 +97,13 @@ function Rect(context, x, y, width, height) {
 
   width = width ? width : context.width;
   height = height ? height : context.height;
+  var left = Math.round(x - width / 2);
+  var top = Math.round(y - height / 2);  
   
   var id = Shape.NewID();
   var group = Shape.AddGroup(context, id, this.shape);
   var node = AddTagNS(group, context.svgNS, "rect", {
-    "x": x, "y": y,
+    "x": left, "y": top,
     "width": width, "height": height,
     "fill": context.fill,
     "stroke": context.stroke_color,
@@ -103,7 +111,7 @@ function Rect(context, x, y, width, height) {
   });
 
   var spec = AddTagNS(group, context.svgNS, "rect", {
-    "x": x, "y": y,
+    "x": left, "y": top,
     "width": width, "height": height,
   });
   Shape.AddSpecAttr(context, spec);
@@ -118,10 +126,10 @@ Rect.prototype = new Shape;
 Rect.prototype.constructor = Rect;
 Rect.prototype.shape = Rect.shape;
 Rect.prototype.load = function(id, group, node, spec) {
-  var x = node.getAttribute("x");
-  var y = node.getAttribute("y");
+  var left = node.getAttribute("x");
+  var top = node.getAttribute("y");
   var width = node.getAttribute("width");
   var height = node.getAttribute("height");
-  Shape.call(this, id, group, node, spec, x, y, width, height);
+  Shape.call(this, id, group, node, spec, left, top, width, height);
 };
 
