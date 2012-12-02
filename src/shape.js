@@ -1,5 +1,46 @@
+// ShapeContext and Shape
 // $Author$
 // $Id$
+
+function ShapeContext()
+{
+  this.svgNS = "http://www.w3.org/2000/svg";
+  
+  //shape defaults
+  this.width = 160;
+  this.height = 100;
+  this.stroke_color = "black";
+  this.stroke_width = 2;
+  this.fill = "none";
+  
+  //spec defaults
+  this.spec_opacity_initial = 0;
+  this.spec_opacity = 0.15;
+  this.spec_event = {};
+
+  //resizer defaults
+  this.resizer_size = 8;
+  this.resizer_color = "blue";
+  this.resizer_event = {};
+
+  this.Classes = {
+  };
+
+  this.Register = function(shapeClass) {
+    this.Classes[shapeClass.shape] = shapeClass.create;
+  };
+
+  this.LoadById = function (id) {
+    var group = document.getElementById(id);
+    var node = group.childNodes[0];
+    var shape = group.getAttribute("shape");
+    var spec = group.childNodes[1];
+    
+    var concreteShape = this.Classes[shape]();
+    concreteShape.load(id, group, node, spec);
+    return concreteShape;
+  };
+}
 
 function Shape(id, group, node, spec, left, top, width, height) {
   if (!id)
@@ -45,6 +86,7 @@ Shape.AddSpecAttr = function(context, spec)
     "opacity": context.spec_opacity_initial,
     "stroke": context.stroke_color,
     "stroke-width": context.stroke_width,
+    "svgram": "spec",
   });
   
   for(var event in context.spec_event) {
@@ -63,11 +105,12 @@ Shape.AddResizer = function(context, group, pos_x, pos_y)
     "y": Math.round(pos_y - context.resizer_size / 2),
     "width": context.resizer_size,
     "height": context.resizer_size,
-    "opacity": context.spec_opacity_initial,
+    "opacity": context.spec_opacity,
     "fill": context.resizer_color,
     "stroke": context.resizer_color,
     "stroke-width": context.stroke_width,
     "id": Shape.NewID(),
+    "svgram": "resizer",
   });
 
   for(var event in context.resizer_event) {
@@ -81,44 +124,4 @@ Shape.AddResizer = function(context, group, pos_x, pos_y)
   return node;
 }
 
-
-// ShapeContext
-function ShapeContext()
-{
-  this.svgNS = "http://www.w3.org/2000/svg";
-  
-  //shape defaults
-  this.width = 160;
-  this.height = 100;
-  this.stroke_color = "black";
-  this.stroke_width = 2;
-  this.fill = "none";
-  
-  //spec defaults
-  this.spec_opacity_initial = 0;
-  this.spec_event = {};
-
-  //resizer defaults
-  this.resizer_size = 8;
-  this.resizer_color = "blue";
-  this.resizer_event = {};
-
-  this.Classes = {
-  };
-
-  this.Register = function(shapeClass) {
-    this.Classes[shapeClass.shape] = shapeClass.create;
-  };
-
-  this.LoadById = function (id) {
-    var group = document.getElementById(id);
-    var node = group.childNodes[0];
-    var shape = group.getAttribute("shape");
-    var spec = group.childNodes[1];
-    
-    var concreteShape = this.Classes[shape]();
-    concreteShape.load(id, group, node, spec);
-    return concreteShape;
-  };
-}
 

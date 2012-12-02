@@ -121,20 +121,24 @@ test("rect properties", function() {
 
 test("rect spec", function() {
   equal(TestContext.spec_opacity_initial, 0);
+  equal(TestContext.spec_opacity, 0.15);
   TestContext.spec_opacity_initial = 0.33;
 
   var rect = new Rect(TestContext, 110, 200);
   notEqual(rect.spec, undefined);
 
-  equal(rect.spec.getAttribute("x"), rect.left);
-  equal(rect.spec.getAttribute("y"), rect.top);
-  equal(rect.spec.getAttribute("width"), rect.width);
-  equal(rect.spec.getAttribute("height"), rect.height);
+  var spec = rect.spec;
+  equal(spec.getAttribute("x"), rect.left);
+  equal(spec.getAttribute("y"), rect.top);
+  equal(spec.getAttribute("width"), rect.width);
+  equal(spec.getAttribute("height"), rect.height);
 
-  equal(rect.spec.getAttribute("fill"), TestContext.stroke_color);
-  equal(rect.spec.getAttribute("opacity"), "0.33");
-  equal(rect.spec.getAttribute("stroke"), TestContext.stroke_color);
-  equal(rect.spec.getAttribute("stroke-width"), TestContext.stroke_width);
+  equal(spec.getAttribute("fill"), TestContext.stroke_color);
+  equal(spec.getAttribute("opacity"), "0.33");
+  equal(spec.getAttribute("stroke"), TestContext.stroke_color);
+  equal(spec.getAttribute("stroke-width"), TestContext.stroke_width);
+
+  equal(spec.getAttribute("svgram"), "spec");
 });
 
 test("spec script events", function() {
@@ -198,11 +202,12 @@ test("rect resizer", function() {
   equal(resizer.getAttribute("height"), rsize);
 
   equal(resizer.getAttribute("fill"), TestContext.resizer_color);
-  equal(resizer.getAttribute("opacity"), "0.33");
+  equal(resizer.getAttribute("opacity"), TestContext.spec_opacity);
   equal(resizer.getAttribute("stroke"), TestContext.resizer_color);
   equal(resizer.getAttribute("stroke-width"), TestContext.stroke_width);
   
   equal(resizer.getAttribute("id").length, 15);
+  equal(resizer.getAttribute("svgram"), "resizer");
 });
 
 test("resizer script events", function() {
