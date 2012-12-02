@@ -17,6 +17,22 @@ module("shapes", {
   }
 });
 
+function MapSize(map)
+{
+  var count = 0;
+  for(key in map)
+    count++;
+  return count;
+}
+
+function testEvent(node, eventType, requred) {
+  TestEvtCounter = 0;
+  var event = document.createEvent ("MouseEvents");
+  event.initMouseEvent(eventType, true, false);
+  node.dispatchEvent(event);
+  equal(TestEvtCounter, requred);
+}
+
 function TestMakeSvg(width, height)
 {
   var fixture = document.getElementById("qunit-fixture");
@@ -142,9 +158,7 @@ test("rect spec", function() {
 });
 
 test("spec script events", function() {
-  strictEqual(TestContext.spec_event.onmouseup, undefined);
-  strictEqual(TestContext.spec_event.onmousedown, undefined);
-  strictEqual(TestContext.spec_event.onmousemove, undefined);
+  equal(MapSize(TestContext.spec_event), 0);
 
   TestContext.spec_event.onmousedown = "SpecMouseDown";
   TestContext.spec_event.onmouseup = "SpecMouseUp";
@@ -156,14 +170,6 @@ test("spec script events", function() {
   equal(rect.spec.getAttribute("onmouseup"), "SpecMouseUp");
   equal(rect.spec.getAttribute("onmousemove"), "SpecMouseMove");
 });
-
-function testEvent(node, eventType, requred) {
-  TestEvtCounter = 0;
-  var event = document.createEvent ("MouseEvents");
-  event.initMouseEvent(eventType, true, false);
-  node.dispatchEvent(event);
-  equal(TestEvtCounter, requred);
-}
 
 test("spec function events", function() {
   TestContext.spec_event.onmousedown = function(evt) {TestEvtCounter++;};
@@ -211,9 +217,7 @@ test("rect resizer", function() {
 });
 
 test("resizer script events", function() {
-  strictEqual(TestContext.resizer_event.onmouseup, undefined);
-  strictEqual(TestContext.resizer_event.onmousemove, undefined);
-  strictEqual(TestContext.resizer_event.onmousedown, undefined);
+  equal(MapSize(TestContext.resizer_event), 0);
 
   TestContext.resizer_event.onmousedown = "ResizerMouseDown";
   TestContext.resizer_event.onmousemove = "ResizerMouseMove";
