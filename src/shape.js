@@ -1,3 +1,6 @@
+// $Author$
+// $Id$
+
 function Shape(id, group, node, x, y, width, height) {
   if (!id)
     return;

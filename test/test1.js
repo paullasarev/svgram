@@ -1,3 +1,6 @@
+// $Author$
+// $Id$
+
 test("create diagram", function() {
   var fixture = document.getElementById("qunit-fixture");
   var svgNS = "http://www.w3.org/2000/svg";

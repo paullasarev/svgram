@@ -1,3 +1,6 @@
+// $Author$
+// $Id$
+
 var ControlMode = "none";
 var ControlToolId = "";
 

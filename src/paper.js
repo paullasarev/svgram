@@ -1,3 +1,4 @@
+// $Author$
 // $Id$
 
 var PaperOffsetX = 0, PaperOffsetY = 0;
