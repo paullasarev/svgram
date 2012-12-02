@@ -1,3 +1,6 @@
+// $Author$
+// $Id$
+
 var test_svg;
 
 module("shapes", {
