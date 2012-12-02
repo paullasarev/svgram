@@ -81,11 +81,30 @@ test("rect shape", function() {
   ok(rect instanceof Shape); 
 });
 
-test("load rect", function() {
+test("load rect by ID", function() {
   var rect = new Rect(TestContext, 100, 200);
   var id = rect.id;
   
   var rect2 = TestContext.LoadById(id);
+  notEqual(rect2, rect);
+  ok(rect2 instanceof Rect); 
+  ok(rect2 instanceof Shape); 
+  
+  equal(rect2.id, rect.id);
+  equal(rect2.x, rect.x);
+  equal(rect2.y, rect.y);
+  equal(rect2.shape, "rect");
+
+  notEqual(rect.Attr("tagName"), "rect");
+  notEqual(rect2.Attr("tagName"), "rect");
+  notEqual(rect2.group, null);
+});
+
+test("load rect by group", function() {
+  var rect = new Rect(TestContext, 100, 200);
+  var group = rect.group;
+  
+  var rect2 = TestContext.LoadByGroup(group);
   notEqual(rect2, rect);
   ok(rect2 instanceof Rect); 
   ok(rect2 instanceof Shape); 
@@ -325,5 +344,60 @@ test("knot function events", function() {
   checkKnotFunctionEvent(rect.knots[1]);
   checkKnotFunctionEvent(rect.knots[2]);
   checkKnotFunctionEvent(rect.knots[3]);
+});
+
+function checkRect(node, left, top, width, height) {
+  equal(node.getAttribute("x"), left);
+  equal(node.getAttribute("y"), top);
+  equal(node.getAttribute("width"), width);
+  equal(node.getAttribute("height"), height);
+}
+
+function checkCircle(node, cx, cy, radius) {
+  equal(node.getAttribute("cx"), cx);
+  equal(node.getAttribute("cy"), cy);
+  equal(node.getAttribute("r"), radius);
+}
+
+test("rect move", function() {
+  var x = 300;
+  var y = 400;
+  var width = 200;
+  var height = 100;
+  var rect = new Rect(TestContext, x, y, width, height);
+  
+  var dx = 20;
+  var dy = 10;
+  
+  rect.Move(dx, dy);
+  
+  var new_x = x + dx;
+  var new_y = y + dy;
+  var left = new_x - width / 2;
+  var right = left + width;
+  var top = new_y - height / 2;
+  var bottom = top + height;
+  
+  equal(rect.x, new_x);
+  equal(rect.y, new_y);
+  equal(rect.width, width);
+  equal(rect.height, height);
+  equal(rect.left, left);
+  equal(rect.right, right);
+  equal(rect.top, top);
+  equal(rect.bottom, bottom);
+  
+  checkRect(rect.node, left, top, width, height);
+  
+  checkRect(rect.spec, left, top, width, height);
+  
+  var rsize = TestContext.resizer_size;
+  var rsize2 = rsize/2
+  checkRect(rect.resizers[0], right - rsize2, bottom - rsize2, rsize, rsize);
+  
+  checkCircle(rect.knots[0], left, new_y, rsize2);
+  checkCircle(rect.knots[1], right, new_y, rsize2);
+  checkCircle(rect.knots[2], new_x, top, rsize2);
+  checkCircle(rect.knots[3], new_x, bottom, rsize2);
 });
 

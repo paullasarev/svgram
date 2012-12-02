@@ -35,15 +35,20 @@ function ShapeContext()
     this.Classes[shapeClass.shape] = shapeClass.create;
   };
 
-  this.LoadById = function (id) {
-    var group = document.getElementById(id);
+  this.LoadByGroup = function(group) {
     var node = group.childNodes[0];
     var shape = group.getAttribute("shape");
     var spec = group.childNodes[1];
+    var id = group.getAttribute("id");
     
     var concreteShape = this.Classes[shape]();
     concreteShape.load(id, group, node, spec);
     return concreteShape;
+  };
+  
+  this.LoadById = function(id) {
+    var group = document.getElementById(id);
+    return this.LoadByGroup(group);
   };
 }
 
@@ -74,7 +79,15 @@ Shape.prototype = {
       this.node.setAttribute(name, val);
     else
       return this.node.getAttribute(name);
-  }
+  },
+  Move: function(dx, dy) {
+    this.x += dx;
+    this.y += dy;
+    this.left += dx;
+    this.top += dy;
+    this.right += dx;
+    this.bottom += dy;
+  },
 };
 
 Shape.NewID = function() {

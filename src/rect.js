@@ -60,3 +60,22 @@ Rect.prototype.load = function(id, group, node, spec) {
   this.knots.push(group.childNodes[6]);
 };
 
+Rect.prototype.Move = function(dx, dy) {
+  Shape.prototype.Move.call(this, dx, dy);
+  
+  var group = this.group;
+  for (var i = 0 ; i < group.childNodes.length ; i++)
+  {
+    var node = group.childNodes.item(i);
+    var tagName = node.tagName;
+    if (tagName == "circle") {
+      AddDelta(node, "cx", dx);
+      AddDelta(node, "cy", dy);
+    } else {
+      AddDelta(node, "x", dx);
+      AddDelta(node, "y", dy);
+    }
+  }
+};
+
+
