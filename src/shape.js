@@ -20,41 +20,47 @@ Shape.prototype = {
       this.node.setAttribute(name, val);
     else
       return this.node.getAttribute(name);
-  },
-  NewID: function() {
-    return Math.uuid(15);
-  },
-  AddGroup: function(root, id) {
-    return AddTagNS(root, svgNS, "g", { "id": id, "shape": this.shape } );
-  },
+  }
+};
+
+Shape.NewID = function() {
+  return Math.uuid(15);
+};
+
+Shape.AddGroup = function(context, id, shape) {
+  return AddTagNS(context.root, context.svgNS, "g", { "id": id, "shape": shape } );
+};
+
+function ShapeContext()
+{
+  this.svgNS = "http://www.w3.org/2000/svg";
+  
+  this.Classes = {
+  };
+
+  this.Register = function(shapeClass) {
+    this.Classes[shapeClass.shape] = shapeClass.create;
+  };
+
+  this.LoadById = function (id) {
+    var group = document.getElementById(id);
+    var node = group.childNodes[0];
+    var shape = group.getAttribute("shape");
+    
+    var concreteShape = this.Classes[shape]();
+    concreteShape.load(id, group, node);
+    return concreteShape;
+  };
 }
 
-Shape.Classes = {
-};
-
-Shape.Register = function(shape, create) {
-  Shape.Classes[shape] = create;
-};
-
-Shape.LoadById = function (id) {
-  var group = document.getElementById(id);
-  var node = group.childNodes[0];
-  var shape = group.getAttribute("shape");
-  
-  var concreteShape = Shape.Classes[shape]();
-  concreteShape.load(id, group, node);
-  return concreteShape;
-};
-
-
 // Rect shape
-function Rect(root, x, y, width, height) {
-  if (!root) 
+function Rect(context, x, y, width, height) {
+  if (!context) 
     return;
 
-  var id = this.NewID();
-  var group = this.AddGroup(root, id);
-  var node = AddTagNS(group, svgNS, "rect", {
+  var id = Shape.NewID();
+  var group = Shape.AddGroup(context, id, this.shape);
+  var node = AddTagNS(group, context.svgNS, "rect", {
     "x": x, "y": y,
     "width": width, "height": height,
     "fill": "none"
@@ -64,9 +70,12 @@ function Rect(root, x, y, width, height) {
   this.load(id, group, node);
 }
 
+Rect.shape = "rect";
+Rect.create = function() { return new Rect(); };
+
 Rect.prototype = new Shape;
 Rect.prototype.constructor = Rect;
-Rect.prototype.shape = "rect";
+Rect.prototype.shape = Rect.shape;
 Rect.prototype.load = function(id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
@@ -75,4 +84,3 @@ Rect.prototype.load = function(id, group, node) {
     Shape.call(this, id, group, node, x, y, width, height);
   };
 
-Shape.Register(Rect.prototype.shape, function() { return new Rect(); });

@@ -1,11 +1,12 @@
 // $Author$
 // $Id$
 
-var test_svg;
+var TestContext = new ShapeContext;
+TestContext.Register(Rect);
 
 module("shapes", {
   setup: function() {
-    test_svg = TestMakeSvg(800, 600);
+    TestContext.root = TestMakeSvg(800, 600);
   },
   teardown: function() {
   }
@@ -20,11 +21,11 @@ function TestMakeSvg(width, height)
 }
 
 test("create svg", function() {
-  notEqual(test_svg, null);
+  notEqual(TestContext.root, null);
 });
 
 test("create rect", function() {
-  var rect = new Rect(test_svg, 100, 200);
+  var rect = new Rect(TestContext, 100, 200);
   notEqual(rect, null);
   
   equal(rect.x, 100);
@@ -40,7 +41,7 @@ test("create rect", function() {
 });
 
 test("rect shape", function() {
-  var rect = new Rect(test_svg, 100, 200);
+  var rect = new Rect(TestContext, 100, 200);
   equal(rect.x, 100);
   equal(rect.y, 200);
   equal(rect.node, rect.node);
@@ -56,10 +57,10 @@ test("rect shape", function() {
 });
 
 test("load rect", function() {
-  var rect = new Rect(test_svg, 100, 200);
+  var rect = new Rect(TestContext, 100, 200);
   var id = rect.id;
   
-  var rect2 = Shape.LoadById(id);
+  var rect2 = TestContext.LoadById(id);
   notEqual(rect2, rect);
   ok(rect2 instanceof Rect); 
   ok(rect2 instanceof Shape); 
@@ -75,10 +76,15 @@ test("load rect", function() {
 });
 
 test("width and height", function() {
-  var rect = new Rect(test_svg, 100, 200, 800, 600);
+  var rect = new Rect(TestContext, 100, 200, 800, 600);
   equal(rect.x, 100);
   equal(rect.y, 200);
   equal(rect.width, 800);
   equal(rect.height, 600);
 });
 
+// test("context", function() {
+  // Shape.Context.svg = TestContext;
+  // var rect = new Rect(Shape.Context, 100, 200, 800, 600);
+  // equal(rect.x, 100);
+// });
