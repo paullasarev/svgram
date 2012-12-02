@@ -1,4 +1,4 @@
-function Shape(id, group, node, x, y) {
+function Shape(id, group, node, x, y, width, height) {
   if (!id)
     return;
   this.id = id;
@@ -6,14 +6,12 @@ function Shape(id, group, node, x, y) {
   this.group = group;
   this.x = x;
   this.y = y;
+  this.width = width;
+  this.height = height;
 }
 
 Shape.prototype = {
-  Classes: {},
   shape: "unknown",
-  Register: function(shape, create) {
-    Shape.prototype.Classes[shape] = create;
-  },
   Attr: function(name, val) {
     if (val != null)
       this.node.setAttribute(name, val);
@@ -26,19 +24,28 @@ Shape.prototype = {
   AddGroup: function(root, id) {
     return AddTagNS(root, svgNS, "g", { "id": id, "shape": this.shape } );
   },
-  LoadById: function (id) {
-    var group = document.getElementById(id);
-    var node = group.childNodes[0];
-    var shape = group.getAttribute("shape");
-    
-    var concreteShape = Shape.prototype.Classes[shape]();
-    concreteShape.load(id, group, node);
-    return concreteShape;
-  }
 }
 
+Shape.Classes = {
+};
+
+Shape.Register = function(shape, create) {
+  Shape.Classes[shape] = create;
+};
+
+Shape.LoadById = function (id) {
+  var group = document.getElementById(id);
+  var node = group.childNodes[0];
+  var shape = group.getAttribute("shape");
+  
+  var concreteShape = Shape.Classes[shape]();
+  concreteShape.load(id, group, node);
+  return concreteShape;
+};
+
+
 // Rect shape
-function Rect(root, x, y) {
+function Rect(root, x, y, width, height) {
   if (!root) 
     return;
 
@@ -46,7 +53,7 @@ function Rect(root, x, y) {
   var group = this.AddGroup(root, id);
   var node = AddTagNS(group, svgNS, "rect", {
     "x": x, "y": y,
-    //"width": width, "height": height,
+    "width": width, "height": height,
     "fill": "none"
     //"stroke": GetShapeColor(), "stroke-width": ShapeStroke,
   });
@@ -60,7 +67,9 @@ Rect.prototype.shape = "rect";
 Rect.prototype.load = function(id, group, node) {
     var x = node.getAttribute("x");
     var y = node.getAttribute("y");
-    Shape.call(this, id, group, node, x, y);
+    var width = node.getAttribute("width");
+    var height = node.getAttribute("height");
+    Shape.call(this, id, group, node, x, y, width, height);
   };
 
-Shape.prototype.Register(Rect.prototype.shape, function() { return new Rect(); });
+Shape.Register(Rect.prototype.shape, function() { return new Rect(); });

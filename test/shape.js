@@ -56,7 +56,7 @@ test("load rect", function() {
   var rect = new Rect(test_svg, 100, 200);
   var id = rect.id;
   
-  var rect2 = Shape.prototype.LoadById(id);
+  var rect2 = Shape.LoadById(id);
   notEqual(rect2, rect);
   ok(rect2 instanceof Rect); 
   ok(rect2 instanceof Shape); 
@@ -70,3 +70,12 @@ test("load rect", function() {
   notEqual(rect2.Attr("tagName"), "rect");
   notEqual(rect2.group, null);
 });
+
+test("width and height", function() {
+  var rect = new Rect(test_svg, 100, 200, 800, 600);
+  equal(rect.x, 100);
+  equal(rect.y, 200);
+  equal(rect.width, 800);
+  equal(rect.height, 600);
+});
+
