@@ -2,12 +2,15 @@
 // $Id$
 
 var TestContext;
+var TestEvtCounter;
 
 module("shapes", {
   setup: function() {
     TestContext = new ShapeContext;
     TestContext.Register(Rect);
     TestContext.root = TestMakeSvg(800, 600);
+    
+    TestEvtCounter = 0;
   },
   teardown: function() {
     TextContext = null;
@@ -106,4 +109,75 @@ test("rect properties", function() {
   equal(rect.Attr("stroke"), "blue");
   equal(rect.Attr("stroke-width"), "4");
   equal(rect.Attr("fill"), "red");
+});
+
+test("rect spec", function() {
+  equal(TestContext.spec_opacity_initial, 0);
+  TestContext.spec_opacity_initial = 0.33;
+
+  var rect = new Rect(TestContext, 110, 200);
+  notEqual(rect.spec, undefined);
+
+  equal(rect.spec.getAttribute("x"), 110);
+  equal(rect.spec.getAttribute("y"), 200);
+  equal(rect.spec.getAttribute("width"), 160);
+  equal(rect.spec.getAttribute("height"), 100);
+
+  equal(rect.spec.getAttribute("fill"), TestContext.stroke_color);
+  equal(rect.spec.getAttribute("opacity"), "0.33");
+  equal(rect.spec.getAttribute("stroke"), TestContext.stroke_color);
+  equal(rect.spec.getAttribute("stroke-width"), TestContext.stroke_width);
+
+});
+
+test("spec script events", function() {
+  strictEqual(TestContext.spec_event.onmouseup, undefined);
+  strictEqual(TestContext.spec_event.onmousedown, undefined);
+  strictEqual(TestContext.spec_event.onmousemove, undefined);
+
+  TestContext.spec_event.onmousedown = "SpecMouseDown";
+  TestContext.spec_event.onmouseup = "SpecMouseUp";
+  TestContext.spec_event.onmousemove = "SpecMouseMove";
+
+  var rect = new Rect(TestContext, 110, 200);
+
+  equal(rect.spec.getAttribute("onmousedown"), "SpecMouseDown");
+  equal(rect.spec.getAttribute("onmouseup"), "SpecMouseUp");
+  equal(rect.spec.getAttribute("onmousemove"), "SpecMouseMove");
+});
+
+test("spec function events", function() {
+  TestContext.spec_event.onmousedown = function(evt) {TestEvtCounter++;};
+  TestContext.spec_event.onmouseup = function(evt) {TestEvtCounter++;};
+  TestContext.spec_event.onmousemove = function(evt) {TestEvtCounter++;};
+
+  var rect = new Rect(TestContext, 110, 200);
+
+  equal(rect.spec.getAttribute("onmousedown"), null);
+  equal(rect.spec.getAttribute("onmouseup"), null);
+  equal(rect.spec.getAttribute("onmousemove"), null);
+  
+  TestEvtCounter = 0;
+  var event = document.createEvent ("MouseEvents");
+  event.initMouseEvent("mousedown", true, false);
+  rect.spec.dispatchEvent(event);
+  equal(TestEvtCounter, 1);
+  
+  TestEvtCounter = 0;
+  event = document.createEvent ("MouseEvents");
+  event.initMouseEvent("mouseup", true, false);
+  rect.spec.dispatchEvent(event);
+  equal(TestEvtCounter, 1);
+
+  TestEvtCounter = 0;
+  event = document.createEvent ("MouseEvents");
+  event.initMouseEvent("mousemove", true, false);
+  rect.spec.dispatchEvent(event);
+  equal(TestEvtCounter, 1);
+
+  TestEvtCounter = 0;
+  event = document.createEvent ("MouseEvents");
+  event.initMouseEvent("contextmenu", true, false);
+  rect.spec.dispatchEvent(event);
+  equal(TestEvtCounter, 0);
 });
