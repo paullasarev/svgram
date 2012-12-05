@@ -87,14 +87,18 @@ Shape.prototype = {
     this.top += dy;
     this.right += dx;
     this.bottom += dy;
+
+    this.SetPosition();
   },
   Resize: function(dx, dy) {
     this.left -= dx;
     this.top -= dy;
-	this.width += dx * 2;
-	this.height += dy * 2;
-	this.right = this.left + this.width;
-	this.bottom = this.top + this.height;
+    this.width += dx * 2;
+    this.height += dy * 2;
+    this.right = this.left + this.width;
+    this.bottom = this.top + this.height;
+
+    this.SetPosition();
   },
 };
 

@@ -71,14 +71,3 @@ Rect.prototype.SetPosition = function() {
   Shape.MoveCircle(this.knots[2], this.x, this.top);
   Shape.MoveCircle(this.knots[3], this.x, this.bottom);
 }
-
-Rect.prototype.Move = function(dx, dy) {
-  Shape.prototype.Move.call(this, dx, dy);
-  this.SetPosition();
-};
-
-Rect.prototype.Resize = function(dx, dy) {
-  Shape.prototype.Resize.call(this, dx, dy);
-  this.SetPosition();
-};
-

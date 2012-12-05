@@ -443,3 +443,25 @@ test("rect resize 1px", function() {
  
   checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
 });
+
+test("create line", function() {
+  var shape = new Line(TestContext, 100, 200, 300, 400);
+  notEqual(shape, null);
+  
+  equal(shape.x, (100 + 300)/2);
+  equal(shape.y, (200 + 400)/2);
+  equal(shape.left, 100);
+  equal(shape.right, 300);
+  equal(shape.top, 200);
+  equal(shape.bottom, 400);
+  equal("line", shape.node.tagName);
+  equal(shape.node.getAttribute("x1"), shape.left);
+  equal(shape.node.getAttribute("y1"), shape.top);
+  equal(shape.node.getAttribute("x2"), shape.right);
+  equal(shape.node.getAttribute("y2"), shape.bottom);
+  ok(shape.id);
+
+  notEqual(shape.group, null);
+  equal(shape.group.getAttribute("id"), shape.id);
+  equal(shape.group.getAttribute("shape"), "line");
+});
