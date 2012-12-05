@@ -8,6 +8,7 @@ module("shapes", {
   setup: function() {
     TestContext = new ShapeContext;
     TestContext.Register(Rect);
+    TestContext.Register(Line);
     TestContext.root = TestMakeSvg(800, 600);
     
     TestEvtCounter = 0;
@@ -464,4 +465,26 @@ test("create line", function() {
   notEqual(shape.group, null);
   equal(shape.group.getAttribute("id"), shape.id);
   equal(shape.group.getAttribute("shape"), "line");
+
+  ok(shape instanceof Line); 
+  ok(shape instanceof Shape); 
+});
+
+test("load line by ID", function() {
+  var shape = new Line(TestContext, 100, 200, 300, 400);
+  var id = shape.id;
+  
+  var shape2 = TestContext.LoadById(id);
+  notEqual(shape2, shape);
+  ok(shape2 instanceof Line); 
+  ok(shape2 instanceof Shape); 
+  
+  equal(shape2.id, shape.id);
+  equal(shape2.x, shape.x);
+  equal(shape2.y, shape.y);
+  equal(shape2.shape, "line");
+
+  notEqual(shape.Attr("tagName"), "line");
+  notEqual(shape2.Attr("tagName"), "line");
+  notEqual(shape2.group, null);
 });
