@@ -359,6 +359,32 @@ function checkCircle(node, cx, cy, radius) {
   equal(node.getAttribute("r"), radius);
 }
 
+function checkShape(shape, x, y, width, height, left, top, right, bottom) {
+  equal(shape.x, x);
+  equal(shape.y, y);
+  equal(shape.width, width);
+  equal(shape.height, height);
+  equal(shape.left, left);
+  equal(shape.right, right);
+  equal(shape.top, top);
+  equal(shape.bottom, bottom);
+}
+
+function checkRectPosition(rect, x, y, width, height, left, top, right, bottom) {
+  checkShape(rect, x, y, width, height, left, top, right, bottom);
+  checkRect(rect.node, left, top, width, height);
+  checkRect(rect.spec, left, top, width, height);
+
+  var rsize = TestContext.resizer_size;
+  var rsize2 = rsize/2;
+  checkRect(rect.resizers[0], right - rsize2, bottom - rsize2, rsize, rsize);
+
+  checkCircle(rect.knots[0], left, y, rsize2);
+  checkCircle(rect.knots[1], right, y, rsize2);
+  checkCircle(rect.knots[2], x, top, rsize2);
+  checkCircle(rect.knots[3], x, bottom, rsize2);
+}
+
 test("rect move", function() {
   var x = 300;
   var y = 400;
@@ -378,26 +404,42 @@ test("rect move", function() {
   var top = new_y - height / 2;
   var bottom = top + height;
   
-  equal(rect.x, new_x);
-  equal(rect.y, new_y);
-  equal(rect.width, width);
-  equal(rect.height, height);
-  equal(rect.left, left);
-  equal(rect.right, right);
-  equal(rect.top, top);
-  equal(rect.bottom, bottom);
-  
-  checkRect(rect.node, left, top, width, height);
-  
-  checkRect(rect.spec, left, top, width, height);
-  
-  var rsize = TestContext.resizer_size;
-  var rsize2 = rsize/2
-  checkRect(rect.resizers[0], right - rsize2, bottom - rsize2, rsize, rsize);
-  
-  checkCircle(rect.knots[0], left, new_y, rsize2);
-  checkCircle(rect.knots[1], right, new_y, rsize2);
-  checkCircle(rect.knots[2], new_x, top, rsize2);
-  checkCircle(rect.knots[3], new_x, bottom, rsize2);
+  checkRectPosition(rect, new_x, new_y, width, height, left, top, right, bottom);
 });
 
+function calcResize(coords, dx, dy) {
+  coords.width += dx * 2;
+  coords.height += dy * 2;
+  coords.left = coords.x - coords.width / 2;
+  coords.right = coords.left + coords.width;
+  coords.top = coords.y - coords.height / 2;
+  coords.bottom = coords.top + coords.height;
+}
+
+test("rect resize", function() {
+  var coords = { x: 300, y: 400, width: 200, height: 100, };
+  var rect = new Rect(TestContext, coords.x, coords.y, coords.width, coords.height);
+  
+  var dx = 20;
+  var dy = 10;
+  
+  calcResize(coords, dx, dy);
+  
+  rect.Resize(dx, dy);
+ 
+  checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
+});
+
+test("rect resize 1px", function() {
+  var coords = { x: 300, y: 400, width: 200, height: 100, };
+  var rect = new Rect(TestContext, coords.x, coords.y, coords.width, coords.height);
+
+  var dx = 1;
+  var dy = 1;
+
+  calcResize(coords, dx, dy);
+  
+  rect.Resize(dx, dy);
+ 
+  checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
+});

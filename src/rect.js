@@ -60,22 +60,25 @@ Rect.prototype.load = function(id, group, node, spec) {
   this.knots.push(group.childNodes[6]);
 };
 
+Rect.prototype.SetPosition = function() {
+  SetAttr(this.node, {"x": this.left, "y": this.top, "width": this.width, "height": this.height});
+  SetAttr(this.spec, {"x": this.left, "y": this.top, "width": this.width, "height": this.height});
+  
+  Shape.MoveRect(this.resizers[0], this.right, this.bottom);
+  
+  Shape.MoveCircle(this.knots[0], this.left, this.y);
+  Shape.MoveCircle(this.knots[1], this.right, this.y);
+  Shape.MoveCircle(this.knots[2], this.x, this.top);
+  Shape.MoveCircle(this.knots[3], this.x, this.bottom);
+}
+
 Rect.prototype.Move = function(dx, dy) {
   Shape.prototype.Move.call(this, dx, dy);
-  
-  var group = this.group;
-  for (var i = 0 ; i < group.childNodes.length ; i++)
-  {
-    var node = group.childNodes.item(i);
-    var tagName = node.tagName;
-    if (tagName == "circle") {
-      AddDelta(node, "cx", dx);
-      AddDelta(node, "cy", dy);
-    } else {
-      AddDelta(node, "x", dx);
-      AddDelta(node, "y", dy);
-    }
-  }
+  this.SetPosition();
 };
 
+Rect.prototype.Resize = function(dx, dy) {
+  Shape.prototype.Resize.call(this, dx, dy);
+  this.SetPosition();
+};
 

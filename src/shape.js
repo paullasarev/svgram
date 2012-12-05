@@ -88,6 +88,14 @@ Shape.prototype = {
     this.right += dx;
     this.bottom += dy;
   },
+  Resize: function(dx, dy) {
+    this.left -= dx;
+    this.top -= dy;
+	this.width += dx * 2;
+	this.height += dy * 2;
+	this.right = this.left + this.width;
+	this.bottom = this.top + this.height;
+  },
 };
 
 Shape.NewID = function() {
@@ -158,6 +166,25 @@ Shape.AddKnot = function(context, group, pos_x, pos_y)
   Shape.AddEventHandlers(node, context.knot_event);
   
   return node;
+}
+
+Shape.AddDelta = function (node, attr, delta) {
+  var val = parseInt(node.getAttribute(attr));
+  node.setAttribute(attr, val + delta);
+}
+
+Shape.MoveRect = function(node, x, y)
+{
+  var rsize = parseInt(node.getAttribute("width"));
+  SetAttr(node, {
+    "x": Math.round(x - rsize / 2),
+    "y": Math.round(y - rsize / 2),
+  });
+}
+
+Shape.MoveCircle = function(node, x, y)
+{
+  SetAttr(node, {"cx": x, "cy": y});
 }
 
 
