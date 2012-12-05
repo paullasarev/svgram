@@ -11,13 +11,6 @@ function Line(context, x1, y1, x2, y2) {
   x2 = parseInt(x2);
   y2 = parseInt(y2);
   
-  // width = parseInt(width ? width : context.width);
-  // height = parseInt(height ? height : context.height);
-  // var left = Math.round(x - width / 2);
-  // var top = Math.round(y - height / 2);  
-  // var right = left + width;
-  // var bottom = top + height;
-  
   var id = Shape.NewID();
   var group = Shape.AddGroup(context, id, this.shape);
   var node = AddTagNS(group, context.svgNS, "line", {
