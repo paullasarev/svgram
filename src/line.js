@@ -53,10 +53,6 @@ Line.prototype.SetPosition = function() {
   SetAttr(this.node, {"x": this.left, "y": this.top, "width": this.width, "height": this.height});
   SetAttr(this.spec, {"x": this.left, "y": this.top, "width": this.width, "height": this.height});
   
-  Shape.MoveRect(this.resizers[0], this.right, this.bottom);
-  
-  Shape.MoveCircle(this.knots[0], this.left, this.y);
-  Shape.MoveCircle(this.knots[1], this.right, this.y);
-  Shape.MoveCircle(this.knots[2], this.x, this.top);
-  Shape.MoveCircle(this.knots[3], this.x, this.bottom);
+  Shape.MoveRect(this.resizers[0], this.left, this.toop);
+  Shape.MoveRect(this.resizers[1], this.right, this.bottom);
 }
