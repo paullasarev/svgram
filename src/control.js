@@ -87,7 +87,7 @@ function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
     PaperMoveShape(pos_x, pos_y, isEnd);
   }
   else if (mode == "dragSize") {
-    PaperResizeShape(pos_x, pos_y, dragObject, connectObject);
+    PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd);
   }
 }
 

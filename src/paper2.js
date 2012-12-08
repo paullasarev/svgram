@@ -184,7 +184,8 @@ function PaperMoveShape(pos_x, pos_y, isEnd)
   DragY = pos_y;
 }
 
-function ConnectResizerToKnot(delta, resizer, knot) {
+function ConnectResizerToKnot(delta, resizer, knot) 
+{
   if (resizer && resizer.tagName == "rect" && knot && knot.tagName == "circle") {
     var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
     var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
@@ -196,12 +197,25 @@ function ConnectResizerToKnot(delta, resizer, knot) {
   return delta;
 }
 
-function PaperResizeShape(pos_x, pos_y, dragObject, connectObject) {
+function SnapResizerToGrid(resizer, delta) {
+  var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
+  var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
+  var gridX = SnapPosToGrid(x, delta.x);
+  var gridY = SnapPosToGrid(y, delta.y);
+  return {x: gridX - x, y: gridY - y};
+}
+
+function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd) {
   var delta = {x : pos_x - DragX, y : pos_y - DragY};
 
+  var shape = Context.LoadByGroup(SelectedGroup);
+
+  if (isEnd) {
+    delta = SnapResizerToGrid(dragObject, delta);
+  }
+  
   delta = ConnectResizerToKnot(delta, dragObject, connectObject);
   
-  var shape = Context.LoadByGroup(SelectedGroup);
   shape.Resize(delta.x, delta.y, dragObject);
  
   DragX = pos_x;
