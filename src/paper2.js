@@ -30,7 +30,7 @@ function CreateContext(root_shapes, root_lines) {
   
   //shape defaults
   context.width = 200;
-  context.height = 100;
+  context.height = 120;
   context.stroke_color = "rgb(51, 51, 204)";
   context.stroke_width = 2;
   context.fill = "none";
