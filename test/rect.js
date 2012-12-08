@@ -1,82 +1,90 @@
 // $Author$
 // $Id$
 
+describe("rect shape", function() {
+  beforeEach(function() {
+    InitTestShapeContext();
+    this.addMatchers(ShapeMatchers);
+  });
+  afterEach(function() {
+    ClearTestShapeContext();
+  });
 
-test("create rect", function() {
+it("should create with required coords", function() {
   var rect = new Rect(TestContext, 100, 200, 160, 120);
-  notEqual(rect, null);
+  expect(rect).not.toBeNull();
   
-  equal(rect.x, 100);
-  equal(rect.y, 200);
-  equal(rect.left, 100 - 160/2);
-  equal(rect.right, 100 + 160/2);
-  equal(rect.top, 200 - 120/2);
-  equal(rect.bottom, 200 + 120/2);
-  equal("rect", rect.node.tagName);
-  equal(rect.node.getAttribute("x"), rect.left);
-  equal(rect.node.getAttribute("y"), rect.top);
-  ok(rect.id);
+  expect(rect.x).toBe(100);
+  expect(rect.y).toBe(200);
+  expect(rect.left).toBe(100 - 160/2);
+  expect(rect.right).toBe(100 + 160/2);
+  expect(rect.top).toBe(200 - 120/2);
+  expect(rect.bottom).toBe(200 + 120/2);
+  expect("rect").toBe(rect.node.tagName);
+  expect(rect.node.getAttribute("x")).toBeString(rect.left);
+  expect(rect.node.getAttribute("y")).toBeString(rect.top);
+  expect(rect.id).toBeDefined();
 
-  notEqual(rect.group, null);
-  equal(rect.group.getAttribute("id"), rect.id);
-  equal(rect.group.getAttribute("shape"), "rect");
+  expect(rect.group).not.toBe(null);
+  expect(rect.group.getAttribute("id")).toBe(rect.id);
+  expect(rect.group.getAttribute("shape")).toBe("rect");
 });
 
-test("rect shape", function() {
+it("should be instance of Shape", function() {
   var rect = new Rect(TestContext, 100, 200);
-  equal(rect.x, 100);
-  equal(rect.y, 200);
-  equal(rect.node, rect.node);
-  equal(rect.id, rect.id);
-  equal(rect.shape, "rect");
+  expect(rect.x).toBe(100);
+  expect(rect.y).toBe(200);
+  expect(rect.node).toBe(rect.node);
+  expect(rect.id).toBe(rect.id);
+  expect(rect.shape).toBe("rect");
   
-  equal(rect.Attr("x"), rect.left);
+  expect(rect.Attr("x")).toBeString(rect.left);
   rect.Attr("x", 200);
-  equal(rect.Attr("x"), 200);
+  expect(rect.Attr("x")).toBeString(200);
 
-  ok(rect instanceof Rect); 
-  ok(rect instanceof Shape); 
+  expect(rect instanceof Rect).toBeTruthy();
+  expect(rect instanceof Shape).toBeTruthy();
 });
 
-test("load rect by ID", function() {
+it("should load by ID", function() {
   var rect = new Rect(TestContext, 100, 200);
   var id = rect.id;
   
   var rect2 = TestContext.LoadById(id);
-  notEqual(rect2, rect);
-  ok(rect2 instanceof Rect); 
-  ok(rect2 instanceof Shape); 
+  expect(rect2).not.toBe(rect);
+  expect(rect2 instanceof Rect).toBeTruthy();
+  expect(rect2 instanceof Shape).toBeTruthy(); 
   
-  equal(rect2.id, rect.id);
-  equal(rect2.x, rect.x);
-  equal(rect2.y, rect.y);
-  equal(rect2.shape, "rect");
+  expect(rect2.id).toBe(rect.id);
+  expect(rect2.x).toBe(rect.x);
+  expect(rect2.y).toBe(rect.y);
+  expect(rect2.shape).toBe("rect");
 
-  equal(rect.node.tagName, "rect");
-  equal(rect2.node.tagName, "rect");
-  notEqual(rect2.group, null);
+  expect(rect.node.tagName).toBe("rect");
+  expect(rect2.node.tagName).toBe("rect");
+  expect(rect2.group).not.toBeNull();
 });
 
-test("load rect by group", function() {
+it("should load by group", function() {
   var rect = new Rect(TestContext, 100, 200);
   var group = rect.group;
   
   var rect2 = TestContext.LoadByGroup(group);
-  notEqual(rect2, rect);
-  ok(rect2 instanceof Rect); 
+  expect(rect2).not.toBe(rect);
+  expect(rect2 instanceof Rect).toBeTruthy();
   ok(rect2 instanceof Shape); 
   
-  equal(rect2.id, rect.id);
-  equal(rect2.x, rect.x);
-  equal(rect2.y, rect.y);
-  equal(rect2.shape, "rect");
+  expect(rect2.id).toBe(rect.id);
+  expect(rect2.x).toBe(rect.x);
+  expect(rect2.y).toBe(rect.y);
+  expect(rect2.shape).toBe("rect");
 
   notEqual(rect.Attr("tagName"), "rect");
   notEqual(rect2.Attr("tagName"), "rect");
   notEqual(rect2.group, null);
 });
 
-test("width and height", function() {
+it("should adjust width and height", function() {
   equal(TestContext.width, 160);
   equal(TestContext.height, 100);
 
@@ -95,7 +103,7 @@ test("width and height", function() {
   equal(rect.bottom, 200 + 600/2);
 });
 
-test("rect properties", function() {
+it("constructor should set stroke and fill attributes from ShapeContext", function() {
   equal(TestContext.stroke_color, "black");
   equal(TestContext.stroke_width, 2);
   equal(TestContext.fill, "none");
@@ -111,7 +119,7 @@ test("rect properties", function() {
   equal(rect.Attr("fill"), "red");
 });
 
-test("rect spec", function() {
+it("should have 'spec' node", function() {
   equal(TestContext.spec_opacity_initial, 0);
   equal(TestContext.spec_opacity, 0.15);
   TestContext.spec_opacity_initial = 0.33;
@@ -122,20 +130,20 @@ test("rect spec", function() {
   var spec = rect.spec;
   equal(spec.tagName, "rect");
   
-  equal(spec.getAttribute("x"), rect.left);
-  equal(spec.getAttribute("y"), rect.top);
-  equal(spec.getAttribute("width"), rect.width);
-  equal(spec.getAttribute("height"), rect.height);
+  sequal(spec.getAttribute("x"), rect.left);
+  sequal(spec.getAttribute("y"), rect.top);
+  sequal(spec.getAttribute("width"), rect.width);
+  sequal(spec.getAttribute("height"), rect.height);
 
-  equal(spec.getAttribute("fill"), TestContext.stroke_color);
+  sequal(spec.getAttribute("fill"), TestContext.stroke_color);
   equal(spec.getAttribute("opacity"), "0.33");
-  equal(spec.getAttribute("stroke"), TestContext.stroke_color);
-  equal(spec.getAttribute("stroke-width"), TestContext.stroke_width);
+  sequal(spec.getAttribute("stroke"), TestContext.stroke_color);
+  sequal(spec.getAttribute("stroke-width"), TestContext.stroke_width);
 
   equal(spec.getAttribute("svgram"), "spec");
 });
 
-test("spec script events", function() {
+it("spec node should handle script events", function() {
   equal(MapSize(TestContext.spec_event), 0);
 
   TestContext.spec_event.onmousedown = "SpecMouseDown";
@@ -149,7 +157,7 @@ test("spec script events", function() {
   equal(rect.spec.getAttribute("onmousemove"), "SpecMouseMove");
 });
 
-test("spec function events", function() {
+it("spec node should handle function events", function() {
   TestContext.spec_event.onmousedown = function(evt) {TestEvtCounter++;};
   TestContext.spec_event.onmouseup = function(evt) {TestEvtCounter++;};
   TestContext.spec_event.onmousemove = function(evt) {TestEvtCounter++;};
@@ -166,7 +174,7 @@ test("spec function events", function() {
   testEvent(rect.spec, "contextmenu", 0);
 });
 
-test("rect resizer", function() {
+it("shoud have 'resizer' node", function() {
   equal(TestContext.resizer_size, 8);
   equal(TestContext.resizer_color, "blue");
   var rsize = 10;
@@ -181,21 +189,21 @@ test("rect resizer", function() {
 
   equal(resizer.tagName, "rect");
   
-  equal(resizer.getAttribute("x"), rect.right - rsize / 2);
-  equal(resizer.getAttribute("y"), rect.bottom - rsize / 2);
-  equal(resizer.getAttribute("width"), rsize);
-  equal(resizer.getAttribute("height"), rsize);
+  sequal(resizer.getAttribute("x"), rect.right - rsize / 2);
+  sequal(resizer.getAttribute("y"), rect.bottom - rsize / 2);
+  sequal(resizer.getAttribute("width"), rsize);
+  sequal(resizer.getAttribute("height"), rsize);
 
-  equal(resizer.getAttribute("fill"), TestContext.resizer_color);
-  equal(resizer.getAttribute("opacity"), TestContext.spec_opacity);
-  equal(resizer.getAttribute("stroke"), TestContext.resizer_color);
-  equal(resizer.getAttribute("stroke-width"), TestContext.stroke_width);
+  sequal(resizer.getAttribute("fill"), TestContext.resizer_color);
+  sequal(resizer.getAttribute("opacity"), TestContext.spec_opacity);
+  sequal(resizer.getAttribute("stroke"), TestContext.resizer_color);
+  sequal(resizer.getAttribute("stroke-width"), TestContext.stroke_width);
   
   equal(resizer.getAttribute("id").length, 15);
   equal(resizer.getAttribute("svgram"), "resizer");
 });
 
-test("resizer script events", function() {
+it("resizer node should handle script events", function() {
   equal(MapSize(TestContext.resizer_event), 0);
 
   TestContext.resizer_event.onmousedown = "ResizerMouseDown";
@@ -210,7 +218,7 @@ test("resizer script events", function() {
   equal(resizer.getAttribute("onmouseup"), "ResizerMouseUp");
 });
 
-test("resizer function events", function() {
+it("resizer node should handle function events", function() {
   TestContext.resizer_event.onmousedown = function(evt) {TestEvtCounter++;};
   TestContext.resizer_event.onmousemove = function(evt) {TestEvtCounter++;};
   TestContext.resizer_event.onmouseup = function(evt) {TestEvtCounter++;};
@@ -228,7 +236,7 @@ test("resizer function events", function() {
   testEvent(resizer, "contextmenu", 0);
 });
 
-test("rect knots", function() {
+it("shold have 'knots' nodes", function() {
   equal(TestContext.knot_size, 8);
   equal(TestContext.knot_color, "blue");
   var rsize = 10;
@@ -245,7 +253,7 @@ test("rect knots", function() {
   checkKnot(rect.knots[3], rect.x, rect.bottom, rsize);
 });
 
-test("knot script events", function() {
+it("knot node should handle script events", function() {
   equal(MapSize(TestContext.knot_event), 0);
 
   TestContext.knot_event.onmousemove = "KnotMouseMove";
@@ -259,7 +267,7 @@ test("knot script events", function() {
   checkKnotScriptEvent(rect.knots[3]);
 });
 
-test("knot function events", function() {
+it("knot node should handle function events", function() {
   TestContext.knot_event.onmousemove = function(evt) {TestEvtCounter++;};
   TestContext.knot_event.onmouseup = function(evt) {TestEvtCounter++;};
 
@@ -271,7 +279,7 @@ test("knot function events", function() {
   checkKnotFunctionEvent(rect.knots[3]);
 });
 
-test("rect move", function() {
+it("move should set coordinates", function() {
   var x = 300;
   var y = 400;
   var width = 200;
@@ -293,7 +301,7 @@ test("rect move", function() {
   checkRectPosition(rect, new_x, new_y, width, height, left, top, right, bottom);
 });
 
-test("rect resize", function() {
+it("resize should set coordinates", function() {
   var coords = { x: 300, y: 400, width: 200, height: 100, };
   var rect = new Rect(TestContext, coords.x, coords.y, coords.width, coords.height);
   
@@ -307,7 +315,7 @@ test("rect resize", function() {
   checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
 });
 
-test("rect resize 1px", function() {
+it("resize for 1px should work correct", function() {
   var coords = { x: 300, y: 400, width: 200, height: 100, };
   var rect = new Rect(TestContext, coords.x, coords.y, coords.width, coords.height);
 
@@ -321,3 +329,4 @@ test("rect resize 1px", function() {
   checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
 });
 
+});

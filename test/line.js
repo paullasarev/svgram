@@ -1,7 +1,16 @@
 // $Author$
 // $Id$
 
-test("create line", function() {
+describe("line shape", function() {
+  beforeEach(function() {
+    InitTestShapeContext();
+    this.addMatchers(ShapeMatchers);
+  });
+  afterEach(function() {
+    ClearTestShapeContext();
+  });
+
+it("new should init attributes", function() {
   var shape = new Line(TestContext, 100, 200, 300, 400);
   notEqual(shape, null);
   
@@ -12,10 +21,10 @@ test("create line", function() {
   equal(shape.top, 200);
   equal(shape.bottom, 400);
   equal("line", shape.node.tagName);
-  equal(shape.node.getAttribute("x1"), shape.left);
-  equal(shape.node.getAttribute("y1"), shape.top);
-  equal(shape.node.getAttribute("x2"), shape.right);
-  equal(shape.node.getAttribute("y2"), shape.bottom);
+  sequal(shape.node.getAttribute("x1"), shape.left);
+  sequal(shape.node.getAttribute("y1"), shape.top);
+  sequal(shape.node.getAttribute("x2"), shape.right);
+  sequal(shape.node.getAttribute("y2"), shape.bottom);
   ok(shape.id);
 
   notEqual(shape.group, null);
@@ -26,7 +35,7 @@ test("create line", function() {
   ok(shape instanceof Shape); 
 });
 
-test("load line by ID", function() {
+it("should load by ID", function() {
   var shape = new Line(TestContext, 100, 200, 300, 400);
   var id = shape.id;
   
@@ -43,4 +52,6 @@ test("load line by ID", function() {
   equal(shape.node.tagName, "line");
   equal(shape2.node.tagName, "line");
   notEqual(shape2.group, null);
+});
+
 });

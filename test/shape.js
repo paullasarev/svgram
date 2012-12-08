@@ -4,20 +4,6 @@
 var TestContext;
 var TestEvtCounter;
 
-module("shapes", {
-  setup: function() {
-    TestContext = new ShapeContext;
-    TestContext.Register(Rect);
-    TestContext.Register(Line);
-    TestContext.root = TestMakeSvg(800, 600);
-    
-    TestEvtCounter = 0;
-  },
-  teardown: function() {
-    TextContext = null;
-  }
-});
-
 function MapSize(map)
 {
   var count = 0;
@@ -26,10 +12,30 @@ function MapSize(map)
   return count;
 }
 
+function equal(actual, expected) {
+  expect(actual).toBe(expected);
+}
+
+function sequal(actual, expected) {
+  expect(actual).toBe(String(expected));
+}
+
+function notEqual(actual, expected) {
+  expect(actual).not.toBe(expected);
+}
+
+function ok(actual) {
+  expect(actual).toBeTruthy();
+}
+
 function testEvent(node, eventType, requred) {
   TestEvtCounter = 0;
   var event = document.createEvent ("MouseEvents");
-  event.initMouseEvent(eventType, true, false);
+  event.initMouseEvent(eventType, true, false,
+        window,
+        1, 0, 0,
+        50, 50,
+        false, false, false, false, 0, null);
   node.dispatchEvent(event);
   equal(TestEvtCounter, requred);
 }
@@ -37,14 +43,14 @@ function testEvent(node, eventType, requred) {
 function checkKnot(knot, cx, cy, rsize) {
   equal(knot.tagName, "circle");
   
-  equal(knot.getAttribute("cx"), cx);
-  equal(knot.getAttribute("cy"), cy);
-  equal(knot.getAttribute("r"), rsize / 2);
+  sequal(knot.getAttribute("cx"), cx);
+  sequal(knot.getAttribute("cy"), cy);
+  sequal(knot.getAttribute("r"), rsize / 2);
 
-  equal(knot.getAttribute("fill"), TestContext.knot_color);
-  equal(knot.getAttribute("opacity"), TestContext.spec_opacity);
-  equal(knot.getAttribute("stroke"), TestContext.knot_color);
-  equal(knot.getAttribute("stroke-width"), TestContext.stroke_width);
+  sequal(knot.getAttribute("fill"), TestContext.knot_color);
+  sequal(knot.getAttribute("opacity"), TestContext.spec_opacity);
+  sequal(knot.getAttribute("stroke"), TestContext.knot_color);
+  sequal(knot.getAttribute("stroke-width"), TestContext.stroke_width);
   
   equal(knot.getAttribute("id").length, 15);
   equal(knot.getAttribute("svgram"), "knot");
@@ -67,16 +73,16 @@ function checkKnotFunctionEvent(knot)
 }
 
 function checkRect(node, left, top, width, height) {
-  equal(node.getAttribute("x"), left);
-  equal(node.getAttribute("y"), top);
-  equal(node.getAttribute("width"), width);
-  equal(node.getAttribute("height"), height);
+  sequal(node.getAttribute("x"), left);
+  sequal(node.getAttribute("y"), top);
+  sequal(node.getAttribute("width"), width);
+  sequal(node.getAttribute("height"), height);
 }
 
 function checkCircle(node, cx, cy, radius) {
-  equal(node.getAttribute("cx"), cx);
-  equal(node.getAttribute("cy"), cy);
-  equal(node.getAttribute("r"), radius);
+  sequal(node.getAttribute("cx"), cx);
+  sequal(node.getAttribute("cy"), cy);
+  sequal(node.getAttribute("r"), radius);
 }
 
 function checkShape(shape, x, y, width, height, left, top, right, bottom) {
@@ -113,15 +119,52 @@ function calcResize(coords, dx, dy) {
   coords.bottom = coords.top + coords.height;
 }
 
+function clearNode(node) {
+  while (node.childNodes.length >= 1)
+  {
+    node.removeChild(node.firstChild);
+  }
+}
+
 function TestMakeSvg(width, height)
 {
   var fixture = document.getElementById("qunit-fixture");
+  clearNode(fixture);
   var svg = AddTagNS(fixture, svgNS, "svg", {id:"diagram", "version":"1.1" , "width": width, "height": height, draggable:"false"});
   SetAttr(svg, {"xmlns:xlink": xlinkNS, "xmlns": svgNS});
   return svg;
 }
 
-test("create svg", function() {
-  notEqual(TestContext.root, null);
-});
+function InitTestShapeContext() {
+    TestContext = new ShapeContext;
+    
+    TestContext.Register(Rect);
+    TestContext.Register(Line);
+    TestContext.root = TestMakeSvg(800, 600);
+    
+    TestEvtCounter = 0;
+}
 
+function ClearTestShapeContext() {
+    TextContext = null;
+}
+
+var ShapeMatchers = {
+  toBeString: function(expected) {
+    return String(this.actual) == expected;
+  },
+};
+
+describe("shape context", function() {
+  beforeEach(function() {
+    InitTestShapeContext();
+  });
+  afterEach(function() {
+    ClearTestShapeContext();
+  });
+
+  it("should create svg", function() {
+    expect(TestContext.root).not.toBeNull();
+  });
+
+});
