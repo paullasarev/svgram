@@ -45,10 +45,10 @@ function CreateContext(root_shapes, root_lines) {
   context.resizer_color = "blue";
 
   //knot defaults
-  context.knot_size = 10;
+  context.knot_size = 20;
   context.knot_color = "blue";
   context.knot_stroke_color = "GhostWhite";
-  context.knot_stroke_width = 20;
+  context.knot_stroke_width = 10;
 
   //events
   context.spec_event.onmousedown = "SpecMouseDown(evt)";
