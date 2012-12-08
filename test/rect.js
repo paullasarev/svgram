@@ -138,7 +138,7 @@ it("should have 'spec' node", function() {
   sequal(spec.getAttribute("fill"), TestContext.stroke_color);
   equal(spec.getAttribute("opacity"), "0.33");
   sequal(spec.getAttribute("stroke"), TestContext.stroke_color);
-  sequal(spec.getAttribute("stroke-width"), TestContext.stroke_width);
+  sequal(spec.getAttribute("stroke-width"), TestContext.spec_stroke_width);
 
   equal(spec.getAttribute("svgram"), "spec");
 });
@@ -197,7 +197,7 @@ it("shoud have 'resizer' node", function() {
   sequal(resizer.getAttribute("fill"), TestContext.resizer_color);
   sequal(resizer.getAttribute("opacity"), TestContext.spec_opacity);
   sequal(resizer.getAttribute("stroke"), TestContext.resizer_color);
-  sequal(resizer.getAttribute("stroke-width"), TestContext.stroke_width);
+  sequal(resizer.getAttribute("stroke-width"), TestContext.spec_stroke_width);
   
   equal(resizer.getAttribute("id").length, 15);
   equal(resizer.getAttribute("svgram"), "resizer");
@@ -308,7 +308,7 @@ it("resize should set coordinates", function() {
   var dx = 20;
   var dy = 10;
   
-  calcResize(coords, dx, dy);
+  calcRectResize(coords, dx, dy);
   
   rect.Resize(dx, dy);
  
@@ -322,7 +322,7 @@ it("resize for 1px should work correct", function() {
   var dx = 1;
   var dy = 1;
 
-  calcResize(coords, dx, dy);
+  calcRectResize(coords, dx, dy);
   
   rect.Resize(dx, dy);
  

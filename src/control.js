@@ -28,33 +28,27 @@ function ControlDragToolStart(toolId)
 {
   ControlMode = "dragTool";
   ControlToolId = toolId;
-  var diagram = document.getElementById("diagram");
-  SetAttr(diagram, {cursor: "move"});
+  PaperSetCursor("move");
 }
 
 function ControlDragShapeStart() {
   ControlMode = "dragShape";
-  var diagram = document.getElementById("diagram");
-  SetAttr(diagram, { cursor: "move" });
+  PaperSetCursor("move");
 }
 
 function ControlDragSizeStart() {
   ControlMode = "dragSize";
-  var diagram = document.getElementById("diagram");
-  SetAttr(diagram, { cursor: "se-resize" });
+  PaperSetCursor("se-resize");
 }
 
 function ControlDragAbort()
 {
   ControlMode = "none";
-
-  var diagram = document.getElementById("diagram");
-  SetAttr(diagram, { cursor: "default" });
+  PaperSetCursor("default");
 }
 
-function ControlDragEnd(pos_x, pos_y, target)
+function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
 {
-  //alert(" pos_x=" + pos_x + "pos_y=" + pos_y);
   if (ControlMode == "none")
     return;
 
@@ -76,15 +70,13 @@ function ControlDragEnd(pos_x, pos_y, target)
     }
   }
   
-  ControlDragMove(pos_x, pos_y, target);
+  ControlDragMove(pos_x, pos_y, dragObject, connectObject, true);
 
-  var diagram = document.getElementById("diagram");
-  SetAttr(diagram, {cursor: "default"});
-  
   ControlMode = "none";
+  PaperSetCursor("default");
 }
 
-function ControlDragMove(pos_x, pos_y, target)
+function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
 {
   if (ControlMode == "none")
     return;
@@ -92,10 +84,10 @@ function ControlDragMove(pos_x, pos_y, target)
   var mode = ControlMode;
 
   if (mode == "dragShape") {
-    PaperMoveShape(pos_x, pos_y);
+    PaperMoveShape(pos_x, pos_y, isEnd);
   }
   else if (mode == "dragSize") {
-    PaperResizeShape(pos_x, pos_y, target);
+    PaperResizeShape(pos_x, pos_y, dragObject, connectObject);
   }
 }
 

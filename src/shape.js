@@ -6,6 +6,9 @@ function ShapeContext()
 {
   this.svgNS = "http://www.w3.org/2000/svg";
   
+  this.root_shapes = null;
+  this.root_lines = null;
+  
   //shape defaults
   this.width = 160;
   this.height = 100;
@@ -17,6 +20,7 @@ function ShapeContext()
   this.spec_opacity_initial = 0;
   this.spec_opacity = 0.15;
   this.spec_event = {};
+  this.spec_stroke_width = 8;
 
   //resizer defaults
   this.resizer_size = 8;
@@ -26,6 +30,8 @@ function ShapeContext()
   //knot defaults
   this.knot_size = 8;
   this.knot_color = "blue";
+  this.knot_stroke_color = "blue";
+  this.knot_stroke_width = 8;
   this.knot_event = {};
   
   this.Classes = {
@@ -90,7 +96,7 @@ Shape.prototype = {
 
     this.SetPosition();
   },
-  Resize: function(dx, dy) {
+  Resize: function(dx, dy, resizer) {
     this.left -= dx;
     this.top -= dy;
     this.width += dx * 2;
@@ -106,8 +112,8 @@ Shape.NewID = function() {
   return Math.uuid(15);
 };
 
-Shape.AddGroup = function(context, id, shape) {
-  return AddTagNS(context.root, context.svgNS, "g", { "id": id, "shape": shape } );
+Shape.AddGroup = function(context, root, id, shape) {
+  return AddTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
 };
 
 Shape.AddEventHandlers = function(node, eventMap) {
@@ -126,7 +132,7 @@ Shape.AddSpecAttr = function(context, spec)
     "fill": context.stroke_color,
     "opacity": context.spec_opacity_initial,
     "stroke": context.stroke_color,
-    "stroke-width": context.stroke_width,
+    "stroke-width": context.spec_stroke_width,
     "svgram": "spec",
   });
   
@@ -143,7 +149,7 @@ Shape.AddResizer = function(context, group, pos_x, pos_y)
     "opacity": context.spec_opacity,
     "fill": context.resizer_color,
     "stroke": context.resizer_color,
-    "stroke-width": context.stroke_width,
+    "stroke-width": context.spec_stroke_width,
     "id": Shape.NewID(),
     "svgram": "resizer",
   });
@@ -161,8 +167,8 @@ Shape.AddKnot = function(context, group, pos_x, pos_y)
     "r": context.knot_size / 2,
     "opacity": context.spec_opacity,
     "fill": context.knot_color,
-    "stroke": context.knot_color, 
-    "stroke-width": context.stroke_width,
+    "stroke": context.knot_stroke_color, 
+    "stroke-width": context.knot_stroke_width,
     "id": Shape.NewID(),
     "svgram": "knot",
   });

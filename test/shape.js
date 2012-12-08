@@ -49,8 +49,8 @@ function checkKnot(knot, cx, cy, rsize) {
 
   sequal(knot.getAttribute("fill"), TestContext.knot_color);
   sequal(knot.getAttribute("opacity"), TestContext.spec_opacity);
-  sequal(knot.getAttribute("stroke"), TestContext.knot_color);
-  sequal(knot.getAttribute("stroke-width"), TestContext.stroke_width);
+  sequal(knot.getAttribute("stroke"), TestContext.knot_stroke_color);
+  sequal(knot.getAttribute("stroke-width"), TestContext.knot_stroke_width);
   
   equal(knot.getAttribute("id").length, 15);
   equal(knot.getAttribute("svgram"), "knot");
@@ -85,6 +85,13 @@ function checkCircle(node, cx, cy, radius) {
   sequal(node.getAttribute("r"), radius);
 }
 
+function checkLine(node, x, y, x1, y1) {
+  sequal(node.getAttribute("x1"), x);
+  sequal(node.getAttribute("y1"), y);
+  sequal(node.getAttribute("x2"), x1);
+  sequal(node.getAttribute("y2"), y1);
+}
+
 function checkShape(shape, x, y, width, height, left, top, right, bottom) {
   equal(shape.x, x);
   equal(shape.y, y);
@@ -110,7 +117,21 @@ function checkRectPosition(rect, x, y, width, height, left, top, right, bottom) 
   checkCircle(rect.knots[2], x, top, rsize2);
   checkCircle(rect.knots[3], x, bottom, rsize2);
 }
-function calcResize(coords, dx, dy) {
+
+function checkLinePosition(rect, x, y, x1, y1) {
+  var width = x1 - x;
+  var height = y1 -y;
+  checkShape(rect, x + width/2, y + height/2, width, height, x, y, x1, y1);
+  checkLine(rect.node, x, y, x1, y1);
+  checkLine(rect.spec, x, y, x1, y1);
+
+  var rsize = TestContext.resizer_size;
+  var rsize2 = rsize/2;
+  checkRect(rect.resizers[0], x - rsize2, y - rsize2, rsize, rsize);
+  checkRect(rect.resizers[1], x1 - rsize2, y1 - rsize2, rsize, rsize);
+}
+
+function calcRectResize(coords, dx, dy) {
   coords.width += dx * 2;
   coords.height += dy * 2;
   coords.left = coords.x - coords.width / 2;
@@ -140,7 +161,8 @@ function InitTestShapeContext() {
     
     TestContext.Register(Rect);
     TestContext.Register(Line);
-    TestContext.root = TestMakeSvg(800, 600);
+    TestContext.root_shapes = TestMakeSvg(800, 600);
+    TestContext.root_lines = TestContext.root_shapes;
     
     TestEvtCounter = 0;
 }

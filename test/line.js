@@ -54,4 +54,57 @@ it("should load by ID", function() {
   notEqual(shape2.group, null);
 });
 
+it("move should set coordinates", function() {
+  var x = 100,  y = 200;
+  var x1 = 300, y1 = 400;
+  
+  var line = new Line(TestContext, x, y, x1, y1);
+  
+  var dx = 20, dy = 10;
+  
+  line.Move(dx, dy);
+  
+  var new_x = x + dx;
+  var new_y = y + dy;
+  var new_x1 = x1 + dx;
+  var new_y1 = y1 + dy;
+  
+  checkLinePosition(line, new_x, new_y, new_x1, new_y1);
+});
+
+
+it("resize by first resizer should move x1,y1", function() {
+  var x = 100,  y = 200;
+  var x1 = 300, y1 = 400;
+  var line = new Line(TestContext, x, y, x1, y1);
+  
+  var dx = 20, dy = 10;
+  
+  line.Resize(dx, dy, line.resizers[0]);
+  
+  var new_x = x + dx;
+  var new_y = y + dy;
+  var new_x1 = x1;
+  var new_y1 = y1;
+  
+  checkLinePosition(line, new_x, new_y, new_x1, new_y1);
+});
+
+it("resize by second resizer should move x2,y2", function() {
+  var x = 100,  y = 200;
+  var x1 = 300, y1 = 400;
+  var line = new Line(TestContext, x, y, x1, y1);
+  
+  var dx = 20, dy = 10;
+  
+  line.Resize(dx, dy, line.resizers[1]);
+  
+  var new_x = x;
+  var new_y = y;
+  var new_x1 = x1 + dx;
+  var new_y1 = y1 + dy;
+  
+  checkLinePosition(line, new_x, new_y, new_x1, new_y1);
+});
+
 });
