@@ -69,7 +69,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
 {
   var canvas = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas"});
   PaperOffsetX = offset_x;
-  PaperOffsetE = offset_y;
+  PaperOffsetY = offset_y;
   PaperWidth = width;
   PaperHeight = height;
 
@@ -83,7 +83,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   for(var x = GridStep + stroke ; x < width ; x += GridStep)
   {
     AddTagNS(grid, svgNS, "line", {x1: offset_x + x, y1: offset_y + stroke, x2:offset_x + x, y2: offset_y + height - stroke,
-      "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + GridStep});
+      "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + (GridStep - 1)});
   }
 
   var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
@@ -133,13 +133,22 @@ function PaperSetCursor(cursor){
   SetAttr(diagram, {"cursor" : cursor});
 }
 
+function SnapPosToGrid(pos, delta) {
+  return Math.round((pos + delta) / GridStep) * GridStep;
+}
+
 function PaperCreateRect(pos_x, pos_y)
 {
+  pos_x = SnapPosToGrid(pos_x, 0);
+  pos_y = SnapPosToGrid(pos_y, 0);
   var rect = new Rect(Context, pos_x, pos_y);
 }
 
 function PaperCreateLine(pos_x, pos_y)
 {
+  pos_x = SnapPosToGrid(pos_x, 0);
+  pos_y = SnapPosToGrid(pos_y, 0);
+  
   var length = Context.line_length;
   var left = pos_x;
   var top = pos_y - length / 2;
@@ -154,8 +163,8 @@ function PaperCreateText(pos_x, pos_y)
 }
 
 function SnapShapeToGrid(shape, delta) {
-  var gridX = Math.round((shape.x + delta.x) / GridStep) * GridStep;
-  var gridY = Math.round((shape.y + delta.y) / GridStep) * GridStep;
+  var gridX = SnapPosToGrid(shape.x, delta.x);
+  var gridY = SnapPosToGrid(shape.y, delta.y);
   return {x: gridX - shape.x, y: gridY - shape.y};
 }
 
@@ -175,7 +184,7 @@ function PaperMoveShape(pos_x, pos_y, isEnd)
   DragY = pos_y;
 }
 
-function SnapResizerToKnot(delta, resizer, knot) {
+function ConnectResizerToKnot(delta, resizer, knot) {
   if (resizer && resizer.tagName == "rect" && knot && knot.tagName == "circle") {
     var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
     var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
@@ -190,7 +199,7 @@ function SnapResizerToKnot(delta, resizer, knot) {
 function PaperResizeShape(pos_x, pos_y, dragObject, connectObject) {
   var delta = {x : pos_x - DragX, y : pos_y - DragY};
 
-  delta = SnapResizerToKnot(delta, dragObject, connectObject);
+  delta = ConnectResizerToKnot(delta, dragObject, connectObject);
   
   var shape = Context.LoadByGroup(SelectedGroup);
   shape.Resize(delta.x, delta.y, dragObject);
