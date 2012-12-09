@@ -172,7 +172,6 @@ Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
     "fill": context.knot_color,
     "stroke": context.knot_stroke_color, 
     "stroke-width": context.knot_stroke_width,
-    "id": Shape.NewID(),
     "svgram": "knot",
     "knot-dir": knot_dir,
     "links": "",

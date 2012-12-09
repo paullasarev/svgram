@@ -52,7 +52,6 @@ function checkKnot(knot, cx, cy, rsize) {
   sequal(knot.getAttribute("stroke"), TestContext.knot_stroke_color);
   sequal(knot.getAttribute("stroke-width"), TestContext.knot_stroke_width);
   
-  equal(knot.getAttribute("id").length, 15);
   equal(knot.getAttribute("svgram"), "knot");
 }
 

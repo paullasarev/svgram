@@ -28,11 +28,11 @@ function CreateContext(root_shapes, root_lines, paper_color) {
 
   context.paper_color = paper_color;
 
-  context.line_length = 60;
+  context.line_length = 80;
   
   //shape defaults
-  context.width = 200;
-  context.height = 120;
+  context.width = 160;
+  context.height = 80;
   context.stroke_color = "rgb(51, 51, 204)";
   context.stroke_width = 2;
   context.fill = "none";
