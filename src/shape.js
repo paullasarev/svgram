@@ -54,6 +54,8 @@ function ShapeContext()
   
   this.LoadById = function(id) {
     var group = document.getElementById(id);
+    if (!group)
+      return null;
     return this.LoadByGroup(group);
   };
 }
@@ -86,7 +88,7 @@ Shape.prototype = {
     else
       return this.node.getAttribute(name);
   },
-  Move: function(dx, dy) {
+  Move: function(context, dx, dy) {
     this.x += dx;
     this.y += dy;
     this.left += dx;
@@ -94,9 +96,9 @@ Shape.prototype = {
     this.right += dx;
     this.bottom += dy;
 
-    this.SetPosition();
+    this.SetPosition(context);
   },
-  Resize: function(dx, dy, resizer) {
+  Resize: function(context, dx, dy, resizer) {
     this.left -= dx;
     this.top -= dy;
     this.width += dx * 2;
@@ -104,7 +106,7 @@ Shape.prototype = {
     this.right = this.left + this.width;
     this.bottom = this.top + this.height;
 
-    this.SetPosition();
+    this.SetPosition(context);
   },
 };
 
@@ -137,9 +139,9 @@ Shape.AddSpecAttr = function(context, spec)
   });
   
   Shape.AddEventHandlers(spec, context.spec_event);
-}
+};
 
-Shape.AddResizer = function(context, group, pos_x, pos_y)
+Shape.AddResizer = function(context, group, pos_x, pos_y, resizer_no)
 {
   var node = AddTagNS(group, context.svgNS, "rect", {
     "x": Math.round(pos_x - context.resizer_size / 2),
@@ -152,12 +154,13 @@ Shape.AddResizer = function(context, group, pos_x, pos_y)
     "stroke-width": context.spec_stroke_width,
     "id": Shape.NewID(),
     "svgram": "resizer",
+    "resizer": resizer_no,
   });
 
   Shape.AddEventHandlers(node, context.resizer_event);
 
   return node;
-}
+};
 
 Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
 {
@@ -172,17 +175,47 @@ Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
     "id": Shape.NewID(),
     "svgram": "knot",
     "knot-dir": knot_dir,
+    "links": "",
   });
 
   Shape.AddEventHandlers(node, context.knot_event);
   
   return node;
-}
+};
+
+Shape.MoveKnot = function (context, knot, pos_x, pos_y) {
+  var old_x = parseInt(knot.getAttribute("cx"));
+  var old_y = parseInt(knot.getAttribute("cy"));
+	Shape.MoveCircle(knot, pos_x, pos_y);
+
+  var dx = pos_x - old_x;
+  var dy = pos_y - old_y;
+
+  var link_str = knot.getAttribute("links");
+  var links;
+  if (!link_str)
+    links = [];
+  else
+    links = link_str.split(",");
+
+  for(var i=0; i < links.length; i++)
+  {
+    var link = links[i];
+    var parts = link.split(":");
+    var shape_id = parts[0];
+    var resizer_no = parseInt(parts[1]);
+    
+    var shape = context.LoadById(shape_id);
+    if (!shape)
+      continue;
+    shape.Resize(context, dx, dy, shape.resizers[resizer_no]);
+  }
+};
 
 Shape.AddDelta = function (node, attr, delta) {
   var val = parseInt(node.getAttribute(attr));
   node.setAttribute(attr, val + delta);
-}
+};
 
 Shape.MoveRect = function(node, x, y)
 {
@@ -191,11 +224,10 @@ Shape.MoveRect = function(node, x, y)
     "x": Math.round(x - rsize / 2),
     "y": Math.round(y - rsize / 2),
   });
-}
+};
 
 Shape.MoveCircle = function(node, x, y)
 {
   SetAttr(node, {"cx": x, "cy": y});
-}
-
+};
 

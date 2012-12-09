@@ -62,7 +62,7 @@ it("move should set coordinates", function() {
   
   var dx = 20, dy = 10;
   
-  line.Move(dx, dy);
+  line.Move(TestContext, dx, dy);
   
   var new_x = x + dx;
   var new_y = y + dy;
@@ -80,7 +80,7 @@ it("resize by first resizer should move x1,y1", function() {
   
   var dx = 20, dy = 10;
   
-  line.Resize(dx, dy, line.resizers[0]);
+  line.Resize(TestContext, dx, dy, line.resizers[0]);
   
   var new_x = x + dx;
   var new_y = y + dy;
@@ -97,7 +97,7 @@ it("resize by second resizer should move x2,y2", function() {
   
   var dx = 20, dy = 10;
   
-  line.Resize(dx, dy, line.resizers[1]);
+  line.Resize(TestContext, dx, dy, line.resizers[1]);
   
   var new_x = x;
   var new_y = y;

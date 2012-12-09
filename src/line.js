@@ -31,8 +31,8 @@ function Line(context, x1, y1, x2, y2) {
 		});
 	Shape.AddSpecAttr(context, spec);
 	
-	Shape.AddResizer(context, group, x1, y1);
-	Shape.AddResizer(context, group, x2, y2);
+	Shape.AddResizer(context, group, x1, y1, 0);
+	Shape.AddResizer(context, group, x2, y2, 1);
 	
 	this.load(id, group, node, spec);
 }
@@ -57,7 +57,7 @@ Line.prototype.load = function (id, group, node, spec) {
 	this.resizers.push(group.childNodes[3]);
 };
 
-Line.prototype.SetPosition = function () {
+Line.prototype.SetPosition = function (context) {
 	SetAttr(this.node, {
 		"x1" : this.left,
 		"y1" : this.top,
@@ -76,7 +76,7 @@ Line.prototype.SetPosition = function () {
 	Shape.MoveRect(this.resizers[1], this.right, this.bottom);
 }
 
-Line.prototype.Resize = function (dx, dy, resizer) {
+Line.prototype.Resize = function (context, dx, dy, resizer) {
 	if (resizer == this.resizers[0]) {
 		this.left += dx;
 		this.top += dy;
@@ -84,7 +84,6 @@ Line.prototype.Resize = function (dx, dy, resizer) {
 		 this.right += dx;
 		 this.bottom += dy;
 	} else {
-    //alert("asdf");
     return;
   }
 	
@@ -94,5 +93,5 @@ Line.prototype.Resize = function (dx, dy, resizer) {
   this.x = Math.round(this.left + this.width / 2);
   this.y = Math.round(this.top + this.height / 2);
 	
-	this.SetPosition();
+	this.SetPosition(context);
 }

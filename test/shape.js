@@ -157,18 +157,18 @@ function TestMakeSvg(width, height)
 }
 
 function InitTestShapeContext() {
-    TestContext = new ShapeContext;
-    
-    TestContext.Register(Rect);
-    TestContext.Register(Line);
-    TestContext.root_shapes = TestMakeSvg(800, 600);
-    TestContext.root_lines = TestContext.root_shapes;
-    
-    TestEvtCounter = 0;
+  TestContext = new ShapeContext;
+  
+  TestContext.Register(Rect);
+  TestContext.Register(Line);
+  TestContext.root_shapes = TestMakeSvg(800, 600);
+  TestContext.root_lines = TestContext.root_shapes;
+  
+  TestEvtCounter = 0;
 }
 
 function ClearTestShapeContext() {
-    TextContext = null;
+  TextContext = null;
 }
 
 var ShapeMatchers = {

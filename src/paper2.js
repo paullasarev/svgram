@@ -17,7 +17,7 @@ var DragX = 0, DragY = 0;
 var DragObject;
 var Context;
 
-function CreateContext(root_shapes, root_lines) {
+function CreateContext(root_shapes, root_lines, paper_color) {
   var context = new ShapeContext();
   
   context.Register(Rect);
@@ -25,6 +25,8 @@ function CreateContext(root_shapes, root_lines) {
   
   context.root_shapes = root_shapes;
   context.root_lines = root_lines;
+
+  context.paper_color = paper_color;
 
   context.line_length = 60;
   
@@ -47,7 +49,7 @@ function CreateContext(root_shapes, root_lines) {
   //knot defaults
   context.knot_size = 20;
   context.knot_color = "blue";
-  context.knot_stroke_color = "GhostWhite";
+  context.knot_stroke_color = paper_color;
   context.knot_stroke_width = 10;
 
   //events
@@ -92,7 +94,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
 
   CalculatePaperClientOffset(paper);
 
-  Context = CreateContext(PaperElement, PaperLinesElement);
+  Context = CreateContext(PaperElement, PaperLinesElement, paperColor);
 }
 
 function CalculatePaperClientOffset(element)
@@ -187,7 +189,7 @@ function PaperCreateLine(pos_x, pos_y, knot)
 
   if (knot) {
     delta = ConnectResizerToKnot({x:pos_x, y:pos_y}, line.resizers[resizer], knot);
-    line.Move(delta.x, delta.y);
+    line.Move(Context, delta.x, delta.y);
   }
 
 }
@@ -212,7 +214,7 @@ function PaperMoveShape(pos_x, pos_y, isEnd)
     delta = SnapShapeToGrid(shape, delta);
   }
   
-  shape.Move(delta.x, delta.y);
+  shape.Move(Context, delta.x, delta.y);
   
   DragX = pos_x;
   DragY = pos_y;
@@ -220,13 +222,31 @@ function PaperMoveShape(pos_x, pos_y, isEnd)
 
 function ConnectResizerToKnot(delta, resizer, knot) 
 {
-  if (resizer && resizer.tagName == "rect" && resizer.getAttribute("svgram") == "resizer"
-    && knot && knot.tagName == "circle" && knot.getAttribute("svgram") == "knot")
+  if (resizer && knot 
+    && resizer.tagName == "rect" && resizer.getAttribute("svgram") == "resizer"
+    && knot.tagName == "circle" && knot.getAttribute("svgram") == "knot")
   {
+    var links_str = knot.getAttribute("links");
+    var links;
+    if (!links_str)
+      links = [];
+    else
+      links = links_str.split(",");
+
+    var shape_id = resizer.parentNode.getAttribute("id");
+    var resizer_no = resizer.getAttribute("resizer");
+    var link_id = shape_id + ":" + resizer_no;
+    if (links.indexOf(link_id) == -1)
+      links.push(link_id);
+
+    links_str = links.join(); 
+    knot.setAttribute("links", links_str);
+  
     var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
     var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
     var cx = parseInt(knot.getAttribute("cx"));
     var cy = parseInt(knot.getAttribute("cy"));
+    
     return {x: cx - x, y: cy - y};
   }
 
@@ -252,7 +272,7 @@ function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd) {
   
   delta = ConnectResizerToKnot(delta, dragObject, connectObject);
   
-  shape.Resize(delta.x, delta.y, dragObject);
+  shape.Resize(Context, delta.x, delta.y, dragObject);
  
   DragX = pos_x;
   DragY = pos_y;
@@ -338,13 +358,11 @@ function ResizerMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject);
   DragObject = null;
-  //alert("ResizerMouseUp:" + evt.target.tagName);
 }
 
 function KnotMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, evt.target);
-  //alert("KnotMouseUp:" + evt.target.tagName);
 }
 
 function KnotMouseMove(evt) {
@@ -352,6 +370,5 @@ function KnotMouseMove(evt) {
   if (ControlInDragMode()) {
     ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject, evt.target);
   }
-  //alert("KnotMouseMove:" + evt.target.tagName);
 }
 

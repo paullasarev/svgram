@@ -35,7 +35,7 @@ function Rect(context, x, y, width, height) {
 		});
 	Shape.AddSpecAttr(context, spec);
 	
-	Shape.AddResizer(context, group, right, bottom);
+	Shape.AddResizer(context, group, right, bottom, 0);
 	
 	Shape.AddKnot(context, group, left, y, "left");
 	Shape.AddKnot(context, group, right, y, "right");
@@ -68,7 +68,7 @@ Rect.prototype.load = function (id, group, node, spec) {
 	this.knots.push(group.childNodes[6]);
 };
 
-Rect.prototype.SetPosition = function () {
+Rect.prototype.SetPosition = function (context) {
 	SetAttr(this.node, {
 		"x" : this.left,
 		"y" : this.top,
@@ -85,8 +85,8 @@ Rect.prototype.SetPosition = function () {
 	
 	Shape.MoveRect(this.resizers[0], this.right, this.bottom);
 	
-	Shape.MoveCircle(this.knots[0], this.left, this.y);
-	Shape.MoveCircle(this.knots[1], this.right, this.y);
-	Shape.MoveCircle(this.knots[2], this.x, this.top);
-	Shape.MoveCircle(this.knots[3], this.x, this.bottom);
+  Shape.MoveKnot(context, this.knots[0], this.left, this.y);
+  Shape.MoveKnot(context, this.knots[1], this.right, this.y);
+	Shape.MoveKnot(context, this.knots[2], this.x, this.top);
+	Shape.MoveKnot(context, this.knots[3], this.x, this.bottom);
 }

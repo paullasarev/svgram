@@ -289,7 +289,7 @@ it("move should set coordinates", function() {
   var dx = 20;
   var dy = 10;
   
-  rect.Move(dx, dy);
+  rect.Move(TestContext, dx, dy);
   
   var new_x = x + dx;
   var new_y = y + dy;
@@ -310,7 +310,7 @@ it("resize should set coordinates", function() {
   
   calcRectResize(coords, dx, dy);
   
-  rect.Resize(dx, dy);
+  rect.Resize(TestContext, dx, dy);
  
   checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
 });
@@ -324,7 +324,7 @@ it("resize for 1px should work correct", function() {
 
   calcRectResize(coords, dx, dy);
   
-  rect.Resize(dx, dy);
+  rect.Resize(TestContext, dx, dy);
  
   checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
 });
