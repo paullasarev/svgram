@@ -3,7 +3,6 @@
 
 var PaperOffsetX = 0, PaperOffsetY = 0;
 var PaperWidth = 0, PaperHeight = 0;
-var GridStep = 20;
 
 // var TextWidth = 100;
 // var TextHeight = 32 ;
@@ -17,16 +16,18 @@ var DragX = 0, DragY = 0;
 var DragObject;
 var Context;
 
-function CreateContext(root_shapes, root_lines, paper_color) {
+function CreateContext(root_shapes, root_lines, paper_color, grid_step) {
   var context = new ShapeContext();
   
   context.Register(Rect);
   context.Register(Line);
+  context.Register(Text);
   
   context.root_shapes = root_shapes;
   context.root_lines = root_lines;
 
   context.paper_color = paper_color;
+  context.grid_step = grid_step;
 
   context.line_length = 80;
   
@@ -52,6 +53,11 @@ function CreateContext(root_shapes, root_lines, paper_color) {
   context.knot_stroke_color = paper_color;
   context.knot_stroke_width = 10;
 
+  //text props
+  context.text_width = 100;
+  context.text_height = 20;
+  context.text_font_size = 20;
+  
   //events
   context.spec_event.onmousedown = "SpecMouseDown(evt)";
   context.spec_event.onmouseup = "SpecMouseUp(evt)";
@@ -74,6 +80,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   PaperOffsetY = offset_y;
   PaperWidth = width;
   PaperHeight = height;
+  var GridStep = 20;
 
   var border = AddTagNS(canvas, svgNS, "rect", {id:"diagram.canvas.border", "x": offset_x + stroke, "y": offset_y + stroke, 
     "width": width - stroke * 2, "height": height - stroke * 2,
@@ -94,7 +101,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
 
   CalculatePaperClientOffset(paper);
 
-  Context = CreateContext(PaperElement, PaperLinesElement, paperColor);
+  Context = CreateContext(PaperElement, PaperLinesElement, paperColor, GridStep);
 }
 
 function CalculatePaperClientOffset(element)
@@ -135,21 +142,21 @@ function PaperSetCursor(cursor){
   SetAttr(diagram, {"cursor" : cursor});
 }
 
-function SnapPosToGrid(pos, delta) {
-  return Math.round((pos + delta) / GridStep) * GridStep;
+function SnapPosToGrid(pos, delta, grid_step) {
+  return Math.round((pos + delta) / grid_step) * grid_step;
 }
 
 function PaperCreateRect(pos_x, pos_y)
 {
-  pos_x = SnapPosToGrid(pos_x, 0);
-  pos_y = SnapPosToGrid(pos_y, 0);
+  pos_x = SnapPosToGrid(pos_x, 0, Context.grid_step);
+  pos_y = SnapPosToGrid(pos_y, 0, Context.grid_step);
   var rect = new Rect(Context, pos_x, pos_y);
 }
 
 function PaperCreateLine(pos_x, pos_y, knot)
 {
-  pos_x = SnapPosToGrid(pos_x, 0);
-  pos_y = SnapPosToGrid(pos_y, 0);
+  pos_x = SnapPosToGrid(pos_x, 0, Context.grid_step);
+  pos_y = SnapPosToGrid(pos_y, 0, Context.grid_step);
 
   var orientation = "v";
   var resizer;
@@ -196,11 +203,12 @@ function PaperCreateLine(pos_x, pos_y, knot)
 
 function PaperCreateText(pos_x, pos_y)
 {
+  var shape = new Text(Context, pos_x, pos_y);
 }
 
-function SnapShapeToGrid(shape, delta) {
-  var gridX = SnapPosToGrid(shape.x, delta.x);
-  var gridY = SnapPosToGrid(shape.y, delta.y);
+function SnapShapeToGrid(shape, delta, grid_step) {
+  var gridX = SnapPosToGrid(shape.x, delta.x, grid_step);
+  var gridY = SnapPosToGrid(shape.y, delta.y, grid_step);
   return {x: gridX - shape.x, y: gridY - shape.y};
 }
 
@@ -211,7 +219,7 @@ function PaperMoveShape(pos_x, pos_y, isEnd)
   var shape = Context.LoadByGroup(SelectedGroup);
   
   if (isEnd) {
-    delta = SnapShapeToGrid(shape, delta);
+    delta = SnapShapeToGrid(shape, delta, Context.grid_step);
   }
   
   shape.Move(Context, delta.x, delta.y);
@@ -253,11 +261,11 @@ function ConnectResizerToKnot(delta, resizer, knot)
   return delta;
 }
 
-function SnapResizerToGrid(resizer, delta) {
+function SnapResizerToGrid(resizer, delta, grid_step) {
   var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
   var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
-  var gridX = SnapPosToGrid(x, delta.x);
-  var gridY = SnapPosToGrid(y, delta.y);
+  var gridX = SnapPosToGrid(x, delta.x, grid_step);
+  var gridY = SnapPosToGrid(y, delta.y, grid_step);
   return {x: gridX - x, y: gridY - y};
 }
 
@@ -267,7 +275,8 @@ function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd) {
   var shape = Context.LoadByGroup(SelectedGroup);
 
   if (isEnd) {
-    delta = SnapResizerToGrid(dragObject, delta);
+    var grid_step = (shape.shape == "text" ? 2 : Context.grid_step);
+    delta = SnapResizerToGrid(dragObject, delta, grid_step);
   }
   
   delta = ConnectResizerToKnot(delta, dragObject, connectObject);

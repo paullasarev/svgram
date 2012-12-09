@@ -70,17 +70,13 @@ Rect.prototype.load = function (id, group, node, spec) {
 
 Rect.prototype.SetPosition = function (context) {
 	SetAttr(this.node, {
-		"x" : this.left,
-		"y" : this.top,
-		"width" : this.width,
-		"height" : this.height
+		"x" : this.left, "y" : this.top,
+		"width" : this.width, "height" : this.height
 	});
   
 	SetAttr(this.spec, {
-		"x" : this.left,
-		"y" : this.top,
-		"width" : this.width,
-		"height" : this.height
+		"x" : this.left,"y" : this.top,
+		"width" : this.width,"height" : this.height
 	});
 	
 	Shape.MoveRect(this.resizers[0], this.right, this.bottom);

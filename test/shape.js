@@ -130,6 +130,33 @@ function checkLinePosition(rect, x, y, x1, y1) {
   checkRect(rect.resizers[1], x1 - rsize2, y1 - rsize2, rsize, rsize);
 }
 
+function checkTextPosition(shape, x, y) {
+  equal(shape.x, x);
+  equal(shape.y, y);
+
+  sequal(shape.node.getAttribute("x"), x);
+  sequal(shape.node.getAttribute("y"), y);
+  
+  var width = parseInt(shape.node.getAttribute("width"));
+  var height = parseInt(shape.node.getAttribute("height"));
+  equal(shape.width, width);
+  equal(shape.height, height);
+  
+  var left = x - width / 2;
+  var top = y - height / 2;
+  
+  equal(shape.left, left);
+  equal(shape.top, top);
+  equal(shape.right, left + width);
+  equal(shape.bottom, top + height);
+
+  checkRect(shape.spec, left, top, width, height);
+  
+  var rsize = TestContext.resizer_size;
+  var rsize2 = rsize / 2;
+  checkRect(shape.resizers[0], shape.right - rsize2, shape.bottom - rsize2, rsize, rsize);
+}
+
 function calcRectResize(coords, dx, dy) {
   coords.width += dx * 2;
   coords.height += dy * 2;
@@ -160,6 +187,8 @@ function InitTestShapeContext() {
   
   TestContext.Register(Rect);
   TestContext.Register(Line);
+  TestContext.Register(Text);
+  
   TestContext.root_shapes = TestMakeSvg(800, 600);
   TestContext.root_lines = TestContext.root_shapes;
   

@@ -34,8 +34,12 @@ function ShapeContext()
   this.knot_stroke_width = 8;
   this.knot_event = {};
   
-  this.Classes = {
-  };
+  //text props
+  this.text_width = 100;
+  this.text_height = 40;
+  this.text_font_size = 20;
+  
+  this.Classes = {};
 
   this.Register = function(shapeClass) {
     this.Classes[shapeClass.shape] = shapeClass.create;
@@ -218,10 +222,11 @@ Shape.AddDelta = function (node, attr, delta) {
 
 Shape.MoveRect = function(node, x, y)
 {
-  var rsize = parseInt(node.getAttribute("width"));
+  var width = parseInt(node.getAttribute("width"));
+  var height = parseInt(node.getAttribute("height"));
   SetAttr(node, {
-    "x": Math.round(x - rsize / 2),
-    "y": Math.round(y - rsize / 2),
+    "x": Math.round(x - width / 2),
+    "y": Math.round(y - height / 2),
   });
 };
 
