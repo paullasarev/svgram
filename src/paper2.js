@@ -77,7 +77,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
     "width": width - stroke * 2, "height": height - stroke * 2,
     "fill": paperColor, "stroke": borderColor, "stroke-width": stroke });
   SetAttr(border, {"filter":"url(#shadow)"}); 
-  SetAttr(border, {onmouseup:"PaperMouseUp(evt)", onmousemove:"PaperMouseMove(evt)"});
+  SetAttr(border, {onmousedown:"PaperMouseDown(evt)", onmousemove:"PaperMouseMove(evt)", onmouseup:"PaperMouseUp(evt)", });
   
   var grid = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas.grid"});
   for(var x = GridStep + stroke ; x < width ; x += GridStep)
@@ -144,18 +144,52 @@ function PaperCreateRect(pos_x, pos_y)
   var rect = new Rect(Context, pos_x, pos_y);
 }
 
-function PaperCreateLine(pos_x, pos_y)
+function PaperCreateLine(pos_x, pos_y, knot)
 {
   pos_x = SnapPosToGrid(pos_x, 0);
   pos_y = SnapPosToGrid(pos_y, 0);
+
+  var orientation = "v";
+  var resizer;
+  if (knot) {
+    var knot_dir = knot.getAttribute("knot-dir");
+    if (knot_dir == "top") {
+      resizer = 1;
+      orientation = "v";
+    } else if (knot_dir == "bottom") {
+      resizer = 0;
+      orientation = "v";
+    } else if (knot_dir == "left") {
+      resizer = 1;
+      orientation = "h";
+    } else if (knot_dir == "right") {
+      resizer = 0;
+      orientation = "h";
+    }
+  }
   
-  var length = Context.line_length;
-  var left = pos_x;
-  var top = pos_y - length / 2;
-  var right = pos_x;
-  var bottom = pos_y + length/ 2;
-  
+  var length2 = Context.line_length / 2;
+  var left, top, right, bottom;
+
+  if (orientation == "v") {
+    left = pos_x;
+    top = pos_y - length2;
+    right = pos_x;
+    bottom = pos_y + length2;
+  } else {
+    left = pos_x - length2;
+    top = pos_y;
+    right = pos_x + length2;
+    bottom = pos_y;
+  }
+
   var line = new Line(Context, left, top, right, bottom);
+
+  if (knot) {
+    delta = ConnectResizerToKnot({x:pos_x, y:pos_y}, line.resizers[resizer], knot);
+    line.Move(delta.x, delta.y);
+  }
+
 }
 
 function PaperCreateText(pos_x, pos_y)
@@ -186,7 +220,9 @@ function PaperMoveShape(pos_x, pos_y, isEnd)
 
 function ConnectResizerToKnot(delta, resizer, knot) 
 {
-  if (resizer && resizer.tagName == "rect" && knot && knot.tagName == "circle") {
+  if (resizer && resizer.tagName == "rect" && resizer.getAttribute("svgram") == "resizer"
+    && knot && knot.tagName == "circle" && knot.getAttribute("svgram") == "knot")
+  {
     var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
     var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
     var cx = parseInt(knot.getAttribute("cx"));
@@ -238,6 +274,12 @@ function EventOffsetX(evt)
 function EventOffsetY(evt)
 {
   return evt.clientY - PaperClientOffsetY;
+}
+
+function PaperMouseDown(evt)
+{
+  evt.preventDefault();
+  DeselectPaper();
 }
 
 function PaperMouseUp(evt)

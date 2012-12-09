@@ -159,7 +159,7 @@ Shape.AddResizer = function(context, group, pos_x, pos_y)
   return node;
 }
 
-Shape.AddKnot = function(context, group, pos_x, pos_y)
+Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
 {
   var node = AddTagNS(group, context.svgNS, "circle", {
     "cx": pos_x,
@@ -171,6 +171,7 @@ Shape.AddKnot = function(context, group, pos_x, pos_y)
     "stroke-width": context.knot_stroke_width,
     "id": Shape.NewID(),
     "svgram": "knot",
+    "knot-dir": knot_dir,
   });
 
   Shape.AddEventHandlers(node, context.knot_event);

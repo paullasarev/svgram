@@ -60,7 +60,7 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
       PaperCreateRect(pos_x, pos_y);
     }
     else if (ControlToolId == "toolbar.icon.line") {
-      PaperCreateLine(pos_x, pos_y);
+      PaperCreateLine(pos_x, pos_y, connectObject);
     }
     else if (ControlToolId == "toolbar.icon.text") {
       PaperCreateText(pos_x, pos_y);

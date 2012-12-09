@@ -37,10 +37,10 @@ function Rect(context, x, y, width, height) {
 	
 	Shape.AddResizer(context, group, right, bottom);
 	
-	Shape.AddKnot(context, group, left, y);
-	Shape.AddKnot(context, group, right, y);
-	Shape.AddKnot(context, group, x, top);
-	Shape.AddKnot(context, group, x, bottom);
+	Shape.AddKnot(context, group, left, y, "left");
+	Shape.AddKnot(context, group, right, y, "right");
+	Shape.AddKnot(context, group, x, top, "top");
+	Shape.AddKnot(context, group, x, bottom, "bottom");
 	
 	this.load(id, group, node, spec);
 }
