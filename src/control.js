@@ -3,6 +3,8 @@
 
 var ControlMode = "none";
 var ControlToolId = "";
+var ControlWasMoved = false;
+var ControlDblClickTimer = null;
 
 function ControlDragToolActive()
 {
@@ -28,16 +30,23 @@ function ControlDragToolStart(toolId)
 {
   ControlMode = "dragTool";
   ControlToolId = toolId;
+  ControlWasMoved = false;
   PaperSetCursor("move");
 }
 
 function ControlDragShapeStart() {
+  if (ControlMode == "DblClick")
+	return;
   ControlMode = "dragShape";
+  ControlWasMoved = false;
   PaperSetCursor("move");
 }
 
 function ControlDragSizeStart() {
+  if (ControlMode == "DblClick")
+	return;
   ControlMode = "dragSize";
+  ControlWasMoved = false;
   PaperSetCursor("se-resize");
 }
 
@@ -52,8 +61,23 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
   if (ControlMode == "none")
     return;
 
-  var mode = ControlMode;
-  if (mode == "dragTool") {
+  if (ControlMode == "DblClick") {
+	  ControlMode = "none";
+	  PaperEditProperties();
+	  return;
+	}
+	
+  if (!ControlWasMoved) {
+	PaperSetCursor("default");
+    ControlMode = "DblClick";
+	ControlDblClickTimer = setTimeout(function() { 
+	  ControlMode = "none";
+    }, 300);
+	
+	return;
+  }
+  
+  if (ControlMode == "dragTool") {
     ToolbarDragToolEnd();
 
     if (ControlToolId == "toolbar.icon.rect") {
@@ -81,6 +105,7 @@ function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
   if (ControlMode == "none")
     return;
 
+  ControlWasMoved = true;
   var mode = ControlMode;
 
   if (mode == "dragShape") {

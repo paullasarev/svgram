@@ -137,6 +137,11 @@ function SelectPaperElement(spec) {
   SetAttr(spec, { "opacity": Context.spec_opacity });
 }
 
+function PaperEditProperties() {
+  var shape = Context.LoadByGroup(SelectedGroup);
+  alert("PaperEditProperties: " + shape.shape);
+}
+
 function PaperSetCursor(cursor){
   var diagram = document.getElementById("diagram");
   SetAttr(diagram, {"cursor" : cursor});
