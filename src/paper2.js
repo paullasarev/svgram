@@ -137,21 +137,20 @@ function SelectPaperElement(spec) {
   SetAttr(spec, { "opacity": Context.spec_opacity });
 }
 
-var PaperPropertiesBox;
 function EditPropertiesText(shape) {
-  var text = shape.node.firstChild.nodeValue;
-  PaperPropertiesBox = dhtmlx.modalbox({
+  var text = shape.node.textContent;
+  text = text.replace(/'/g, '&#039;');
+  
+  var box = dhtmlx.modalbox({
 	title:"Text properties",
-	text:"<div><label>text: <input class='inform' name='textvalue' id='text-property' type='text' value='"+text+"'></label></div>",
+	text:"<div><label>text: <input class='inform' name='textvalue' id='text-property' type='text' value='" + text + "'></label></div>",
 	buttons:["Save", "Cancel"],
 	callback: function (result) {
 	  if (result == 1)
 		return;
-	  var prop = PaperPropertiesBox.getElementsByTagName("input")[0];
+	  var prop = box.querySelector("input");
 	  var newText = prop.value;
-	  shape.node.firstChild.nodeValue = newText;
-	  //alert(newText);
-	  
+	  shape.node.textContent = newText;
 	}
  });
 }
