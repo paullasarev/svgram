@@ -137,9 +137,32 @@ function SelectPaperElement(spec) {
   SetAttr(spec, { "opacity": Context.spec_opacity });
 }
 
+var PaperPropertiesBox;
+function EditPropertiesText(shape) {
+  var text = shape.node.firstChild.nodeValue;
+  PaperPropertiesBox = dhtmlx.modalbox({
+	title:"Text properties",
+	text:"<div><label>text: <input class='inform' name='textvalue' id='text-property' type='text' value='"+text+"'></label></div>",
+	buttons:["Save", "Cancel"],
+	callback: function (result) {
+	  if (result == 1)
+		return;
+	  var prop = PaperPropertiesBox.getElementsByTagName("input")[0];
+	  var newText = prop.value;
+	  shape.node.firstChild.nodeValue = newText;
+	  //alert(newText);
+	  
+	}
+ });
+}
+
 function PaperEditProperties() {
   var shape = Context.LoadByGroup(SelectedGroup);
-  alert("PaperEditProperties: " + shape.shape);
+  if (shape.shape == "text") {
+	EditPropertiesText(shape);
+  } else {
+    alert("PaperEditProperties: " + shape.shape);
+  }
 }
 
 function PaperSetCursor(cursor){
