@@ -169,7 +169,7 @@ function OpenSavePrintWindow()
 	var serializer = new XMLSerializer();
   var copySvgString = vkbeautify.xml(serializer.serializeToString(copySvg));
 	var copySvgBase64 = Base64.encode(copySvgString);	
-	var wnd = window.open("data:image/svg+xml;base64,\n" + copySvgBase64, "Save_Print", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
+	var wnd = window.open("data:image/svg+xml;charset=utf-8;base64,\n" + copySvgBase64, "Save_Print", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
 	// var wnd = window.open("data:image/svg+xml", "Svg diagram", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
   // wnd.document.write(copySvgString);
 }
