@@ -4,9 +4,6 @@
 var PaperOffsetX = 0, PaperOffsetY = 0;
 var PaperWidth = 0, PaperHeight = 0;
 
-// var TextWidth = 100;
-// var TextHeight = 32 ;
-// var TextFontSize = 24;
 var PaperClientOffsetX = 0; PaperClientOffsetY = 0;
 
 var PaperElement = null;
@@ -41,11 +38,12 @@ function CreateContext(root_shapes, root_lines, paper_color, grid_step) {
   //spec defaults
   context.spec_opacity_initial = 0;
   context.spec_opacity = 0.15;
-  context.spec_stroke_width = 8;
+  context.spec_stroke_width = 12;
 
   //resizer defaults
   context.resizer_size = 8;
   context.resizer_color = "blue";
+  context.resizer_stroke_width = 8;
 
   //knot defaults
   context.knot_size = 20;
@@ -125,16 +123,20 @@ function GetShapeColor()
 function DeselectPaper()
 {
   if (SelectedGroup != null) {
-    var oldspec = SelectedGroup.childNodes.item(1);
+    var oldspec = SelectedGroup.childNodes.item(1); //.firstChild;
     SetAttr(oldspec, { "opacity": 0 });
   }
 }
 
-function SelectPaperElement(spec) {
+function SelectSpec(spec) {
   DeselectPaper();
-
   SelectedGroup = spec.parentNode;
   SetAttr(spec, { "opacity": Context.spec_opacity });
+}
+
+function SelectPaperElement(specNode) {
+  var spec = specNode.parentNode;
+  SelectSpec(spec);
 }
 
 function EditPropertiesText(shape) {
@@ -158,7 +160,7 @@ function EditPropertiesText(shape) {
 function PaperEditProperties() {
   var shape = Context.LoadByGroup(SelectedGroup);
   if (shape.shape == "text") {
-	EditPropertiesText(shape);
+    EditPropertiesText(shape);
   } else {
     alert("PaperEditProperties: " + shape.shape);
   }
@@ -173,14 +175,16 @@ function SnapPosToGrid(pos, delta, grid_step) {
   return Math.round((pos + delta) / grid_step) * grid_step;
 }
 
-function PaperCreateRect(pos_x, pos_y)
+function PaperCreateRect(pos_x, pos_y, parentGroup)
 {
   pos_x = SnapPosToGrid(pos_x, 0, Context.grid_step);
   pos_y = SnapPosToGrid(pos_y, 0, Context.grid_step);
-  var rect = new Rect(Context, pos_x, pos_y);
+
+  var rect = new Rect(Context, parentGroup, pos_x, pos_y);
+  SelectSpec(rect.spec);
 }
 
-function PaperCreateLine(pos_x, pos_y, knot)
+function PaperCreateLine(pos_x, pos_y, knot, parentGroup)
 {
   pos_x = SnapPosToGrid(pos_x, 0, Context.grid_step);
   pos_y = SnapPosToGrid(pos_y, 0, Context.grid_step);
@@ -219,18 +223,21 @@ function PaperCreateLine(pos_x, pos_y, knot)
     bottom = pos_y;
   }
 
-  var line = new Line(Context, left, top, right, bottom);
+  var line = new Line(Context, parentGroup, left, top, right, bottom);
 
   if (knot) {
     delta = ConnectResizerToKnot({x:pos_x, y:pos_y}, line.resizers[resizer], knot);
     line.Move(Context, delta.x, delta.y);
   }
 
+  SelectSpec(line.spec);
 }
 
-function PaperCreateText(pos_x, pos_y)
+function PaperCreateText(pos_x, pos_y, parentGroup)
 {
-  var shape = new Text(Context, pos_x, pos_y);
+  var shape = new Text(Context, parentGroup, pos_x, pos_y);
+
+  SelectSpec(shape.spec);
 }
 
 function SnapShapeToGrid(shape, delta, grid_step) {
@@ -268,7 +275,7 @@ function ConnectResizerToKnot(delta, resizer, knot)
     else
       links = links_str.split(",");
 
-    var shape_id = resizer.parentNode.getAttribute("id");
+    var shape_id = resizer.parentNode.parentNode.getAttribute("id");
     var resizer_no = resizer.getAttribute("resizer");
     var link_id = shape_id + ":" + resizer_no;
     if (links.indexOf(link_id) == -1)
@@ -341,8 +348,11 @@ function PaperMouseDown(evt)
 function PaperMouseUp(evt)
 {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
-  DeselectPaper();
+  if (!ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject)) {
+    DeselectPaper();
+  }
+  
+  DragObject = null;
 }
 
 function PaperMouseMove(evt)
@@ -370,7 +380,8 @@ function SpecMouseDown(evt) {
 
 function SpecMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), null, evt.target.parentNode.parentNode);
+  //alert("SpecMouseUp: " + evt.target.parentNode.parentNode.getAttribute("shape"));
 }
 
 function ResizerMouseDown(evt) {

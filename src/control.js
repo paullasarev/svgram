@@ -59,45 +59,56 @@ function ControlDragAbort()
 function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
 {
   if (ControlMode == "none")
-    return;
+    return false;
 
   if (ControlMode == "DblClick") {
 	  ControlMode = "none";
 	  PaperEditProperties();
-	  return;
+	  return false;
 	}
 	
   if (!ControlWasMoved) {
-	PaperSetCursor("default");
-    ControlMode = "DblClick";
-	ControlDblClickTimer = setTimeout(function() { 
-	  ControlMode = "none";
-    }, 300);
-	
-	return;
+    PaperSetCursor("default");
+      ControlMode = "DblClick";
+    ControlDblClickTimer = setTimeout(function() { 
+      ControlMode = "none";
+      }, 300);
+    
+    return true;
   }
   
   if (ControlMode == "dragTool") {
     ToolbarDragToolEnd();
+    
+    var targetObject = null;
+    if (connectObject && connectObject.getAttribute("shape")) {
+      targetObject = connectObject;
+      connectObject = null;
+    }
 
     if (ControlToolId == "toolbar.icon.rect") {
-      PaperCreateRect(pos_x, pos_y);
+      PaperCreateRect(pos_x, pos_y, targetObject);
     }
     else if (ControlToolId == "toolbar.icon.line") {
-      PaperCreateLine(pos_x, pos_y, connectObject);
+      PaperCreateLine(pos_x, pos_y, connectObject, targetObject);
     }
     else if (ControlToolId == "toolbar.icon.text") {
-      PaperCreateText(pos_x, pos_y);
+      PaperCreateText(pos_x, pos_y, targetObject);
     }
     else {
       alert(ControlToolId);
     }
+    
+    ControlMode = "none";
+    PaperSetCursor("default");
+    return true;
   }
   
   ControlDragMove(pos_x, pos_y, dragObject, connectObject, true);
 
   ControlMode = "none";
   PaperSetCursor("default");
+  return true;
 }
 
 function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)

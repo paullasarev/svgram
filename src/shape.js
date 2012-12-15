@@ -25,6 +25,7 @@ function ShapeContext()
   //resizer defaults
   this.resizer_size = 8;
   this.resizer_color = "blue";
+  this.resizer_stroke_width = 8;
   this.resizer_event = {};
 
   //knot defaults
@@ -82,17 +83,20 @@ function Shape(id, group, node, spec, left, top, width, height) {
   this.y = Math.round(this.top + this.height / 2);
   this.resizers = [];
   this.knots = [];
+  this.outline = "";
 }
 
 Shape.prototype = {
   shape: "unknown",
+  
   Attr: function(name, val) {
     if (val != null)
       this.node.setAttribute(name, val);
     else
       return this.node.getAttribute(name);
   },
-  Move: function(context, dx, dy) {
+  
+  Move: function(context, dx, dy, noPropagate) {
     this.x += dx;
     this.y += dy;
     this.left += dx;
@@ -100,8 +104,16 @@ Shape.prototype = {
     this.right += dx;
     this.bottom += dy;
 
-    this.SetPosition(context);
+    this.SetPosition(context, noPropagate);
+
+    var subs = this.GetSubShapes(context);
+    for(var i = 0 ; i < subs.length ; ++i)
+    {
+      var sub = subs[i];
+      sub.Move(context, dx, dy, true);
+    }
   },
+  
   Resize: function(context, dx, dy, resizer) {
     this.left -= dx;
     this.top -= dy;
@@ -112,6 +124,43 @@ Shape.prototype = {
 
     this.SetPosition(context);
   },
+  
+  GetSubShapes: function(context) {
+    var subs = null;
+    if (this.subs) {
+      subs = this.subs;
+    } else if (this.group.childNodes.length > 2) {
+      subs = this.group.childNodes[2];
+    } else {
+      return [];
+    }
+    
+    var subShapes = [];
+    for(var i = 0 ; i < subs.childNodes.length ; ++i)
+    {
+      var group = subs.childNodes[i];
+      var shape = context.LoadByGroup(group);
+      if (shape) {
+        subShapes.push(shape);
+      }
+    }
+     
+    return subShapes;
+   },
+      
+  AddSubs: function(context) {
+    var subs = null;
+    if (this.subs) {
+      return this.subs;
+    } else if (this.group.childNodes.length < 3) {
+      subs = AddTagNS(this.group, context.svgNS, "g", {} );
+    } else {
+      subs = this.group.childNodes[2];
+    }
+    
+    this.subs = subs;
+    return subs;
+  },
 };
 
 Shape.NewID = function() {
@@ -120,6 +169,10 @@ Shape.NewID = function() {
 
 Shape.AddGroup = function(context, root, id, shape) {
   return AddTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
+};
+
+Shape.PrependGroup = function(context, root, id, shape) {
+  return PrependTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
 };
 
 Shape.AddEventHandlers = function(node, eventMap) {
@@ -132,11 +185,25 @@ Shape.AddEventHandlers = function(node, eventMap) {
   }
 };
 
+Shape.AddRoot = function(parentGroup, defaultRoot) {
+  var root;
+  if (parentGroup) {
+    var parentShape = Context.LoadByGroup(parentGroup);
+    root = parentShape.AddSubs(Context);
+  } else {
+    root = defaultRoot;
+  }
+  
+  return root;
+};
+
+
 Shape.AddSpecAttr = function(context, spec)
 {
   SetAttr(spec, { 
-    "fill": context.stroke_color,
-    "opacity": context.spec_opacity_initial,
+    //"fill": context.paper_color,//context.stroke_color,
+    //"opacity": context.spec_opacity_initial,
+    "opacity": 0,
     "stroke": context.stroke_color,
     "stroke-width": context.spec_stroke_width,
     "svgram": "spec",
@@ -152,10 +219,10 @@ Shape.AddResizer = function(context, group, pos_x, pos_y, resizer_no)
     "y": Math.round(pos_y - context.resizer_size / 2),
     "width": context.resizer_size,
     "height": context.resizer_size,
-    "opacity": context.spec_opacity,
+    //"opacity": context.spec_opacity,
     "fill": context.resizer_color,
     "stroke": context.resizer_color,
-    "stroke-width": context.spec_stroke_width,
+    "stroke-width": context.resizer_stroke_width,
     "id": Shape.NewID(),
     "svgram": "resizer",
     "resizer": resizer_no,
@@ -172,7 +239,7 @@ Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
     "cx": pos_x,
     "cy": pos_y,
     "r": context.knot_size / 2,
-    "opacity": context.spec_opacity,
+    //"opacity": context.spec_opacity,
     "fill": context.knot_color,
     "stroke": context.knot_stroke_color, 
     "stroke-width": context.knot_stroke_width,
@@ -186,10 +253,13 @@ Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
   return node;
 };
 
-Shape.MoveKnot = function (context, knot, pos_x, pos_y) {
+Shape.MoveKnot = function (context, knot, pos_x, pos_y, noPropagate) {
   var old_x = parseInt(knot.getAttribute("cx"));
   var old_y = parseInt(knot.getAttribute("cy"));
 	Shape.MoveCircle(knot, pos_x, pos_y);
+  
+  if (noPropagate)
+    return;
 
   var dx = pos_x - old_x;
   var dy = pos_y - old_y;

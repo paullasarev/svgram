@@ -28,6 +28,18 @@ function AddTagNS(parent, namespace, name, attributes)
   return tag;
 }
 
+function PrependTagNS(parent, namespace, name, attributes)
+{
+  var tag = document.createElementNS(namespace, name);
+  if (parent.firstChild)
+    parent.insertBefore(tag, parent.firstChild);
+  else
+    parent.appendChild(tag);
+    
+  SetAttr(tag, attributes);
+  return tag;
+}
+
 function CreateShadowFilter(svg)
 {
   var defs = AddTagNS(svg, svgNS, "defs");

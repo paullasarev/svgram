@@ -2,7 +2,7 @@
 // $Author$
 // $Id$
 
-function Text(context, x, y) {
+function Text(context, parentGroup, x, y) {
   if (!context)
     return;
 
@@ -16,7 +16,8 @@ function Text(context, x, y) {
   var bottom = top + height;
 
   var id = Shape.NewID();
-  var group = Shape.AddGroup(context, context.root_shapes, id, this.shape);
+  var root = Shape.AddRoot(parentGroup, context.root_lines);
+  var group = Shape.AddGroup(context, root, id, this.shape);
   var node = AddTagNS(group, svgNS, "text", {
     "x" : x, "y" : y,
     "width" : right - left, "height" : bottom - top,
@@ -29,10 +30,18 @@ function Text(context, x, y) {
   var text_body = document.createTextNode("Text");
   node.appendChild(text_body); 
 
-  var spec = AddTagNS(group, svgNS, "rect", {"x" : left, "y" : top, "width" : width, "height" : height });
-  Shape.AddSpecAttr(context, spec);
+	var spec = AddTagNS(group, context.svgNS, "g", {});
+  var outline = AddTagNS(spec, svgNS, "rect", {"x" : left, "y" : top, "width" : width, "height" : height });
+  Shape.AddSpecAttr(context, outline);
+  SetAttr(outline, {
+    "opacity": 1,
+    "fill": context.paper_color,
+    "stroke": context.stroke_color,
+    "stroke-width": 1,
+    }
+  );
 
-  Shape.AddResizer(context, group, right, bottom);
+  Shape.AddResizer(context, spec, right, bottom);
 
   this.load(id, group, node, spec);
 }
@@ -55,7 +64,8 @@ Text.prototype.load = function (id, group, node, spec) {
   var right = left + width;
   var bottom = top + height;
   Shape.call(this, id, group, node, spec, left, top, width, height);
-  this.resizers.push(group.childNodes[2]);
+  this.resizers.push(spec.childNodes[1]);
+  this.outline = spec.firstChild;
 };
 
 Text.prototype.SetPosition = function (context) {
@@ -63,7 +73,7 @@ Text.prototype.SetPosition = function (context) {
     "width" : this.width,"height" : this.height,
   });
 
-  SetAttr(this.spec, {
+  SetAttr(this.spec.firstChild, {
     "x" : this.left,"y" : this.top,
     "width" : this.width,"height" : this.height,
   });
@@ -73,6 +83,7 @@ Text.prototype.SetPosition = function (context) {
 
 Text.prototype.Resize = function (context, dx, dy, resizer) {
   var height = this.height;
+  //dx = this.node.offsetWidth - this.width;
   Shape.prototype.Resize.call(this, context, dx, dy, resizer);
 
   var new_height = this.height;

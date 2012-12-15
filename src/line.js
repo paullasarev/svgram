@@ -2,7 +2,7 @@
 // $Author$
 // $Id$
 
-function Line(context, x1, y1, x2, y2) {
+function Line(context, parentGroup, x1, y1, x2, y2) {
 	if (!context)
 		return;
 	
@@ -12,7 +12,8 @@ function Line(context, x1, y1, x2, y2) {
 	y2 = parseInt(y2);
 	
 	var id = Shape.NewID();
-	var group = Shape.AddGroup(context, context.root_lines, id, this.shape);
+  var root = Shape.AddRoot(parentGroup, context.root_lines);
+	var group = Shape.PrependGroup(context, root, id, this.shape);
 	var node = AddTagNS(group, context.svgNS, "line", {
 			"x1" : x1,
 			"y1" : y1,
@@ -23,16 +24,17 @@ function Line(context, x1, y1, x2, y2) {
 			"stroke-width" : context.stroke_width,
 		});
 	
-	var spec = AddTagNS(group, context.svgNS, "line", {
+	var spec = AddTagNS(group, context.svgNS, "g", {});
+	var spec1 = AddTagNS(spec, context.svgNS, "line", {
 			"x1" : x1,
 			"y1" : y1,
 			"x2" : x2,
 			"y2" : y2,
 		});
-	Shape.AddSpecAttr(context, spec);
+	Shape.AddSpecAttr(context, spec1);
 	
-	Shape.AddResizer(context, group, x1, y1, 0);
-	Shape.AddResizer(context, group, x2, y2, 1);
+	Shape.AddResizer(context, spec, x1, y1, 0);
+	Shape.AddResizer(context, spec, x2, y2, 1);
 	
 	this.load(id, group, node, spec);
 }
@@ -45,6 +47,7 @@ Line.create = function () {
 Line.prototype = new Shape;
 Line.prototype.constructor = Line;
 Line.prototype.shape = Line.shape;
+
 Line.prototype.load = function (id, group, node, spec) {
 	var left = parseInt(node.getAttribute("x1"));
 	var top = parseInt(node.getAttribute("y1"));
@@ -52,9 +55,12 @@ Line.prototype.load = function (id, group, node, spec) {
 	var bottom = parseInt(node.getAttribute("y2"));
 	var width = right - left;
 	var height = bottom - top;
+  
 	Shape.call(this, id, group, node, spec, left, top, width, height);
-	this.resizers.push(group.childNodes[2]);
-	this.resizers.push(group.childNodes[3]);
+  
+	this.resizers.push(spec.childNodes[1]);
+	this.resizers.push(spec.childNodes[2]);
+  this.outline = spec.firstChild;
 };
 
 Line.prototype.SetPosition = function (context) {
@@ -65,7 +71,7 @@ Line.prototype.SetPosition = function (context) {
 		"y2" : this.bottom
 	});
   
-	SetAttr(this.spec, {
+	SetAttr(this.spec.firstChild, {
 		"x1" : this.left,
 		"y1" : this.top,
 		"x2" : this.right,
