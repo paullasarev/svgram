@@ -32,10 +32,10 @@
 
 <div class="page">
 
+<!--
   <div class="nav-bar">
     <div class="nav-bar-inner padding10">
         <span class="pull-menu"></span>
-
         <span class="element brand">
           <img class="place-left" src="images/logo.png" style="height: 20px"/>
           SVGram <small></small>
@@ -46,7 +46,10 @@
         </span>
       </div>
     </div>
+-->
 
+    <div class="nav-bar">
+    </div>
     <div class="page-region">
       <div class="page-region-content" style="padding-bottom:0">
 
@@ -54,6 +57,11 @@
           <div class="row">
             <div class="span2 bg-color-white" style="height:600px">
               <div class="toolbar-vertical">
+                <div class="toolbar-group">
+                  <button class="button standard bg-color-blue fg-color-white" style="width:140px;"
+                    onclick="OnclickToolbarIcon(event)" id="toolbar.icon.about">
+                    <img src="images/logo.png" style="width:30px; height:30px; top:0px; left:4px"/>SVGram</button>
+                </div>
                 <div class="toolbar-group">
                   <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.rect">
                     <img src="images/block.png""/>Block</button>

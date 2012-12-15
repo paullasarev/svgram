@@ -127,6 +127,14 @@ function ControlExportSvg() {
   ControlDragAbort();
 }
 
+function ControlAbout() {
+		dhtmlx.modalbox({ 
+			title:"Svg diagram editor", 
+			text:"SVGram is a svg-based diagram editor<br><br>The project home is <a href='http://code.google.com/p/svgram/'>code.google.com/p/svgram</a>",
+      buttons:["OK"],
+		});
+}
+
 function FilterSvgNodes(parent)
 {
   var attr = parent.getAttribute('cursor');

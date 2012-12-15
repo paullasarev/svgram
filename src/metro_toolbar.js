@@ -17,6 +17,8 @@ function OnclickToolbarIcon(evt) {
     ControlDeleteShape();
   } else if (id == "toolbar.icon.export") {
     ControlExportSvg();
+  } else if (id == "toolbar.icon.about") {
+    ControlAbout();
   }
 }
 
