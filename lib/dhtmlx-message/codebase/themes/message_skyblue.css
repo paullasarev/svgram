@@ -75,8 +75,8 @@
 }
 
 .dhtmlx_popup_button, .dhtmlx_button{
-	height: 30px;
-	line-height:30px;
+	height: 28px;
+	line-height:28px;
 
 	display: inline-block;
 	margin: 0 5px;
@@ -137,8 +137,8 @@ div.dhx_modal_cover {
 	color:#000; padding:0px; margin:0px;
 	vertical-align:top;
 
-	height:28px;
-	line-height:28px;
+	height:26px;
+	line-height:26px;
 }
 
 .dhtmlx_button input:focus, .dhtmlx_button input:active, .dhtmlx_popup_button div:active, .dhtmlx_popup_button div:focus{
@@ -147,7 +147,7 @@ div.dhx_modal_cover {
 .dhtmlx_popup_title{
 	color:#000;
 	
-	height:40px; line-height:40px;
+	height:32px; line-height:32px;
 	font-size:20px;
 }
 .dhtmlx_popup_text{
