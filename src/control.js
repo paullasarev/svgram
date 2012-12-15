@@ -81,9 +81,18 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
     ToolbarDragToolEnd();
     
     var targetObject = null;
-    if (connectObject && connectObject.getAttribute("shape")) {
-      targetObject = connectObject;
-      connectObject = null;
+    if (connectObject) { 
+      if (connectObject.getAttribute("shape")) {
+        targetObject = connectObject;
+        connectObject = null;
+      } else {
+        var group = connectObject.parentNode.parentNode;
+        //alert (group.parentNode.getAttribute("id"));
+        if (group.parentNode.getAttribute("id") != "diagram.paper.shapes") {
+          //alert (group.parentNode.parentNode.getAttribute("shape"));
+          targetObject = group.parentNode.parentNode;
+        }
+      }
     }
 
     if (ControlToolId == "toolbar.icon.rect") {
