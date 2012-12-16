@@ -55,6 +55,8 @@ Rect.create = function () {
 Rect.prototype = new Shape;
 Rect.prototype.constructor = Rect;
 Rect.prototype.shape = Rect.shape;
+Rect.prototype.min_width = 60;
+Rect.prototype.min_height = 40;
 
 Rect.prototype.load = function (id, group, node, spec) {
 	var left = node.getAttribute("x");

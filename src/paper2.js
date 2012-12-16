@@ -46,7 +46,7 @@ function CreateContext(root_shapes, root_lines, paper_color, grid_step) {
   context.resizer_stroke_width = 8;
 
   //knot defaults
-  context.knot_size = 20;
+  context.knot_size = 18;
   context.knot_color = "blue";
   context.knot_stroke_color = paper_color;
   context.knot_stroke_width = 10;

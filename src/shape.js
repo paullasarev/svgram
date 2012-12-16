@@ -88,6 +88,8 @@ function Shape(id, group, node, spec, left, top, width, height) {
 
 Shape.prototype = {
   shape: "unknown",
+  min_width: 40,
+  min_height: 20,
   
   Attr: function(name, val) {
     if (val != null)
@@ -115,6 +117,13 @@ Shape.prototype = {
   },
   
   Resize: function(context, dx, dy, resizer, orientation) {
+    var left = this.left;
+    var top = this.top;
+    var right = this.right;
+    var bottom = this.bottom;
+    var width = this.width;
+    var height = this.height;
+    
     if (orientation == 'n-resize') {
       this.top += dy;
       this.height -= dy;
@@ -133,12 +142,26 @@ Shape.prototype = {
       this.width += dx * 2;
       this.height += dy * 2;
     }
-    
-    this.right = this.left + this.width;
-    this.bottom = this.top + this.height;
-    this.x = Math.round((this.right + this.left) / 2);
-    this.y = Math.round((this.top + this.bottom) / 2);
 
+    //alert("Resize: width:" + this.width + " height:" + this.height);
+    
+    if (this.width < this.min_width || this.height < this.min_height) {
+      this.left = left;
+      this.top = top;
+      this.right = right;
+      this.bottom = bottom;
+      this.width = width;
+      this.height = height;
+      ControlDragAbort();
+      return;
+    } else 
+    {
+      this.right = this.left + this.width;
+      this.bottom = this.top + this.height;
+      this.x = Math.round((this.right + this.left) / 2);
+      this.y = Math.round((this.top + this.bottom) / 2);
+    }
+    
     this.SetPosition(context);
   },
   

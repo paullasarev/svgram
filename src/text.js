@@ -55,6 +55,10 @@ Text.create = function () {
 Text.prototype = new Shape;
 Text.prototype.constructor = Text;
 Text.prototype.shape = Text.shape;
+Text.prototype.min_width = 40;
+Text.prototype.min_height = 20;
+
+
 Text.prototype.load = function (id, group, node, spec) {
   var x = parseInt(node.getAttribute("x"));
   var y = parseInt(node.getAttribute("y"));

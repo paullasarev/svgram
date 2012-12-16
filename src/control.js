@@ -63,6 +63,7 @@ function ControlDragAbort()
 {
   ControlMode = "none";
   PaperSetCursor("default");
+  ControlDragSizeOrientation = null;
 }
 
 function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
@@ -117,16 +118,13 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
       alert(ControlToolId);
     }
     
-    ControlMode = "none";
-    PaperSetCursor("default");
+    ControlDragAbort();
     return true;
   }
   
   ControlDragMove(pos_x, pos_y, dragObject, connectObject, true);
 
-  ControlMode = "none";
-  PaperSetCursor("default");
-  ControlDragSizeOrientation = null;
+  ControlDragAbort();
   
   return true;
 }
