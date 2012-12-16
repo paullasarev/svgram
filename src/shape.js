@@ -114,13 +114,30 @@ Shape.prototype = {
     }
   },
   
-  Resize: function(context, dx, dy, resizer) {
-    this.left -= dx;
-    this.top -= dy;
-    this.width += dx * 2;
-    this.height += dy * 2;
+  Resize: function(context, dx, dy, resizer, orientation) {
+    if (orientation == 'n-resize') {
+      this.top += dy;
+      this.height -= dy;
+    } else if (orientation == 's-resize') {
+      this.bottom += dy;
+      this.height += dy;
+    } else if (orientation == 'w-resize') {
+      this.left += dx;
+      this.width -= dx;
+    } else if (orientation == 'e-resize') {
+      this.right += dx;
+      this.width += dx;
+    } else {
+      this.left -= dx;
+      this.top -= dy;
+      this.width += dx * 2;
+      this.height += dy * 2;
+    }
+    
     this.right = this.left + this.width;
     this.bottom = this.top + this.height;
+    this.x = Math.round((this.right + this.left) / 2);
+    this.y = Math.round((this.top + this.bottom) / 2);
 
     this.SetPosition(context);
   },

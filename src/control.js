@@ -26,6 +26,11 @@ function ControlInDragMode()
   return false;
 }
 
+function ControlInDragSizeMode()
+{
+  return ControlMode == "dragSize";
+}
+
 function ControlDragToolStart(toolId)
 {
   ControlMode = "dragTool";
@@ -36,18 +41,21 @@ function ControlDragToolStart(toolId)
 
 function ControlDragShapeStart() {
   if (ControlMode == "DblClick")
-	return;
+	  return;
   ControlMode = "dragShape";
   ControlWasMoved = false;
   PaperSetCursor("move");
 }
 
-function ControlDragSizeStart() {
+function ControlDragSizeStart(orientation) {
   if (ControlMode == "DblClick")
 	return;
   ControlMode = "dragSize";
   ControlWasMoved = false;
-  PaperSetCursor("se-resize");
+  ControlDragSizeOrientation = orientation;
+  var cursor = (orientation ? orientation : "se-resize");
+    
+  PaperSetCursor(cursor);
 }
 
 function ControlDragAbort()
@@ -117,6 +125,8 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
 
   ControlMode = "none";
   PaperSetCursor("default");
+  ControlDragSizeOrientation = null;
+  
   return true;
 }
 
@@ -132,7 +142,7 @@ function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
     PaperMoveShape(pos_x, pos_y, isEnd);
   }
   else if (mode == "dragSize") {
-    PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd);
+    PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, ControlDragSizeOrientation);
   }
 }
 

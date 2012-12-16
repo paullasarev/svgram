@@ -65,6 +65,7 @@ function CreateContext(root_shapes, root_lines, paper_color, grid_step) {
   context.resizer_event.onmousemove = "ResizerMouseMove(evt)";
   context.resizer_event.onmouseup = "ResizerMouseUp(evt)";
   
+  context.knot_event.onmousedown = "KnotMouseDown(evt)";
   context.knot_event.onmousemove = "KnotMouseMove(evt)";
   context.knot_event.onmouseup = "KnotMouseUp(evt)";
   
@@ -296,15 +297,32 @@ function ConnectResizerToKnot(delta, resizer, knot)
 }
 
 function SnapResizerToGrid(resizer, delta, grid_step) {
-  var x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
-  var y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
+  if (!resizer)
+    return delta;
+    
+  var x, y;
+  if(resizer.tagName == "rect") {
+    x = parseInt(resizer.getAttribute("x")) + parseInt(resizer.getAttribute("width")) / 2;
+    y = parseInt(resizer.getAttribute("y")) + parseInt(resizer.getAttribute("height")) / 2;
+  } else if(resizer.tagName == "circle") {
+    x = parseInt(resizer.getAttribute("cx"));
+    y = parseInt(resizer.getAttribute("cy"));
+  } else {
+    return delta;
+  }
+
   var gridX = SnapPosToGrid(x, delta.x, grid_step);
   var gridY = SnapPosToGrid(y, delta.y, grid_step);
   return {x: gridX - x, y: gridY - y};
 }
 
-function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd) {
+function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, orientation) {
   var delta = {x : pos_x - DragX, y : pos_y - DragY};
+  if (orientation == "n-resize" || orientation == "s-resize") {
+    delta.x = 0;
+  } else if (orientation == "w-resize" || orientation == "e-resize") {
+    delta.y = 0;
+  }
 
   var shape = Context.LoadByGroup(SelectedGroup);
 
@@ -315,7 +333,7 @@ function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd) {
   
   delta = ConnectResizerToKnot(delta, dragObject, connectObject);
   
-  shape.Resize(Context, delta.x, delta.y, dragObject);
+  shape.Resize(Context, delta.x, delta.y, dragObject, orientation);
  
   DragX = pos_x;
   DragY = pos_y;
@@ -381,7 +399,7 @@ function SpecMouseDown(evt) {
 function SpecMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), null, evt.target.parentNode.parentNode);
-  //alert("SpecMouseUp: " + evt.target.parentNode.parentNode.getAttribute("shape"));
+  DragObject = null;
 }
 
 function ResizerMouseDown(evt) {
@@ -407,9 +425,35 @@ function ResizerMouseUp(evt) {
   DragObject = null;
 }
 
+
+function KnotMouseDown(evt) {
+  evt.preventDefault();
+  SelectPaperElement(evt.target);
+  DragObject = evt.target;
+
+  DragX = EventOffsetX(evt);
+  DragY = EventOffsetY(evt);
+
+  var orientation = null;
+  var knot_dir = DragObject.getAttribute("knot-dir");
+  if (knot_dir == "top") {
+    orientation = "n-resize";
+  } else if (knot_dir == "bottom") {
+    orientation = "s-resize";
+  } else if (knot_dir == "left") {
+    orientation = "w-resize";
+  } else if (knot_dir == "right") {
+    orientation = "e-resize";
+  }
+
+  ControlDragSizeStart(orientation);
+}
+
 function KnotMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, evt.target);
+  var target = (ControlDragSizeOrientation ? null : evt.target);
+  //alert("KnotMouseUp: " + target);
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, target);
 }
 
 function KnotMouseMove(evt) {
