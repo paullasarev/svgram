@@ -2,6 +2,9 @@
 function PrepareColorPicker(pickerdiv) {
 
     var default_colors = [
+      //'3333cc', '000000', '303030', '606060', '808080', 'a0a0a0', 'c0c0c0', 'ffffff',
+      '3333cc', '000000', '333333', '444444', '555555', '666666', '777777', '888888',
+      '999999', 'aaaaaa', 'bbbbbb', 'cccccc', 'dddddd', 'eeeeee', 
       '990033', 'ff3366', 'cc0033', 'ff0033', 'ff9999', 'cc3366', 'ffccff', 'cc6699',
       '993366', '660033', 'cc3399', 'ff99cc', 'ff66cc', 'ff99ff', 'ff6699', 'cc0066',
       'ff0066', 'ff3399', 'ff0099', 'ff33cc', 'ff00cc', 'ff66ff', 'ff33ff', 'ff00ff',
@@ -28,15 +31,16 @@ function PrepareColorPicker(pickerdiv) {
       '993300', 'cc6633', '663300', 'ff9966', 'ff6633', 'ff9933', 'ff6600', 'cc3300',
       '996633', '330000', '663333', '996666', 'cc9999', '993333', 'cc6666', 'ffcccc',
       'ff3333', 'cc3333', 'ff6666', '660000', '990000', 'cc0000', 'ff0000', 'ff3300',
-      'cc9966', 'ffcc99', 'ffffff', 'cccccc', '999999', '666666', '333333', '000000',
-      '000000', '000000', '000000', '000000', '000000', '000000', '000000', '000000'
+      'cc9966', 'ffcc99',
+//      'cc9966', 'ffcc99', 'ffffff', 'cccccc', '999999', '666666', '333333', '000000',
+//      '000000', '000000', '000000', '000000', '000000', '000000', '000000', '000000'
     ];
 
     var txt = '<TABLE class=colorpickertable>';
     for (r = 0; r < 16; r++) {
         txt += '<TR>';
         for (c = 0; c < 14; c++) {
-            var color = default_colors[r * 10 + c];
+            var color = default_colors[r * 14 + c];
             txt += '<TD class=colorpickertile style="background-color:#' + color + '"' +
                    'onclick="ColorPickerOnClick(\'#' + color + '\')"></TD>';
         }

@@ -5,6 +5,7 @@ var ControlMode = "none";
 var ControlToolId = "";
 var ControlWasMoved = false;
 var ControlDblClickTimer = null;
+var SvgramVersion = "12.12.16";
 
 function ControlDragToolActive()
 {
@@ -130,6 +131,17 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
   return true;
 }
 
+function ControlGetShapeColor()
+{
+  var colorButton = document.getElementById('buttonColor');
+  if (colorButton != null)
+  {
+    return colorButton.style.backgroundColor;
+  }
+  
+  return null;
+}
+
 function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
 {
   if (ControlMode == "none")
@@ -160,7 +172,7 @@ function ControlExportSvg() {
 function ControlAbout() {
 		dhtmlx.modalbox({ 
 			title:"Svg diagram editor", 
-			text:"SVGram is a svg-based diagram editor<br><br>The project home is <a href='http://code.google.com/p/svgram/'>code.google.com/p/svgram</a>",
+			text:"SVGram is an <a href='http://www.w3.org/TR/SVG/'>SVG</a>-based <a href='http://en.wikipedia.org/wiki/Diagram'>diagram</a> editor<br>Version: "+SvgramVersion+"<br>Please see details on <a href='http://code.google.com/p/svgram/'>code.google.com/p/svgram</a>",
       buttons:["OK"],
 		});
 }

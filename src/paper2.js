@@ -176,11 +176,17 @@ function SnapPosToGrid(pos, delta, grid_step) {
   return Math.round((pos + delta) / grid_step) * grid_step;
 }
 
+function PaperGetCurrentColor()
+{
+  Context.stroke_color = ControlGetShapeColor();
+}
+
 function PaperCreateRect(pos_x, pos_y, parentGroup)
 {
   pos_x = SnapPosToGrid(pos_x, 0, Context.grid_step);
   pos_y = SnapPosToGrid(pos_y, 0, Context.grid_step);
 
+  PaperGetCurrentColor();
   var rect = new Rect(Context, parentGroup, pos_x, pos_y);
   SelectSpec(rect.spec);
 }
@@ -224,6 +230,7 @@ function PaperCreateLine(pos_x, pos_y, knot, parentGroup)
     bottom = pos_y;
   }
 
+  PaperGetCurrentColor();
   var line = new Line(Context, parentGroup, left, top, right, bottom);
 
   if (knot) {
@@ -236,6 +243,7 @@ function PaperCreateLine(pos_x, pos_y, knot, parentGroup)
 
 function PaperCreateText(pos_x, pos_y, parentGroup)
 {
+  PaperGetCurrentColor();
   var shape = new Text(Context, parentGroup, pos_x, pos_y);
 
   SelectSpec(shape.spec);

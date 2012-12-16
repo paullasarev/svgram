@@ -24,6 +24,7 @@ function Text(context, parentGroup, x, y) {
     "text-anchor" : "middle",
     "dominant-baseline" : "central",
     "font-size" : context.text_font_size,
+    "fill" : context.stroke_color,
     "font-family": "Arial",
     });
 
