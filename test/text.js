@@ -11,7 +11,7 @@ describe("text shape", function() {
   });
 
 it("new should init attributes", function() {
-  var shape = new Text(TestContext, 100, 200);
+  var shape = new Text(TestContext, null, 100, 200);
   notEqual(shape, null);
   
   equal(shape.x, 100);
@@ -37,7 +37,7 @@ it("new should init attributes", function() {
 });
 
 it("should load by ID", function() {
-  var shape = new Text(TestContext, 100, 200);
+  var shape = new Text(TestContext, null, 100, 200);
   var id = shape.id;
   
   var shape2 = TestContext.LoadById(id);
@@ -57,7 +57,7 @@ it("should load by ID", function() {
 
 it("move should set coordinates", function() {
   var x = 100,  y = 200;
-  var shape = new Text(TestContext, x, y);
+  var shape = new Text(TestContext, null, x, y);
   var dx = 20, dy = 10;
 
   checkTextPosition(shape, x, y);
@@ -73,7 +73,7 @@ it("move should set coordinates", function() {
 
 it("resize should set font size", function() {
   var x = 100,  y = 200;
-  var shape = new Text(TestContext, x, y);
+  var shape = new Text(TestContext, null, x, y);
   var dx = 20, dy = 10;
   
   var font_size = parseInt(shape.node.getAttribute("font-size"));

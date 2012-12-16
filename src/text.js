@@ -16,7 +16,7 @@ function Text(context, parentGroup, x, y) {
   var bottom = top + height;
 
   var id = Shape.NewID();
-  var root = Shape.AddRoot(parentGroup, context.root_lines);
+  var root = Shape.AddRoot(context, parentGroup, context.root_lines);
   var group = Shape.AddGroup(context, root, id, this.shape);
   var node = AddTagNS(group, svgNS, "text", {
     "x" : x, "y" : y,

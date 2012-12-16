@@ -16,7 +16,7 @@ function Rect(context, parentGroup, x, y, width, height) {
 	var bottom = top + height;
 	
 	var id = Shape.NewID();
-  var root = Shape.AddRoot(parentGroup, context.root_shapes);
+  var root = Shape.AddRoot(context, parentGroup, context.root_shapes);
 	var group = Shape.AddGroup(context, root, id, this.shape);
 	var node = AddTagNS(group, context.svgNS, "rect", {
 			"x" : left,

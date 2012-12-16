@@ -48,7 +48,7 @@ function checkKnot(knot, cx, cy, rsize) {
   sequal(knot.getAttribute("r"), rsize / 2);
 
   sequal(knot.getAttribute("fill"), TestContext.knot_color);
-  sequal(knot.getAttribute("opacity"), TestContext.spec_opacity);
+  //sequal(knot.getAttribute("opacity"), TestContext.spec_opacity);
   sequal(knot.getAttribute("stroke"), TestContext.knot_stroke_color);
   sequal(knot.getAttribute("stroke-width"), TestContext.knot_stroke_width);
   
@@ -105,7 +105,7 @@ function checkShape(shape, x, y, width, height, left, top, right, bottom) {
 function checkRectPosition(rect, x, y, width, height, left, top, right, bottom) {
   checkShape(rect, x, y, width, height, left, top, right, bottom);
   checkRect(rect.node, left, top, width, height);
-  checkRect(rect.spec, left, top, width, height);
+  checkRect(rect.spec.firstChild, left, top, width, height);
 
   var rsize = TestContext.resizer_size;
   var rsize2 = rsize/2;
@@ -122,7 +122,7 @@ function checkLinePosition(rect, x, y, x1, y1) {
   var height = y1 -y;
   checkShape(rect, x + width/2, y + height/2, width, height, x, y, x1, y1);
   checkLine(rect.node, x, y, x1, y1);
-  checkLine(rect.spec, x, y, x1, y1);
+  checkLine(rect.spec.firstChild, x, y, x1, y1);
 
   var rsize = TestContext.resizer_size;
   var rsize2 = rsize/2;
@@ -150,7 +150,7 @@ function checkTextPosition(shape, x, y) {
   equal(shape.right, left + width);
   equal(shape.bottom, top + height);
 
-  checkRect(shape.spec, left, top, width, height);
+  checkRect(shape.spec.firstChild, left, top, width, height);
   
   var rsize = TestContext.resizer_size;
   var rsize2 = rsize / 2;

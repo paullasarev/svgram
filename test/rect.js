@@ -11,7 +11,7 @@ describe("rect shape", function() {
   });
 
 it("should create with required coords", function() {
-  var rect = new Rect(TestContext, 100, 200, 160, 120);
+  var rect = new Rect(TestContext, null, 100, 200, 160, 120);
   expect(rect).not.toBeNull();
   
   expect(rect.x).toBe(100);
@@ -31,7 +31,7 @@ it("should create with required coords", function() {
 });
 
 it("should be instance of Shape", function() {
-  var rect = new Rect(TestContext, 100, 200);
+  var rect = new Rect(TestContext, null, 100, 200);
   expect(rect.x).toBe(100);
   expect(rect.y).toBe(200);
   expect(rect.node).toBe(rect.node);
@@ -47,7 +47,7 @@ it("should be instance of Shape", function() {
 });
 
 it("should load by ID", function() {
-  var rect = new Rect(TestContext, 100, 200);
+  var rect = new Rect(TestContext, null, 100, 200);
   var id = rect.id;
   
   var rect2 = TestContext.LoadById(id);
@@ -66,7 +66,7 @@ it("should load by ID", function() {
 });
 
 it("should load by group", function() {
-  var rect = new Rect(TestContext, 100, 200);
+  var rect = new Rect(TestContext, null, 100, 200);
   var group = rect.group;
   
   var rect2 = TestContext.LoadByGroup(group);
@@ -88,11 +88,11 @@ it("should adjust width and height", function() {
   equal(TestContext.width, 160);
   equal(TestContext.height, 100);
 
-  var rect1 = new Rect(TestContext, 100, 200);
+  var rect1 = new Rect(TestContext, null, 100, 200);
   equal(rect1.width, 160);
   equal(rect1.height, 100);
   
-  var rect = new Rect(TestContext, 100, 200, 800, 600);
+  var rect = new Rect(TestContext, null, 100, 200, 800, 600);
   equal(rect.x, 100);
   equal(rect.y, 200);
   equal(rect.width, 800);
@@ -112,7 +112,7 @@ it("constructor should set stroke and fill attributes from ShapeContext", functi
   TestContext.stroke_width = 4;
   TestContext.fill = "red";
   
-  var rect = new Rect(TestContext, 100, 200, 800, 600);
+  var rect = new Rect(TestContext, null, 100, 200, 800, 600);
   
   equal(rect.Attr("stroke"), "blue");
   equal(rect.Attr("stroke-width"), "4");
@@ -124,10 +124,11 @@ it("should have 'spec' node", function() {
   equal(TestContext.spec_opacity, 0.15);
   TestContext.spec_opacity_initial = 0.33;
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
   notEqual(rect.spec, undefined);
 
-  var spec = rect.spec;
+  equal(rect.spec.tagName, "g");
+  var spec = rect.spec.firstChild;
   equal(spec.tagName, "rect");
   
   sequal(spec.getAttribute("x"), rect.left);
@@ -135,8 +136,8 @@ it("should have 'spec' node", function() {
   sequal(spec.getAttribute("width"), rect.width);
   sequal(spec.getAttribute("height"), rect.height);
 
-  sequal(spec.getAttribute("fill"), TestContext.stroke_color);
-  equal(spec.getAttribute("opacity"), "0.33");
+  //sequal(spec.getAttribute("fill"), TestContext.stroke_color);
+  equal(spec.getAttribute("opacity"), "0");
   sequal(spec.getAttribute("stroke"), TestContext.stroke_color);
   sequal(spec.getAttribute("stroke-width"), TestContext.spec_stroke_width);
 
@@ -150,11 +151,12 @@ it("spec node should handle script events", function() {
   TestContext.spec_event.onmouseup = "SpecMouseUp";
   TestContext.spec_event.onmousemove = "SpecMouseMove";
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
+  var spec = rect.spec.firstChild;
 
-  equal(rect.spec.getAttribute("onmousedown"), "SpecMouseDown");
-  equal(rect.spec.getAttribute("onmouseup"), "SpecMouseUp");
-  equal(rect.spec.getAttribute("onmousemove"), "SpecMouseMove");
+  equal(spec.getAttribute("onmousedown"), "SpecMouseDown");
+  equal(spec.getAttribute("onmouseup"), "SpecMouseUp");
+  equal(spec.getAttribute("onmousemove"), "SpecMouseMove");
 });
 
 it("spec node should handle function events", function() {
@@ -162,16 +164,17 @@ it("spec node should handle function events", function() {
   TestContext.spec_event.onmouseup = function(evt) {TestEvtCounter++;};
   TestContext.spec_event.onmousemove = function(evt) {TestEvtCounter++;};
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
+  var spec = rect.spec.firstChild;
 
-  equal(rect.spec.getAttribute("onmousedown"), null);
-  equal(rect.spec.getAttribute("onmouseup"), null);
-  equal(rect.spec.getAttribute("onmousemove"), null);
+  equal(spec.getAttribute("onmousedown"), null);
+  equal(spec.getAttribute("onmouseup"), null);
+  equal(spec.getAttribute("onmousemove"), null);
   
-  testEvent(rect.spec, "mousedown", 1);
-  testEvent(rect.spec, "mouseup", 1);
-  testEvent(rect.spec, "mousemove", 1);
-  testEvent(rect.spec, "contextmenu", 0);
+  testEvent(spec, "mousedown", 1);
+  testEvent(spec, "mouseup", 1);
+  testEvent(spec, "mousemove", 1);
+  testEvent(spec, "contextmenu", 0);
 });
 
 it("shoud have 'resizer' node", function() {
@@ -181,7 +184,7 @@ it("shoud have 'resizer' node", function() {
   TestContext.resizer_size = rsize;
   TestContext.resizer_color = "red";
 
-  var rect = new Rect(TestContext, 100, 200);
+  var rect = new Rect(TestContext, null, 100, 200);
   notEqual(rect.spec, undefined);
 
   equal(rect.resizers.length, 1);
@@ -195,7 +198,7 @@ it("shoud have 'resizer' node", function() {
   sequal(resizer.getAttribute("height"), rsize);
 
   sequal(resizer.getAttribute("fill"), TestContext.resizer_color);
-  sequal(resizer.getAttribute("opacity"), TestContext.spec_opacity);
+  //sequal(resizer.getAttribute("opacity"), TestContext.spec_opacity);
   sequal(resizer.getAttribute("stroke"), TestContext.resizer_color);
   sequal(resizer.getAttribute("stroke-width"), TestContext.spec_stroke_width);
   
@@ -210,7 +213,7 @@ it("resizer node should handle script events", function() {
   TestContext.resizer_event.onmousemove = "ResizerMouseMove";
   TestContext.resizer_event.onmouseup = "ResizerMouseUp";
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
 
   var resizer = rect.resizers[0];
   equal(resizer.getAttribute("onmousedown"), "ResizerMouseDown");
@@ -223,7 +226,7 @@ it("resizer node should handle function events", function() {
   TestContext.resizer_event.onmousemove = function(evt) {TestEvtCounter++;};
   TestContext.resizer_event.onmouseup = function(evt) {TestEvtCounter++;};
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
   var resizer = rect.resizers[0];
 
   equal(resizer.getAttribute("onmousedown"), null);
@@ -243,7 +246,7 @@ it("shold have 'knots' nodes", function() {
   TestContext.knot_size = rsize;
   TestContext.knot_color = "red";
 
-  var rect = new Rect(TestContext, 100, 200);
+  var rect = new Rect(TestContext, null, 100, 200);
   notEqual(rect.spec, undefined);
 
   equal(rect.knots.length, 4);
@@ -259,7 +262,7 @@ it("knot node should handle script events", function() {
   TestContext.knot_event.onmousemove = "KnotMouseMove";
   TestContext.knot_event.onmouseup = "KnotMouseUp";
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
 
   checkKnotScriptEvent(rect.knots[0]);
   checkKnotScriptEvent(rect.knots[1]);
@@ -271,7 +274,7 @@ it("knot node should handle function events", function() {
   TestContext.knot_event.onmousemove = function(evt) {TestEvtCounter++;};
   TestContext.knot_event.onmouseup = function(evt) {TestEvtCounter++;};
 
-  var rect = new Rect(TestContext, 110, 200);
+  var rect = new Rect(TestContext, null, 110, 200);
   
   checkKnotFunctionEvent(rect.knots[0]);
   checkKnotFunctionEvent(rect.knots[1]);
@@ -284,7 +287,7 @@ it("move should set coordinates", function() {
   var y = 400;
   var width = 200;
   var height = 100;
-  var rect = new Rect(TestContext, x, y, width, height);
+  var rect = new Rect(TestContext, null, x, y, width, height);
   
   var dx = 20;
   var dy = 10;
@@ -303,7 +306,7 @@ it("move should set coordinates", function() {
 
 it("resize should set coordinates", function() {
   var coords = { x: 300, y: 400, width: 200, height: 100, };
-  var rect = new Rect(TestContext, coords.x, coords.y, coords.width, coords.height);
+  var rect = new Rect(TestContext, null, coords.x, coords.y, coords.width, coords.height);
   
   var dx = 20;
   var dy = 10;
@@ -317,7 +320,7 @@ it("resize should set coordinates", function() {
 
 it("resize for 1px should work correct", function() {
   var coords = { x: 300, y: 400, width: 200, height: 100, };
-  var rect = new Rect(TestContext, coords.x, coords.y, coords.width, coords.height);
+  var rect = new Rect(TestContext, null, coords.x, coords.y, coords.width, coords.height);
 
   var dx = 1;
   var dy = 1;

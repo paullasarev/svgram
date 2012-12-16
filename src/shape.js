@@ -202,11 +202,11 @@ Shape.AddEventHandlers = function(node, eventMap) {
   }
 };
 
-Shape.AddRoot = function(parentGroup, defaultRoot) {
+Shape.AddRoot = function(context, parentGroup, defaultRoot) {
   var root;
   if (parentGroup) {
-    var parentShape = Context.LoadByGroup(parentGroup);
-    root = parentShape.AddSubs(Context);
+    var parentShape = context.LoadByGroup(parentGroup);
+    root = parentShape.AddSubs(context);
   } else {
     root = defaultRoot;
   }

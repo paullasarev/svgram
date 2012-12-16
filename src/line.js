@@ -12,7 +12,7 @@ function Line(context, parentGroup, x1, y1, x2, y2) {
 	y2 = parseInt(y2);
 	
 	var id = Shape.NewID();
-  var root = Shape.AddRoot(parentGroup, context.root_lines);
+  var root = Shape.AddRoot(context, parentGroup, context.root_lines);
 	var group = Shape.PrependGroup(context, root, id, this.shape);
 	var node = AddTagNS(group, context.svgNS, "line", {
 			"x1" : x1,

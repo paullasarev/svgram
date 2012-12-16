@@ -11,7 +11,7 @@ describe("line shape", function() {
   });
 
 it("new should init attributes", function() {
-  var shape = new Line(TestContext, 100, 200, 300, 400);
+  var shape = new Line(TestContext, null, 100, 200, 300, 400);
   notEqual(shape, null);
   
   equal(shape.x, (100 + 300)/2);
@@ -36,7 +36,7 @@ it("new should init attributes", function() {
 });
 
 it("should load by ID", function() {
-  var shape = new Line(TestContext, 100, 200, 300, 400);
+  var shape = new Line(TestContext, null, 100, 200, 300, 400);
   var id = shape.id;
   
   var shape2 = TestContext.LoadById(id);
@@ -58,7 +58,7 @@ it("move should set coordinates", function() {
   var x = 100,  y = 200;
   var x1 = 300, y1 = 400;
   
-  var line = new Line(TestContext, x, y, x1, y1);
+  var line = new Line(TestContext, null, x, y, x1, y1);
   
   var dx = 20, dy = 10;
   
@@ -76,7 +76,7 @@ it("move should set coordinates", function() {
 it("resize by first resizer should move x1,y1", function() {
   var x = 100,  y = 200;
   var x1 = 300, y1 = 400;
-  var line = new Line(TestContext, x, y, x1, y1);
+  var line = new Line(TestContext, null, x, y, x1, y1);
   
   var dx = 20, dy = 10;
   
@@ -93,7 +93,7 @@ it("resize by first resizer should move x1,y1", function() {
 it("resize by second resizer should move x2,y2", function() {
   var x = 100,  y = 200;
   var x1 = 300, y1 = 400;
-  var line = new Line(TestContext, x, y, x1, y1);
+  var line = new Line(TestContext, null, x, y, x1, y1);
   
   var dx = 20, dy = 10;
   
