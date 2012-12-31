@@ -59,6 +59,14 @@ function ControlDragSizeStart(orientation) {
   PaperSetCursor(cursor);
 }
 
+
+function ControlDragPaperStart()
+{
+  ControlMode = "resizePaper";
+  ControlWasMoved = false;
+  PaperSetCursor("se-resize");
+}
+
 function ControlDragAbort()
 {
   ControlMode = "none";
@@ -97,9 +105,7 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
         connectObject = null;
       } else {
         var group = connectObject.parentNode.parentNode;
-        //alert (group.parentNode.getAttribute("id"));
         if (group.parentNode.getAttribute("id") != "diagram.paper.shapes") {
-          //alert (group.parentNode.parentNode.getAttribute("shape"));
           targetObject = group.parentNode.parentNode;
         }
       }
@@ -153,6 +159,9 @@ function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
   }
   else if (mode == "dragSize") {
     PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, ControlDragSizeOrientation);
+  }
+  else if (mode == "resizePaper") {
+    PaperResizePaper(pos_x, pos_y, isEnd);
   }
 }
 

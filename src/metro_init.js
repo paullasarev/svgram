@@ -14,10 +14,10 @@ function CreateSvg(root, width, height, stroke)
   
   var svg = document.getElementById("diagram");
 
-  CreatePaper(svg, width, height, 0, 0, 0, paperColor, paperBorderColor);
+  CreatePaper(svg, width, height, stroke, 0, 0, paperColor, paperBorderColor);
 }
 
 function Init(root)
 {
-  CreateSvg(root, 800, 600, 1);
+  CreateSvg(root, 800, 600, 2);
 }

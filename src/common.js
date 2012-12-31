@@ -49,6 +49,15 @@ function CreateShadowFilter(svg)
   AddTagNS(filter, svgNS, "feBlend", {"in":"SourceGraphic", in2:"blurOut", mode:"normal" });
 }
 
+function RemoveAllChilds(node) {
+  if (node.hasChildNodes())
+  {
+    while (node.childNodes.length >= 1)
+    {
+        node.removeChild(node.firstChild);
+    } 
+  }
+}
 
 /*!
 Math.uuid.js (v1.4)
