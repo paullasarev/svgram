@@ -14,6 +14,7 @@ var PaperSvg = null;
 var PaperGrid = null;
 var GridStep = 20;
 var PaperStroke = null;
+var PaperRoot = null;
 
 var SelectedGroup = null;
 var DragX = 0, DragY = 0;
@@ -107,11 +108,11 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   PaperGrid = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas.grid"});
   CreateGrid(PaperGrid, width, height, borderColor);
 
-  var paper = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
-  PaperLinesElement = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.lines"});
-  PaperElement = AddTagNS(paper, svgNS, "g", {id:"diagram.paper.shapes"});
+  PaperRoot = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
+  PaperLinesElement = AddTagNS(PaperRoot, svgNS, "g", {id:"diagram.paper.lines"});
+  PaperElement = AddTagNS(PaperRoot, svgNS, "g", {id:"diagram.paper.shapes"});
   
-  CalculatePaperClientOffset(paper);
+  CalculatePaperClientOffset(PaperRoot);
 
   Context = CreateContext(PaperElement, PaperLinesElement, paperColor, GridStep);
 
@@ -170,6 +171,7 @@ function PaperResizePaper(pos_x, pos_y, isEnd) {
   var height = parseInt(PaperSvg.getAttribute("height"));
 
   CreateGrid(PaperGrid, width, height, PaperBorderColor);
+  CalculatePaperClientOffset(PaperRoot);
   
   if (isEnd) {
     //alert("PaperResizePaper");
@@ -556,10 +558,12 @@ function PaperResizerMouseMove(evt) {
   evt.preventDefault();
   if (ControlInDragMode()) {
     ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
+    //dhtmlx.message({text: "PaperResizerMouseMove"});
   }
 }
 
 function PaperResizerMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject);
+	//dhtmlx.message({text: "PaperResizerMouseUp"});
 }
