@@ -13,11 +13,14 @@ function CreateSvg(root, width, height, stroke)
   var paperColor = "GhostWhite";
   
   var svg = document.getElementById("diagram");
+  SetAttr(svg, {"width" : width, "height" : height});
 
   CreatePaper(svg, width, height, stroke, 0, 0, paperColor, paperBorderColor);
 }
 
 function Init(root)
 {
-  CreateSvg(root, 800, 600, 2);
+  var width = (window.innerWidth||document.documentElement.offsetWidth) - 200;
+  var height = (window.innerHeight||document.documentElement.offsetHeight) - 20;
+  CreateSvg(root, width, height, 2);
 }

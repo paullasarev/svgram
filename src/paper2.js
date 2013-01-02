@@ -112,7 +112,7 @@ function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor,
   PaperLinesElement = AddTagNS(PaperRoot, svgNS, "g", {id:"diagram.paper.lines"});
   PaperElement = AddTagNS(PaperRoot, svgNS, "g", {id:"diagram.paper.shapes"});
   
-  CalculatePaperClientOffset(PaperRoot);
+  CalculatePaperClientOffset(PaperSvg);
 
   Context = CreateContext(PaperElement, PaperLinesElement, paperColor, GridStep);
 
@@ -132,17 +132,18 @@ function CreateGrid(grid, width, height, borderColor)
 }
 
 function AddPaperResizer(context, svg, x, y, width, height, stroke) {
-  var paperResizerSize = 20;
+  var paperResizerSize = 30;
+  var strokeSize = 10;
   var paperResizer = AddTagNS(svg, svgNS, "rect", {
     "id": "diagram.resizer",
-    "x": x + width - stroke - paperResizerSize - 0,
-    "y": y + height - stroke - paperResizerSize - 0, 
+    "x": x + width - stroke * 1 - paperResizerSize + strokeSize /2 ,
+    "y": y + height - stroke * 1- paperResizerSize + strokeSize/2, 
     "width": paperResizerSize, 
     "height": paperResizerSize,
     "opacity": context.spec_opacity,
     "fill": context.resizer_color,
-    //"stroke": context.resizer_color,
-    //"stroke-width": context.resizer_stroke_width,
+    "stroke": context.paper_color,
+    "stroke-width": strokeSize,
     "id": Shape.NewID(),
     "svgram": "resizer",
     });
@@ -166,23 +167,31 @@ function PaperResizePaper(pos_x, pos_y, isEnd) {
   Shape.AddDelta(PaperSpec, "height", delta_y);
 
   Shape.AddDelta(PaperSvg, "width", delta_x);
-  Shape.AddDelta(PaperSvg, "height", delta_y);
+  Shape.AddDelta(PaperSvg, "height", delta_y); 
   var width = parseInt(PaperSvg.getAttribute("width"));
   var height = parseInt(PaperSvg.getAttribute("height"));
 
   CreateGrid(PaperGrid, width, height, PaperBorderColor);
-  CalculatePaperClientOffset(PaperRoot);
-  
+  CalculatePaperClientOffset(PaperSvg);
+  //SetViewbox(PaperSvg);
+
   if (isEnd) {
     //alert("PaperResizePaper");
   }
 }
 
+function SetViewbox(node)
+{
+  var width = parseInt(node.getAttribute("width"));
+  var height = parseInt(node.getAttribute("height"));
+  node.setAttribute("viewBox", "0 0 " + width + " " +height);
+}
+
 function CalculatePaperClientOffset(element)
 {
   var rect = element.getBoundingClientRect();
-  PaperClientOffsetX = rect.left;
-  PaperClientOffsetY = rect.top;
+  PaperClientOffsetX = parseInt(rect.left);
+  PaperClientOffsetY = parseInt(rect.top);
 }
 
 function GetShapeColor()
@@ -201,6 +210,9 @@ function DeselectPaper()
   if (SelectedGroup != null) {
     var oldspec = SelectedGroup.childNodes.item(1);
     SetAttr(oldspec, { "opacity": 0 });
+    
+    SelectedGroup = null;
+    DragObject = null;
   }
 }
 
@@ -508,7 +520,6 @@ function ResizerMouseUp(evt) {
   DragObject = null;
 }
 
-
 function KnotMouseDown(evt) {
   evt.preventDefault();
   SelectPaperElement(evt.target);
@@ -535,7 +546,6 @@ function KnotMouseDown(evt) {
 function KnotMouseUp(evt) {
   evt.preventDefault();
   var target = (ControlDragSizeOrientation ? null : evt.target);
-  //alert("KnotMouseUp: " + target);
   ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, target);
 }
 
@@ -548,6 +558,7 @@ function KnotMouseMove(evt) {
 
 function PaperResizerMouseDown(evt) {
   evt.preventDefault();
+  DeselectPaper();
 
   DragX = EventOffsetX(evt);
   DragY = EventOffsetY(evt);
@@ -556,14 +567,14 @@ function PaperResizerMouseDown(evt) {
 
 function PaperResizerMouseMove(evt) {
   evt.preventDefault();
+
   if (ControlInDragMode()) {
-    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
-    //dhtmlx.message({text: "PaperResizerMouseMove"});
+    DeselectPaper();
+    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
   }
 }
 
 function PaperResizerMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject);
-	//dhtmlx.message({text: "PaperResizerMouseUp"});
+  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
 }
