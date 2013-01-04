@@ -578,3 +578,16 @@ function PaperResizerMouseUp(evt) {
   evt.preventDefault();
   ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
 }
+
+define(["uuid","shape","rect","line","text"], 
+  function(Uuid, ShapeModule, RectModule, LineModule, TextModule) {
+  
+  function Paper() {
+    this.Control = null;
+  }
+  
+  Paper.prototype.CreatePaper = CreatePaper;
+  Paper.prototype.DeselectPaper = DeselectPaper;
+  
+  return Paper;
+});

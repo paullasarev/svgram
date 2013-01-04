@@ -101,3 +101,10 @@ Line.prototype.Resize = function (context, dx, dy, resizer) {
 	
 	this.SetPosition(context);
 }
+
+define(["shape"], function(ShapeModule) {
+  function LineModule() {
+  }
+  
+  return LineModule;
+});

@@ -1,26 +1,57 @@
 // $Author$
 // $Id$
 
-var browserName=navigator.appName; 
-if (browserName=="Microsoft Internet Explorer")
-{
-  //alert("Sorry, Internet Explorer is not fully supported now. Please use instead Chrome or Firefox.");
-}
+require.config({
+  paths: {
+    'dhtmlx' : '../lib/dhtmlx-message/codebase/message',
+    'dhtmlx-css' : '../lib/dhtmlx-message/codebase/themes/message_skyblue',
+  },
+  shim: {
+    'vkbeautify' : {
+      'deps' : [],
+      'exports' : 'vkbeautify',
+    },
+    'webtoolkit.base64' : {
+      'exports' : 'Base64',
+    },
+    'dhtmlx' : {
+      'deps' : ['css!dhtmlx-css'],
+      'exports' : 'dhtmlx',
+    },
+  },
+});
 
-function CreateSvg(root, width, height, stroke)
-{
-  var paperBorderColor = "blue";
-  var paperColor = "GhostWhite";
-  
-  var svg = document.getElementById("diagram");
-  SetAttr(svg, {"width" : width, "height" : height});
+requirejs(["colorpicker", "paper2", "control", "metro_toolbar", "common", "uuid"],
+  function (colorPicker, Paper, Control, Toolbar, Common, Uuid) {
 
-  CreatePaper(svg, width, height, stroke, 0, 0, paperColor, paperBorderColor);
-}
+  if (navigator.appName == "Microsoft Internet Explorer")
+  {
+    //alert("Sorry, Internet Explorer is not fully supported now. Please use instead Chrome or Firefox.");
+  }
+ 
+  colorPicker.PrepareColorPicker(document.getElementById('colorPicker'));
 
-function Init(root)
-{
   var width = (window.innerWidth||document.documentElement.offsetWidth) - 200;
   var height = (window.innerHeight||document.documentElement.offsetHeight) - 20;
-  CreateSvg(root, width, height, 2);
-}
+  var paperBorderColor = "blue";
+  var paperColor = "GhostWhite";
+  var stroke = 2;
+  
+  var root = document.body;
+  var svg = document.getElementById("diagram");
+  Common.SetAttr(svg, {"width" : width, "height" : height});
+
+  var paper = new Paper();
+  var control = new Control();
+  var toolbar = new Toolbar();
+  
+  paper.Control = control;
+  toolbar.Control = control;
+  control.Paper = paper;
+  control.Toolbar = toolbar;
+  
+  control.Init();
+  paper.CreatePaper(svg, width, height, stroke, 0, 0, paperColor, paperBorderColor);
+  toolbar.CreateToolbar(root, 160, height, paperColor);
+  
+});

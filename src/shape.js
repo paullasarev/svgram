@@ -345,3 +345,10 @@ Shape.MoveCircle = function(node, x, y)
   SetAttr(node, {"cx": x, "cy": y});
 };
 
+// require.js module declaration
+define(["uuid"], function(Uuid) {
+  function ShapeModule() {
+  }
+  return ShapeModule;
+});
+

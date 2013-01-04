@@ -93,3 +93,10 @@ Rect.prototype.SetPosition = function (context, noPropagate) {
 	Shape.MoveKnot(context, this.knots[2], this.x, this.top, noPropagate);
 	Shape.MoveKnot(context, this.knots[3], this.x, this.bottom, noPropagate);
 }
+
+define(["shape"], function(ShapeModule) {
+  function RectModule() {
+  }
+  
+  return RectModule;
+});

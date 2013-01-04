@@ -3,6 +3,7 @@
 <head>
     <!--$Author$--> 
     <!--$Id$--> 
+
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -10,53 +11,38 @@
     <link href="css/modern.css" rel="stylesheet">
     <link href="css/site.css" rel="stylesheet" type="text/css">
 	
-	<link rel="stylesheet" type="text/css" href="lib/dhtmlx-message/codebase/themes/message_skyblue.css">
-	<script type="text/javascript" src='lib/dhtmlx-message/codebase/message.js'></script>
-
-    <script language="JavaScript" type="text/javascript" src="src/common.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/control.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/metro_toolbar.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/shape.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/rect.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/line.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/text.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/paper2.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/metro_init.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/colorpicker.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/webtoolkit.base64.js"></script>
-    <script language="JavaScript" type="text/javascript" src="src/vkbeautify.js"></script>
+    <script data-main="src/metro_init.js" src="src/require.js"></script>
     
     <title>SVGRAM</title>
 </head>
-<body class="modern-ui" onload="Init(document.body); PrepareColorPicker(document.getElementById('colorPicker'));">
+<body class="modern-ui">
 
 <table border="0" style="border-collapse:collapse; border:none; table-layout:fixed;">
 <tr>
 <td width="160px" style="border-collapse:collapse; border:none;">
   <div class="toolbar-vertical">
-    <div class="toolbar-group">
-      <button class="button standard bg-color-blue fg-color-white" style="width:140px;"
-        onclick="OnclickToolbarIcon(event)" id="toolbar.icon.about">
+    <div class="toolbar-group" id="shape-action-button">
+      <button class="button standard bg-color-blue fg-color-white" style="width:140px;" id="toolbar.icon.about">
         <img src="images/logo.png" style="width:30px; height:30px; top:0px; left:4px"/>SVGram</button>
     </div>
-    <div class="toolbar-group">
-      <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.rect">
+    <div class="toolbar-group" id="shape-button">
+      <button class="button standard" style="width:140px" id="toolbar.icon.rect">
         <img src="images/block.png""/>Block</button>
-      <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.line">
+      <button class="button standard" style="width:140px" id="toolbar.icon.line">
         <img src="images/line.png"/>Line</button>
-      <button class="button standard" style="width:140px" onmousedown="OnmousedownToolbarIcon(event)" onmouseup="OnmouseupToolbarIcon(event)" id="toolbar.icon.text">
+      <button class="button standard" style="width:140px" id="toolbar.icon.text">
         <img src="images/text.png"/>Text</button>
     </div>
-    <div class="toolbar-group">
-      <button class="button standard" style="width:140px" onclick="OnclickToolbarIcon(event)" id="toolbar.icon.export">
+    <div class="toolbar-group" id="shape-action-button">
+      <button class="button standard" style="width:140px" id="toolbar.icon.export">
         Export SVG<img src="images/save.png"/></button>
     </div>
     <div class="toolbar-group">
       <button id="buttonColor" class="button" style="width:140px; background-color:#3333CC; color:white">Current Color</button>
       <div id="colorPicker"></div>
     </div>
-    <div class="toolbar-group">
-      <button class="button standard" style="width:140px" onclick="OnclickToolbarIcon(event)" id="toolbar.icon.delete">
+    <div class="toolbar-group" id="shape-action-button">
+      <button class="button standard" style="width:140px" id="toolbar.icon.delete">
         Delete</button>
     </div>
   </div>

@@ -7,6 +7,11 @@ var ControlWasMoved = false;
 var ControlDblClickTimer = null;
 var SvgramVersion = "12.12.16";
 
+function ControlInit() {
+  ControlDragAbort();
+}
+
+
 function ControlDragToolActive()
 {
   if (ControlMode == "dragTool")
@@ -170,63 +175,34 @@ function ControlDeleteShape() {
   ControlDragAbort();
 }
 
-function ControlExportSvg() {
-  DeselectPaper();
-  OpenSavePrintWindow();
-  ControlDragAbort();
-}
-
-function ControlAbout() {
-		dhtmlx.modalbox({ 
+define(["export_svg", "dhtmlx"], function(ExportSvg, Dhtmlx) {
+  function Control() {
+    this.Paper = null;
+    this.Toolbar = null;
+  }
+  
+  Control.prototype.Init = ControlInit;
+  Control.prototype.ControlDragToolStart = ControlDragToolStart;
+  Control.prototype.ControlDragAbort = ControlDragAbort;
+  Control.prototype.ControlDeleteShape = ControlDeleteShape;
+  
+  Control.prototype.ControlAbout = function()
+  {
+		Dhtmlx.modalbox({ 
 			title:"Svg diagram editor", 
 			text:"SVGram is an <a href='http://www.w3.org/TR/SVG/'>SVG</a>-based <a href='http://en.wikipedia.org/wiki/Diagram'>diagram</a> editor<br>Version: "+SvgramVersion+"<br>Please see details on <a href='http://code.google.com/p/svgram/'>code.google.com/p/svgram</a>",
       buttons:["OK"],
 		});
-}
-
-function FilterSvgNodes(parent)
-{
-  var attr = parent.getAttribute('cursor');
-  if (attr) {
-     parent.removeAttribute('cursor');
-  }
+  };
   
-  var attributesToRemove = {svgram:"", onmouseover:"", onmouseup:"", onmousedown:"", onmouseout:""};
-  next_node:
-  for (var i = parent.childNodes.length - 1 ; i >= 0 ; i--) 
+  Control.prototype.ControlExportSvg = function()
   {
-    var node = parent.childNodes[i];
-    
-    if(node.tagName == "text")
-      continue;
-    
-    for(var name in attributesToRemove)
-    {
-      attr = node.getAttribute(name);
-      if (attr) {
-        parent.removeChild(node);
-        continue next_node;
-      }
-    }
-
-    FilterSvgNodes(parent.childNodes[i]);
-  }
-}
-
-function OpenSavePrintWindow()
-{
-	var svg = document.getElementById('diagram');
-	var copySvg = svg.cloneNode(false);
-	copySvg.id = 'newDiagram';
+    this.Paper.DeselectPaper();
+    this.ControlDragAbort();
+    var exportSvg = new ExportSvg;
+    exportSvg.Export();
+  };
   
-	var svg_paper_root = document.getElementById('diagram.paper').cloneNode(true);
-	copySvg.appendChild(svg_paper_root);	
-	FilterSvgNodes(copySvg);	
-  
-	var serializer = new XMLSerializer();
-  var copySvgString = vkbeautify.xml(serializer.serializeToString(copySvg));
-	var copySvgBase64 = Base64.encode(copySvgString);	
-	var wnd = window.open("data:image/svg+xml;charset=utf-8;base64,\n" + copySvgBase64, "Save_Print", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
-	// var wnd = window.open("data:image/svg+xml", "Svg diagram", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
-  // wnd.document.write(copySvgString);
-}
+  return Control;
+});
+

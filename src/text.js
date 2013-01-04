@@ -88,12 +88,17 @@ Text.prototype.SetPosition = function (context) {
 
 Text.prototype.Resize = function (context, dx, dy, resizer) {
   var height = this.height;
-  //dx = this.node.offsetWidth - this.width;
   Shape.prototype.Resize.call(this, context, dx, dy, resizer);
 
   var new_height = this.height;
   var font_size = parseInt(this.node.getAttribute("font-size"));
   var new_font_size = Math.round(font_size * (new_height/height));
   this.node.setAttribute("font-size", new_font_size);
-  //this.SetPosition(context);
 }
+
+define(["shape"], function(ShapeModule) {
+  function TextModule() {
+  }
+
+  return TextModule;
+});

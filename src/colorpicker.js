@@ -1,5 +1,5 @@
-
-function PrepareColorPicker(pickerdiv) {
+define([], function() { return {
+"PrepareColorPicker" : function (pickerdiv) {
 
     var default_colors = [
       //'3333cc', '000000', '303030', '606060', '808080', 'a0a0a0', 'c0c0c0', 'ffffff',
@@ -42,14 +42,16 @@ function PrepareColorPicker(pickerdiv) {
         for (c = 0; c < 14; c++) {
             var color = default_colors[r * 14 + c];
             txt += '<TD class=colorpickertile style="background-color:#' + color + '"' +
-                   'onclick="ColorPickerOnClick(\'#' + color + '\')"></TD>';
+                   'onclick="requirejs([\'colorpicker\'], function(colorpicker){colorpicker.ColorPickerOnClick(\'#' + color + '\')})"></TD>';
         }
         txt += '</TR>';
     }
     txt += '</TABLE>';
     pickerdiv.innerHTML = txt;
-}
+},
 
-function ColorPickerOnClick(color) {
+"ColorPickerOnClick" : function (color) {
     document.getElementById('buttonColor').style.backgroundColor = color;
-}
+},
+
+}});
