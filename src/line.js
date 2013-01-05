@@ -2,6 +2,8 @@
 // $Author$
 // $Id$
 
+define(["shape"], function(Shape) {
+
 function Line(context, parentGroup, x1, y1, x2, y2) {
 	if (!context)
 		return;
@@ -103,9 +105,5 @@ Line.prototype.Resize = function (context, dx, dy, resizer) {
   return true;
 }
 
-define(["shape"], function(ShapeModule) {
-  function LineModule() {
-  }
-  
-  return LineModule;
+return Line;
 });

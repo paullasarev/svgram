@@ -2,6 +2,8 @@
 // $Author$
 // $Id$
 
+define(["shape"], function(Shape) {
+  
 function Rect(context, parentGroup, x, y, width, height) {
 	if (!context)
 		return;
@@ -94,9 +96,5 @@ Rect.prototype.SetPosition = function (context, noPropagate) {
 	Shape.MoveKnot(context, this.knots[3], this.x, this.bottom, noPropagate);
 }
 
-define(["shape"], function(ShapeModule) {
-  function RectModule() {
-  }
-  
-  return RectModule;
+return Rect;
 });

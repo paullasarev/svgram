@@ -1,8 +1,8 @@
 // $Author: paullasarev@gmail.com $
 // $Id$
 
-define(["uuid","common","shape","rect","line","text"], 
-function(Uuid, Common, ShapeModule, RectModule, LineModule, TextModule) {
+define(["uuid","common","shape_context", "shape","rect","line","text"], 
+function(Uuid, Common, ShapeContext, Shape, Rect, Line, Text) {
   
 function Paper() 
 {

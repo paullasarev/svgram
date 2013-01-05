@@ -2,6 +2,8 @@
 // $Author$
 // $Id$
 
+define(["shape"], function(Shape) {
+
 function Text(context, parentGroup, x, y) {
   if (!context)
     return;
@@ -84,7 +86,7 @@ Text.prototype.SetPosition = function (context) {
   });
 
   Shape.MoveRect(this.resizers[0], this.right, this.bottom);
-}
+};
 
 Text.prototype.Resize = function (context, dx, dy, resizer) {
   var height = this.height;
@@ -95,11 +97,7 @@ Text.prototype.Resize = function (context, dx, dy, resizer) {
   var new_font_size = Math.round(font_size * (new_height/height));
   this.node.setAttribute("font-size", new_font_size);
   return true;
-}
+};
 
-define(["shape"], function(ShapeModule) {
-  function TextModule() {
-  }
-
-  return TextModule;
+return Text;
 });

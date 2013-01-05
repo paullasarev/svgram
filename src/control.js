@@ -60,7 +60,7 @@ Control.prototype.ControlDragEnd = function(pos_x, pos_y, dragObject, connectObj
     this.ControlMode = "DblClick";
     this.ControlDblClickTimer = setTimeout(function() {
       this.ControlMode = "none";
-      }, 300);
+      }.bind(this), 300);
     
     return true;
   }
