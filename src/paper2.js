@@ -442,7 +442,7 @@ function KnotMouseDown(evt) {
 
 function KnotMouseUp(evt) {
   evt.preventDefault();
-  var target = (ControlDragSizeOrientation ? null : evt.target);
+  var target = (TheControl.ControlDragSizeOrientation ? null : evt.target);
   TheControl.ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, target);
 }
 
