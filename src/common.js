@@ -50,15 +50,6 @@ function CreateShadowFilter(svg)
   AddTagNS(filter, svgNS, "feBlend", {"in":"SourceGraphic", in2:"blurOut", mode:"normal" });
 }
 
-function RemoveAllChilds(node) {
-  if (node.hasChildNodes())
-  {
-    while (node.childNodes.length >= 1)
-    {
-        node.removeChild(node.firstChild);
-    } 
-  }
-}
 
 define([], {
   
@@ -91,6 +82,23 @@ Bind: function(node, eventName, object, propertyName)
 SetAttr: SetAttr,
 
 SetAttrNS2: SetAttrNS2,
+
+AddTagNS: AddTagNS,
+
+svgNS: svgNS,
+
+xlinkNS: xlinkNS,
+
+RemoveAllChilds: function (node) {
+  if (node.hasChildNodes())
+  {
+    while (node.childNodes.length >= 1)
+    {
+        node.removeChild(node.firstChild);
+    } 
+  }
+},
+
 
 });
 

@@ -21,115 +21,9 @@ var DragX = 0, DragY = 0;
 var DragObject;
 var Context;
 
-function CreateContext(root_shapes, root_lines, paper_color, grid_step) {
-  var context = new ShapeContext();
-  
-  context.Register(Rect);
-  context.Register(Line);
-  context.Register(Text);
-  
-  context.root_shapes = root_shapes;
-  context.root_lines = root_lines;
+var TheControl = null;
+var ThePaper = null;
 
-  context.paper_color = paper_color;
-  context.grid_step = grid_step;
-
-  context.line_length = 40;
-  
-  //shape defaults
-  context.width = 160;
-  context.height = 80;
-  context.stroke_color = "rgb(51, 51, 204)";
-  context.stroke_width = 2;
-  context.fill = "none";
-  
-  //spec defaults
-  context.spec_opacity_initial = 0;
-  context.spec_opacity = 0.15;
-  context.spec_stroke_width = 12;
-
-  //resizer defaults
-  context.resizer_size = 8;
-  context.resizer_color = "blue";
-  context.resizer_stroke_width = 8;
-
-  //knot defaults
-  context.knot_size = 18;
-  context.knot_color = "blue";
-  context.knot_stroke_color = paper_color;
-  context.knot_stroke_width = 10;
-
-  //text props
-  context.text_width = 100;
-  context.text_height = 20;
-  context.text_font_size = 20;
-  
-  //events
-  context.spec_event.onmousedown = "SpecMouseDown(evt)";
-  context.spec_event.onmouseup = "SpecMouseUp(evt)";
-  context.spec_event.onmousemove = "SpecMouseMove(evt)";
-  
-  context.resizer_event.onmousedown = "ResizerMouseDown(evt)";
-  context.resizer_event.onmousemove = "ResizerMouseMove(evt)";
-  context.resizer_event.onmouseup = "ResizerMouseUp(evt)";
-  
-  context.knot_event.onmousedown = "KnotMouseDown(evt)";
-  context.knot_event.onmousemove = "KnotMouseMove(evt)";
-  context.knot_event.onmouseup = "KnotMouseUp(evt)";
-  
-  context.paper_resizer_event = {};
-  context.paper_resizer_event.onmousedown = "PaperResizerMouseDown(evt)";
-  context.paper_resizer_event.onmousemove = "PaperResizerMouseMove(evt)";
-  context.paper_resizer_event.onmouseup = "PaperResizerMouseUp(evt)";
-  
-  return context;
-}
-
-function CreatePaper(svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
-{
-  PaperSvg = svg;
-  var paperGroup = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas"});
-  PaperOffsetX = offset_x;
-  PaperOffsetY = offset_y;
-  PaperWidth = width;
-  PaperHeight = height;
-  PaperBorderColor = borderColor;
-  PaperStroke = stroke;
-
-  PaperSpec = AddTagNS(paperGroup, svgNS, "rect", {id:"diagram.canvas.border", 
-    "x": offset_x + stroke, "y": offset_y + stroke, 
-    "width": width - stroke * 2, "height" : height - stroke * 2,
-    "fill": paperColor, 
-    "stroke": borderColor, 
-    "stroke-width": stroke });
-  //SetAttr(PaperSpec, {"filter":"url(#shadow)"}); 
-  SetAttr(PaperSpec, {onmousedown:"PaperMouseDown(evt)", onmousemove:"PaperMouseMove(evt)", onmouseup:"PaperMouseUp(evt)", });
-  
-  PaperGrid = AddTagNS(svg, svgNS, "g", {id:"diagram.canvas.grid"});
-  CreateGrid(PaperGrid, width, height, borderColor);
-
-  PaperRoot = AddTagNS(svg, svgNS, "g", {id:"diagram.paper"});
-  PaperLinesElement = AddTagNS(PaperRoot, svgNS, "g", {id:"diagram.paper.lines"});
-  PaperElement = AddTagNS(PaperRoot, svgNS, "g", {id:"diagram.paper.shapes"});
-  
-  CalculatePaperClientOffset(PaperSvg);
-
-  Context = CreateContext(PaperElement, PaperLinesElement, paperColor, GridStep);
-
-  PaperResizer = AddPaperResizer(Context, svg, offset_x, offset_y, width, height, stroke);
-}
-
-function CreateGrid(grid, width, height, borderColor)
-{
-  var offset_x = PaperOffsetX;
-  var offset_y = PaperOffsetY; 
-  RemoveAllChilds(grid);
-  for(var x = GridStep ; x < width ; x += GridStep)
-  {
-    AddTagNS(grid, svgNS, "line", {x1: offset_x + x, y1: offset_y + GridStep, x2:offset_x + x, y2: offset_y + height,
-      "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + (GridStep - 1)});
-  }
-}
 
 function AddPaperResizer(context, svg, x, y, width, height, stroke) {
   var paperResizerSize = 30;
@@ -171,7 +65,7 @@ function PaperResizePaper(pos_x, pos_y, isEnd) {
   var width = parseInt(PaperSvg.getAttribute("width"));
   var height = parseInt(PaperSvg.getAttribute("height"));
 
-  CreateGrid(PaperGrid, width, height, PaperBorderColor);
+  ThePaper.CreateGrid(PaperGrid, width, height, PaperBorderColor);
   CalculatePaperClientOffset(PaperSvg);
   //SetViewbox(PaperSvg);
 
@@ -265,7 +159,7 @@ function SnapPosToGrid(pos, delta, grid_step) {
 
 function PaperGetCurrentColor()
 {
-  Context.stroke_color = ControlGetShapeColor();
+  Context.stroke_color = TheControl.ControlGetShapeColor();
 }
 
 function PaperCreateRect(pos_x, pos_y, parentGroup)
@@ -428,7 +322,10 @@ function PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, orient
   
   delta = ConnectResizerToKnot(delta, dragObject, connectObject);
   
-  shape.Resize(Context, delta.x, delta.y, dragObject, orientation);
+  if (!shape.Resize(Context, delta.x, delta.y, dragObject, orientation))
+  {
+    TheControl.ControlDragAbort();
+  }
  
   DragX = pos_x;
   DragY = pos_y;
@@ -461,7 +358,7 @@ function PaperMouseDown(evt)
 function PaperMouseUp(evt)
 {
   evt.preventDefault();
-  if (!ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject)) {
+  if (!TheControl.ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject)) {
     DeselectPaper();
   }
   
@@ -471,13 +368,13 @@ function PaperMouseUp(evt)
 function PaperMouseMove(evt)
 {
   evt.preventDefault();
-  ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
+  TheControl.ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
 }
 
 function SpecMouseMove(evt) {
   evt.preventDefault();
-  if (ControlInDragMode()) {
-    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
+  if (TheControl.ControlInDragMode()) {
+    TheControl.ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
   }
 }
 
@@ -488,12 +385,12 @@ function SpecMouseDown(evt) {
   DragX = EventOffsetX(evt);
   DragY = EventOffsetY(evt);
 
-  ControlDragShapeStart();
+  TheControl.ControlDragShapeStart();
 }
 
 function SpecMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), null, evt.target.parentNode.parentNode);
+  TheControl.ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), null, evt.target.parentNode.parentNode);
   DragObject = null;
 }
 
@@ -504,19 +401,19 @@ function ResizerMouseDown(evt) {
 
   DragX = EventOffsetX(evt);
   DragY = EventOffsetY(evt);
-  ControlDragSizeStart();
+  TheControl.ControlDragSizeStart();
 }
 
 function ResizerMouseMove(evt) {
   evt.preventDefault();
-  if (ControlInDragMode()) {
-    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
+  if (TheControl.ControlInDragMode()) {
+    TheControl.ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject);
   }
 }
 
 function ResizerMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject);
+  TheControl.ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject);
   DragObject = null;
 }
 
@@ -540,19 +437,19 @@ function KnotMouseDown(evt) {
     orientation = "e-resize";
   }
 
-  ControlDragSizeStart(orientation);
+  TheControl.ControlDragSizeStart(orientation);
 }
 
 function KnotMouseUp(evt) {
   evt.preventDefault();
   var target = (ControlDragSizeOrientation ? null : evt.target);
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, target);
+  TheControl.ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt), DragObject, target);
 }
 
 function KnotMouseMove(evt) {
   evt.preventDefault();
-  if (ControlInDragMode()) {
-    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject, evt.target);
+  if (TheControl.ControlInDragMode()) {
+    TheControl.ControlDragMove(EventOffsetX(evt), EventOffsetY(evt), DragObject, evt.target);
   }
 }
 
@@ -562,31 +459,147 @@ function PaperResizerMouseDown(evt) {
 
   DragX = EventOffsetX(evt);
   DragY = EventOffsetY(evt);
-  ControlDragPaperStart();
+  TheControl.ControlDragPaperStart();
 }
 
 function PaperResizerMouseMove(evt) {
   evt.preventDefault();
 
-  if (ControlInDragMode()) {
+  if (TheControl.ControlInDragMode()) {
     DeselectPaper();
-    ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
+    TheControl.ControlDragMove(EventOffsetX(evt), EventOffsetY(evt));
   }
 }
 
 function PaperResizerMouseUp(evt) {
   evt.preventDefault();
-  ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
+  TheControl.ControlDragEnd(EventOffsetX(evt), EventOffsetY(evt));
 }
 
-define(["uuid","shape","rect","line","text"], 
-  function(Uuid, ShapeModule, RectModule, LineModule, TextModule) {
+define(["uuid","common","shape","rect","line","text"], 
+  function(Uuid, Common, ShapeModule, RectModule, LineModule, TextModule) {
   
   function Paper() {
     this.Control = null;
   }
   
-  Paper.prototype.CreatePaper = CreatePaper;
+Paper.prototype.CreatePaper = 
+function (svg, width, height, stroke, offset_x, offset_y, paperColor, borderColor)
+{
+  PaperSvg = svg;
+  var paperGroup = Common.AddTagNS(svg, Common.svgNS, "g", {id:"diagram.canvas"});
+  PaperOffsetX = offset_x;
+  PaperOffsetY = offset_y;
+  PaperWidth = width;
+  PaperHeight = height;
+  PaperBorderColor = borderColor;
+  PaperStroke = stroke;
+
+  PaperSpec = Common.AddTagNS(paperGroup, Common.svgNS, "rect", {id:"diagram.canvas.border", 
+    "x": offset_x + stroke, "y": offset_y + stroke, 
+    "width": width - stroke * 2, "height" : height - stroke * 2,
+    "fill": paperColor, 
+    "stroke": borderColor, 
+    "stroke-width": stroke });
+  //SetAttr(PaperSpec, {"filter":"url(#shadow)"}); 
+  Common.SetAttr(PaperSpec, {onmousedown:"PaperMouseDown(evt)", onmousemove:"PaperMouseMove(evt)", onmouseup:"PaperMouseUp(evt)", });
+  
+  PaperGrid = Common.AddTagNS(svg, Common.svgNS, "g", {id:"diagram.canvas.grid"});
+  this.CreateGrid(PaperGrid, width, height, borderColor);
+
+  PaperRoot = Common.AddTagNS(svg, Common.svgNS, "g", {id:"diagram.paper"});
+  PaperLinesElement = Common.AddTagNS(PaperRoot, Common.svgNS, "g", {id:"diagram.paper.lines"});
+  PaperElement = Common.AddTagNS(PaperRoot, Common.svgNS, "g", {id:"diagram.paper.shapes"});
+  
+  CalculatePaperClientOffset(PaperSvg);
+
+  Context = this.CreateContext(PaperElement, PaperLinesElement, paperColor, GridStep);
+
+  PaperResizer = AddPaperResizer(Context, svg, offset_x, offset_y, width, height, stroke);
+  
+  TheControl = this.Control;
+  ThePaper = this;
+},
+
+Paper.prototype.CreateContext =
+function (root_shapes, root_lines, paper_color, grid_step) {
+  var context = new ShapeContext();
+  
+  context.Register(Rect);
+  context.Register(Line);
+  context.Register(Text);
+  
+  context.root_shapes = root_shapes;
+  context.root_lines = root_lines;
+
+  context.paper_color = paper_color;
+  context.grid_step = grid_step;
+
+  context.line_length = 40;
+  
+  //shape defaults
+  context.width = 160;
+  context.height = 80;
+  context.stroke_color = "rgb(51, 51, 204)";
+  context.stroke_width = 2;
+  context.fill = "none";
+  
+  //spec defaults
+  context.spec_opacity_initial = 0;
+  context.spec_opacity = 0.15;
+  context.spec_stroke_width = 12;
+
+  //resizer defaults
+  context.resizer_size = 8;
+  context.resizer_color = "blue";
+  context.resizer_stroke_width = 8;
+
+  //knot defaults
+  context.knot_size = 18;
+  context.knot_color = "blue";
+  context.knot_stroke_color = paper_color;
+  context.knot_stroke_width = 10;
+
+  //text props
+  context.text_width = 100;
+  context.text_height = 20;
+  context.text_font_size = 20;
+  
+  //events
+  context.spec_event.onmousedown = "SpecMouseDown(evt)";
+  context.spec_event.onmouseup = "SpecMouseUp(evt)";
+  context.spec_event.onmousemove = "SpecMouseMove(evt)";
+  
+  context.resizer_event.onmousedown = "ResizerMouseDown(evt)";
+  context.resizer_event.onmousemove = "ResizerMouseMove(evt)";
+  context.resizer_event.onmouseup = "ResizerMouseUp(evt)";
+  
+  context.knot_event.onmousedown = "KnotMouseDown(evt)";
+  context.knot_event.onmousemove = "KnotMouseMove(evt)";
+  context.knot_event.onmouseup = "KnotMouseUp(evt)";
+  
+  context.paper_resizer_event = {};
+  context.paper_resizer_event.onmousedown = "PaperResizerMouseDown(evt)";
+  context.paper_resizer_event.onmousemove = "PaperResizerMouseMove(evt)";
+  context.paper_resizer_event.onmouseup = "PaperResizerMouseUp(evt)";
+  
+  return context;
+},
+
+Paper.prototype.CreateGrid =
+function (grid, width, height, borderColor)
+{
+  var offset_x = PaperOffsetX;
+  var offset_y = PaperOffsetY; 
+  Common.RemoveAllChilds(grid);
+  for(var x = GridStep ; x < width ; x += GridStep)
+  {
+    Common.AddTagNS(grid, Common.svgNS, "line", {x1: offset_x + x, y1: offset_y + GridStep, x2:offset_x + x, y2: offset_y + height,
+      "stroke":borderColor, "stroke-width":"0.5", "stroke-dasharray": "1," + (GridStep - 1)});
+  }
+},
+
+
   Paper.prototype.DeselectPaper = DeselectPaper;
   
   return Paper;

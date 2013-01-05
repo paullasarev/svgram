@@ -94,6 +94,7 @@ Text.prototype.Resize = function (context, dx, dy, resizer) {
   var font_size = parseInt(this.node.getAttribute("font-size"));
   var new_font_size = Math.round(font_size * (new_height/height));
   this.node.setAttribute("font-size", new_font_size);
+  return true;
 }
 
 define(["shape"], function(ShapeModule) {

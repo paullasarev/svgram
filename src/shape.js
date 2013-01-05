@@ -145,6 +145,7 @@ Shape.prototype = {
 
     //alert("Resize: width:" + this.width + " height:" + this.height);
     
+    var result = true;
     if (this.width < this.min_width || this.height < this.min_height) {
       this.left = left;
       this.top = top;
@@ -152,8 +153,7 @@ Shape.prototype = {
       this.bottom = bottom;
       this.width = width;
       this.height = height;
-      ControlDragAbort();
-      return;
+      result = false;
     } else 
     {
       this.right = this.left + this.width;
@@ -163,6 +163,7 @@ Shape.prototype = {
     }
     
     this.SetPosition(context);
+    return result;
   },
   
   GetSubShapes: function(context) {

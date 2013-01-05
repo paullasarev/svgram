@@ -1,107 +1,71 @@
 // $Author$
 // $Id$
 
-var ControlMode = "none";
-var ControlToolId = "";
-var ControlWasMoved = false;
-var ControlDblClickTimer = null;
-var SvgramVersion = "12.12.16";
+define(["export_svg", "dhtmlx"], function(ExportSvg, Dhtmlx) {
 
-function ControlInit() {
-  ControlDragAbort();
-}
+Control.prototype.SvgramVersion = "12.12.16";
 
-
-function ControlDragToolActive()
+function Control() 
 {
-  if (ControlMode == "dragTool")
-  {
-    return true;
-  }
-
-  return false;
+  this.Paper = null;
+  this.Toolbar = null;
+  this.ControlMode = "none";
+  this.ControlToolId = "";
+  this.ControlWasMoved = false;
+  this.ControlDblClickTimer = null;
+  this.ControlDragSizeOrientation = null;
 }
-
-function ControlInDragMode()
+  
+Control.prototype.Init = function()
 {
-  if (ControlMode != "none")
-  {
-    return true;
-  }
+  this.ControlDragAbort();
+};
 
-  return false;
-}
-
-function ControlInDragSizeMode()
+Control.prototype.ControlDragToolStart = function(toolId)
 {
-  return ControlMode == "dragSize";
-}
-
-function ControlDragToolStart(toolId)
-{
-  ControlMode = "dragTool";
-  ControlToolId = toolId;
-  ControlWasMoved = false;
+  this.ControlMode = "dragTool";
+  this.ControlToolId = toolId;
+  this.ControlWasMoved = false;
   PaperSetCursor("move");
-}
+};
 
-function ControlDragShapeStart() {
-  if (ControlMode == "DblClick")
-	  return;
-  ControlMode = "dragShape";
-  ControlWasMoved = false;
-  PaperSetCursor("move");
-}
-
-function ControlDragSizeStart(orientation) {
-  if (ControlMode == "DblClick")
-	return;
-  ControlMode = "dragSize";
-  ControlWasMoved = false;
-  ControlDragSizeOrientation = orientation;
-  var cursor = (orientation ? orientation : "se-resize");
-    
-  PaperSetCursor(cursor);
-}
-
-
-function ControlDragPaperStart()
+Control.prototype.ControlDragPaperStart = function ()
 {
-  ControlMode = "resizePaper";
-  ControlWasMoved = false;
+  this.ControlMode = "resizePaper";
+  this.ControlWasMoved = false;
   PaperSetCursor("se-resize");
-}
+};
 
-function ControlDragAbort()
+Control.prototype.ControlDragAbort = function()
 {
-  ControlMode = "none";
+  this.ControlMode = "none";
   PaperSetCursor("default");
-  ControlDragSizeOrientation = null;
-}
+  this.ControlDragSizeOrientation = null;
+};
 
-function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
+Control.prototype.ControlDragEnd = function(pos_x, pos_y, dragObject, connectObject)
 {
-  if (ControlMode == "none")
+  if (this.ControlMode == "none")
     return false;
 
-  if (ControlMode == "DblClick") {
-	  ControlMode = "none";
+  if (this.ControlMode == "DblClick") {
+	  this.ControlMode = "none";
 	  PaperEditProperties();
 	  return false;
 	}
 	
-  if (!ControlWasMoved) {
+  if (!this.ControlWasMoved) {
     PaperSetCursor("default");
-      ControlMode = "DblClick";
-    ControlDblClickTimer = setTimeout(function() { 
-      ControlMode = "none";
+      this.ControlMode = "DblClick";
+    this.ControlDblClickTimer = setTimeout(function() { 
+      this.ControlMode = "none";
       }, 300);
     
     return true;
   }
   
-  if (ControlMode == "dragTool") {
-    ToolbarDragToolEnd();
+  if (this.ControlMode == "dragTool") {
+    this.Toolbar.ToolbarDragToolEnd();
     
     var targetObject = null;
     if (connectObject) { 
@@ -116,93 +80,108 @@ function ControlDragEnd(pos_x, pos_y, dragObject, connectObject)
       }
     }
 
-    if (ControlToolId == "toolbar.icon.rect") {
+    if (this.ControlToolId == "toolbar.icon.rect") {
       PaperCreateRect(pos_x, pos_y, targetObject);
     }
-    else if (ControlToolId == "toolbar.icon.line") {
+    else if (this.ControlToolId == "toolbar.icon.line") {
       PaperCreateLine(pos_x, pos_y, connectObject, targetObject);
     }
-    else if (ControlToolId == "toolbar.icon.text") {
+    else if (this.ControlToolId == "toolbar.icon.text") {
       PaperCreateText(pos_x, pos_y, targetObject);
     }
     else {
-      alert(ControlToolId);
+      alert(this.ControlToolId);
     }
     
-    ControlDragAbort();
+    this.ControlDragAbort();
     return true;
   }
   
-  ControlDragMove(pos_x, pos_y, dragObject, connectObject, true);
+  this.ControlDragMove(pos_x, pos_y, dragObject, connectObject, true);
 
-  ControlDragAbort();
+  this.ControlDragAbort();
   
   return true;
-}
+};
 
-function ControlGetShapeColor()
+Control.prototype.ControlDragMove = function(pos_x, pos_y, dragObject, connectObject, isEnd)
 {
-  var colorButton = document.getElementById('buttonColor');
-  if (colorButton != null)
-  {
-    return colorButton.style.backgroundColor;
-  }
-  
-  return null;
-}
-
-function ControlDragMove(pos_x, pos_y, dragObject, connectObject, isEnd)
-{
-  if (ControlMode == "none")
+  if (this.ControlMode == "none")
     return;
 
-  ControlWasMoved = true;
-  var mode = ControlMode;
+  this.ControlWasMoved = true;
+  var mode = this.ControlMode;
 
   if (mode == "dragShape") {
     PaperMoveShape(pos_x, pos_y, isEnd);
   }
   else if (mode == "dragSize") {
-    PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, ControlDragSizeOrientation);
+    PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, this.ControlDragSizeOrientation);
   }
   else if (mode == "resizePaper") {
     PaperResizePaper(pos_x, pos_y, isEnd);
   }
-}
+};
 
-function ControlDeleteShape() {
-  PaperDeleteSelectedShape();
-  ControlDragAbort();
-}
-
-define(["export_svg", "dhtmlx"], function(ExportSvg, Dhtmlx) {
-  function Control() {
-    this.Paper = null;
-    this.Toolbar = null;
+Control.prototype.ControlInDragMode = function ()
+{
+  if (this.ControlMode != "none")
+  {
+    return true;
   }
-  
-  Control.prototype.Init = ControlInit;
-  Control.prototype.ControlDragToolStart = ControlDragToolStart;
-  Control.prototype.ControlDragAbort = ControlDragAbort;
-  Control.prototype.ControlDeleteShape = ControlDeleteShape;
-  
-  Control.prototype.ControlAbout = function()
-  {
-		Dhtmlx.modalbox({ 
-			title:"Svg diagram editor", 
-			text:"SVGram is an <a href='http://www.w3.org/TR/SVG/'>SVG</a>-based <a href='http://en.wikipedia.org/wiki/Diagram'>diagram</a> editor<br>Version: "+SvgramVersion+"<br>Please see details on <a href='http://code.google.com/p/svgram/'>code.google.com/p/svgram</a>",
-      buttons:["OK"],
-		});
-  };
-  
-  Control.prototype.ControlExportSvg = function()
-  {
-    this.Paper.DeselectPaper();
-    this.ControlDragAbort();
-    var exportSvg = new ExportSvg;
-    exportSvg.Export();
-  };
-  
-  return Control;
+
+  return false;
+};
+
+Control.prototype.ControlDragShapeStart = function()
+{
+  if (this.ControlMode == "DblClick")
+	  return;
+  this.ControlMode = "dragShape";
+  this.ControlWasMoved = false;
+  PaperSetCursor("move");
+};
+
+Control.prototype.ControlDragSizeStart = function(orientation)
+{
+  if (this.ControlMode == "DblClick")
+    return;
+  this.ControlMode = "dragSize";
+  this.ControlWasMoved = false;
+  this.ControlDragSizeOrientation = orientation;
+  var cursor = (orientation ? orientation : "se-resize");
+    
+  PaperSetCursor(cursor);
+};
+
+Control.prototype.ControlDeleteShape = function()
+{
+  PaperDeleteSelectedShape();
+  this.ControlDragAbort();
+};
+
+Control.prototype.ControlAbout = function()
+{
+  Dhtmlx.modalbox({ 
+    title:"Svg diagram editor", 
+    text:"SVGram is an <a href='http://www.w3.org/TR/SVG/'>SVG</a>-based <a href='http://en.wikipedia.org/wiki/Diagram'>diagram</a> editor<br>Version: "+this.SvgramVersion+"<br>Please see details on <a href='http://code.google.com/p/svgram/'>code.google.com/p/svgram</a>",
+    buttons:["OK"],
+  });
+};
+
+Control.prototype.ControlExportSvg = function()
+{
+  this.Paper.DeselectPaper();
+  this.ControlDragAbort();
+  var exportSvg = new ExportSvg;
+  exportSvg.Export();
+};
+
+Control.prototype.ControlGetShapeColor = function()
+{
+  return this.Toolbar.GetShapeColor();
+};
+
+return Control;
 });
 

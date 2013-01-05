@@ -90,7 +90,7 @@ Line.prototype.Resize = function (context, dx, dy, resizer) {
 		 this.right += dx;
 		 this.bottom += dy;
 	} else {
-    return;
+    return true;
   }
 	
 	this.width = this.right - this.left;
@@ -100,6 +100,7 @@ Line.prototype.Resize = function (context, dx, dy, resizer) {
   this.y = Math.round(this.top + this.height / 2);
 	
 	this.SetPosition(context);
+  return true;
 }
 
 define(["shape"], function(ShapeModule) {
