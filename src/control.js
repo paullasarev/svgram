@@ -1,9 +1,8 @@
 // $Author$
 // $Id$
 
-define(["export_svg", "dhtmlx"], function(ExportSvg, Dhtmlx) {
-
-Control.prototype.SvgramVersion = "12.12.16";
+define(["export_svg", "dhtmlx"],
+function(ExportSvg, Dhtmlx) {
 
 function Control() 
 {
@@ -16,6 +15,8 @@ function Control()
   this.ControlDragSizeOrientation = null;
 }
   
+Control.prototype.SvgramVersion = "12.12.16";
+
 Control.prototype.Init = function()
 {
   this.ControlDragAbort();
@@ -26,20 +27,20 @@ Control.prototype.ControlDragToolStart = function(toolId)
   this.ControlMode = "dragTool";
   this.ControlToolId = toolId;
   this.ControlWasMoved = false;
-  PaperSetCursor("move");
+  this.Paper.PaperSetCursor("move");
 };
 
 Control.prototype.ControlDragPaperStart = function ()
 {
   this.ControlMode = "resizePaper";
   this.ControlWasMoved = false;
-  PaperSetCursor("se-resize");
+  this.Paper.PaperSetCursor("se-resize");
 };
 
 Control.prototype.ControlDragAbort = function()
 {
   this.ControlMode = "none";
-  PaperSetCursor("default");
+  this.Paper.PaperSetCursor("default");
   this.ControlDragSizeOrientation = null;
 };
 
@@ -50,14 +51,14 @@ Control.prototype.ControlDragEnd = function(pos_x, pos_y, dragObject, connectObj
 
   if (this.ControlMode == "DblClick") {
 	  this.ControlMode = "none";
-	  PaperEditProperties();
+	  this.Paper.PaperEditProperties();
 	  return false;
 	}
 	
   if (!this.ControlWasMoved) {
-    PaperSetCursor("default");
-      this.ControlMode = "DblClick";
-    this.ControlDblClickTimer = setTimeout(function() { 
+    this.Paper.PaperSetCursor("default");
+    this.ControlMode = "DblClick";
+    this.ControlDblClickTimer = setTimeout(function() {
       this.ControlMode = "none";
       }, 300);
     
@@ -81,13 +82,13 @@ Control.prototype.ControlDragEnd = function(pos_x, pos_y, dragObject, connectObj
     }
 
     if (this.ControlToolId == "toolbar.icon.rect") {
-      PaperCreateRect(pos_x, pos_y, targetObject);
+      this.Paper.PaperCreateRect(pos_x, pos_y, targetObject);
     }
     else if (this.ControlToolId == "toolbar.icon.line") {
-      PaperCreateLine(pos_x, pos_y, connectObject, targetObject);
+      this.Paper.PaperCreateLine(pos_x, pos_y, connectObject, targetObject);
     }
     else if (this.ControlToolId == "toolbar.icon.text") {
-      PaperCreateText(pos_x, pos_y, targetObject);
+      this.Paper.PaperCreateText(pos_x, pos_y, targetObject);
     }
     else {
       alert(this.ControlToolId);
@@ -113,13 +114,13 @@ Control.prototype.ControlDragMove = function(pos_x, pos_y, dragObject, connectOb
   var mode = this.ControlMode;
 
   if (mode == "dragShape") {
-    PaperMoveShape(pos_x, pos_y, isEnd);
+    this.Paper.PaperMoveShape(pos_x, pos_y, isEnd);
   }
   else if (mode == "dragSize") {
-    PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, this.ControlDragSizeOrientation);
+    this.Paper.PaperResizeShape(pos_x, pos_y, dragObject, connectObject, isEnd, this.ControlDragSizeOrientation);
   }
   else if (mode == "resizePaper") {
-    PaperResizePaper(pos_x, pos_y, isEnd);
+    this.Paper.PaperResizePaper(pos_x, pos_y, isEnd);
   }
 };
 
@@ -139,7 +140,7 @@ Control.prototype.ControlDragShapeStart = function()
 	  return;
   this.ControlMode = "dragShape";
   this.ControlWasMoved = false;
-  PaperSetCursor("move");
+  this.Paper.PaperSetCursor("move");
 };
 
 Control.prototype.ControlDragSizeStart = function(orientation)
@@ -151,12 +152,12 @@ Control.prototype.ControlDragSizeStart = function(orientation)
   this.ControlDragSizeOrientation = orientation;
   var cursor = (orientation ? orientation : "se-resize");
     
-  PaperSetCursor(cursor);
+  this.Paper.PaperSetCursor(cursor);
 };
 
 Control.prototype.ControlDeleteShape = function()
 {
-  PaperDeleteSelectedShape();
+  this.Paper.PaperDeleteSelectedShape();
   this.ControlDragAbort();
 };
 
@@ -184,4 +185,3 @@ Control.prototype.ControlGetShapeColor = function()
 
 return Control;
 });
-
