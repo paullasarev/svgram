@@ -175,7 +175,7 @@ Control.prototype.ControlExportSvg = function()
   this.Paper.DeselectPaper();
   this.ControlDragAbort();
   var exportSvg = new ExportSvg;
-  exportSvg.Export();
+  exportSvg.Export(this.Paper.PaperWidth, this.Paper.PaperHeight);
 };
 
 Control.prototype.ControlGetShapeColor = function()

@@ -2,7 +2,7 @@ define(["common", "vkbeautify", "webtoolkit.base64"], function(Common, XmlBeauti
   function ExportSvg() {
   }
   
-  ExportSvg.prototype.Export = function()
+  ExportSvg.prototype.Export = function(paperWidth, paperHeight)
   {
     var svg = document.getElementById('diagram');
     var copySvg = svg.cloneNode(false);
@@ -15,7 +15,7 @@ define(["common", "vkbeautify", "webtoolkit.base64"], function(Common, XmlBeauti
     var serializer = new XMLSerializer();
     var copySvgString = XmlBeautify.xml(serializer.serializeToString(copySvg));
     var copySvgBase64 = Base64.encode(copySvgString);	
-    var wnd = window.open("data:image/svg+xml;charset=utf-8;base64,\n" + copySvgBase64, "Save_Print", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
+    var wnd = window.open("data:image/svg+xml;charset=utf-8;base64,\n" + copySvgBase64, "Save_Print", "toolbar=yes,status=1,menubar=yes,width=" + paperWidth + ",height=" + paperHeight);
     // var wnd = window.open("data:image/svg+xml", "Svg diagram", "toolbar=yes,status=1,menubar=yes,width=" + PaperWidth + ",height=" + PaperHeight);
     // wnd.document.write(copySvgString);
   };
