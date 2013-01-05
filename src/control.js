@@ -1,3 +1,4 @@
+// Control module
 // $Author$
 // $Id$
 
@@ -15,7 +16,7 @@ function Control()
   this.ControlDragSizeOrientation = null;
 }
   
-Control.prototype.SvgramVersion = "12.12.16";
+Control.prototype.SvgramVersion = "13.01.05";
 
 Control.prototype.Init = function()
 {
