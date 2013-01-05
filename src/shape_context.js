@@ -2,11 +2,12 @@
 // $Author$
 // $Id$
 
-define([], function() {
+define(["common"], function(Common) {
 
 function ShapeContext()
 {
-  this.svgNS = "http://www.w3.org/2000/svg";
+  //this.svgNS = "http://www.w3.org/2000/svg";
+  this.svgNS = Common.svgNS;
   
   this.root_shapes = null;
   this.root_lines = null;

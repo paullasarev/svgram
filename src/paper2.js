@@ -172,7 +172,7 @@ Paper.prototype.DeselectPaper = function()
 {
   if (this.SelectedGroup != null) {
     var oldspec = this.SelectedGroup.childNodes.item(1);
-    SetAttr(oldspec, { "opacity": 0 });
+    Common.SetAttr(oldspec, { "opacity": 0 });
     
     this.SelectedGroup = null;
     this.DragObject = null;

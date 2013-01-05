@@ -2,7 +2,7 @@
 // $Author$
 // $Id$
 
-define(["shape"], function(Shape) {
+define(["shape","common"], function(Shape, Common) {
   
 function Rect(context, parentGroup, x, y, width, height) {
 	if (!context)
@@ -20,7 +20,7 @@ function Rect(context, parentGroup, x, y, width, height) {
 	var id = Shape.NewID();
   var root = Shape.AddRoot(context, parentGroup, context.root_shapes);
 	var group = Shape.AddGroup(context, root, id, this.shape);
-	var node = AddTagNS(group, context.svgNS, "rect", {
+	var node = Common.AddTagNS(group, context.svgNS, "rect", {
 			"x" : left,
 			"y" : top,
 			"width" : width,
@@ -30,8 +30,8 @@ function Rect(context, parentGroup, x, y, width, height) {
 			"stroke-width" : context.stroke_width,
 		});
 	
-	var spec = AddTagNS(group, context.svgNS, "g", {});
-	var specRect = AddTagNS(spec, context.svgNS, "rect", {
+	var spec = Common.AddTagNS(group, context.svgNS, "g", {});
+	var specRect = Common.AddTagNS(spec, context.svgNS, "rect", {
 			"x" : left,
 			"y" : top,
 			"width" : width,
@@ -78,12 +78,12 @@ Rect.prototype.load = function (id, group, node, spec) {
 };
 
 Rect.prototype.SetPosition = function (context, noPropagate) {
-	SetAttr(this.node, {
+	Common.SetAttr(this.node, {
 		"x" : this.left, "y" : this.top,
 		"width" : this.width, "height" : this.height
 	});
   
-	SetAttr(this.spec.firstChild, {
+	Common.SetAttr(this.spec.firstChild, {
 		"x" : this.left,"y" : this.top,
 		"width" : this.width,"height" : this.height
 	});

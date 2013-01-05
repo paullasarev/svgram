@@ -2,7 +2,7 @@
 // $Author$
 // $Id$
 
-define(["shape"], function(Shape) {
+define(["shape","common"], function(Shape, Common) {
 
 function Line(context, parentGroup, x1, y1, x2, y2) {
 	if (!context)
@@ -16,7 +16,7 @@ function Line(context, parentGroup, x1, y1, x2, y2) {
 	var id = Shape.NewID();
   var root = Shape.AddRoot(context, parentGroup, context.root_lines);
 	var group = Shape.PrependGroup(context, root, id, this.shape);
-	var node = AddTagNS(group, context.svgNS, "line", {
+	var node = Common.AddTagNS(group, context.svgNS, "line", {
 			"x1" : x1,
 			"y1" : y1,
 			"x2" : x2,
@@ -26,8 +26,8 @@ function Line(context, parentGroup, x1, y1, x2, y2) {
 			"stroke-width" : context.stroke_width,
 		});
 	
-	var spec = AddTagNS(group, context.svgNS, "g", {});
-	var spec1 = AddTagNS(spec, context.svgNS, "line", {
+	var spec = Common.AddTagNS(group, context.svgNS, "g", {});
+	var spec1 = Common.AddTagNS(spec, context.svgNS, "line", {
 			"x1" : x1,
 			"y1" : y1,
 			"x2" : x2,
@@ -66,14 +66,14 @@ Line.prototype.load = function (id, group, node, spec) {
 };
 
 Line.prototype.SetPosition = function (context) {
-	SetAttr(this.node, {
+	Common.SetAttr(this.node, {
 		"x1" : this.left,
 		"y1" : this.top,
 		"x2" : this.right,
 		"y2" : this.bottom
 	});
   
-	SetAttr(this.spec.firstChild, {
+	Common.SetAttr(this.spec.firstChild, {
 		"x1" : this.left,
 		"y1" : this.top,
 		"x2" : this.right,

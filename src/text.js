@@ -2,7 +2,7 @@
 // $Author$
 // $Id$
 
-define(["shape"], function(Shape) {
+define(["shape","common"], function(Shape, Common) {
 
 function Text(context, parentGroup, x, y) {
   if (!context)
@@ -20,7 +20,7 @@ function Text(context, parentGroup, x, y) {
   var id = Shape.NewID();
   var root = Shape.AddRoot(context, parentGroup, context.root_lines);
   var group = Shape.AddGroup(context, root, id, this.shape);
-  var node = AddTagNS(group, svgNS, "text", {
+  var node = Common.AddTagNS(group, context.svgNS, "text", {
     "x" : x, "y" : y,
     "width" : right - left, "height" : bottom - top,
     "text-anchor" : "middle",
@@ -33,10 +33,10 @@ function Text(context, parentGroup, x, y) {
   var text_body = document.createTextNode("Text");
   node.appendChild(text_body); 
 
-	var spec = AddTagNS(group, context.svgNS, "g", {});
-  var outline = AddTagNS(spec, svgNS, "rect", {"x" : left, "y" : top, "width" : width, "height" : height });
+	var spec = Common.AddTagNS(group, context.svgNS, "g", {});
+  var outline = Common.AddTagNS(spec, context.svgNS, "rect", {"x" : left, "y" : top, "width" : width, "height" : height });
   Shape.AddSpecAttr(context, outline);
-  SetAttr(outline, {
+  Common.SetAttr(outline, {
     "opacity": 1,
     "fill": context.paper_color,
     "stroke": context.stroke_color,
@@ -76,11 +76,11 @@ Text.prototype.load = function (id, group, node, spec) {
 };
 
 Text.prototype.SetPosition = function (context) {
-  SetAttr(this.node, { "x" : this.x, "y" : this.y, 
+  Common.SetAttr(this.node, { "x" : this.x, "y" : this.y, 
     "width" : this.width,"height" : this.height,
   });
 
-  SetAttr(this.spec.firstChild, {
+  Common.SetAttr(this.spec.firstChild, {
     "x" : this.left,"y" : this.top,
     "width" : this.width,"height" : this.height,
   });

@@ -3,7 +3,7 @@
 // $Id$
 
 // require.js module declaration
-define(["uuid"], function(Uuid) {
+define(["uuid","common"], function(Uuid,Common) {
 
 function Shape(id, group, node, spec, left, top, width, height)
 {
@@ -135,7 +135,7 @@ Shape.prototype = {
     if (this.subs) {
       return this.subs;
     } else if (this.group.childNodes.length < 3) {
-      subs = AddTagNS(this.group, context.svgNS, "g", {} );
+      subs = Common.AddTagNS(this.group, context.svgNS, "g", {} );
     } else {
       subs = this.group.childNodes[2];
     }
@@ -150,11 +150,11 @@ Shape.NewID = function() {
 };
 
 Shape.AddGroup = function(context, root, id, shape) {
-  return AddTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
+  return Common.AddTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
 };
 
 Shape.PrependGroup = function(context, root, id, shape) {
-  return PrependTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
+  return Common.PrependTagNS(root, context.svgNS, "g", { "id": id, "shape": shape } );
 };
 
 Shape.AddEventHandlers = function(node, eventMap) {
@@ -182,7 +182,7 @@ Shape.AddRoot = function(context, parentGroup, defaultRoot) {
 
 Shape.AddSpecAttr = function(context, spec)
 {
-  SetAttr(spec, { 
+  Common.SetAttr(spec, { 
     //"fill": context.paper_color,//context.stroke_color,
     //"opacity": context.spec_opacity_initial,
     "opacity": 0,
@@ -196,7 +196,7 @@ Shape.AddSpecAttr = function(context, spec)
 
 Shape.AddResizer = function(context, group, pos_x, pos_y, resizer_no)
 {
-  var node = AddTagNS(group, context.svgNS, "rect", {
+  var node = Common.AddTagNS(group, context.svgNS, "rect", {
     "x": Math.round(pos_x - context.resizer_size / 2),
     "y": Math.round(pos_y - context.resizer_size / 2),
     "width": context.resizer_size,
@@ -217,7 +217,7 @@ Shape.AddResizer = function(context, group, pos_x, pos_y, resizer_no)
 
 Shape.AddKnot = function(context, group, pos_x, pos_y, knot_dir)
 {
-  var node = AddTagNS(group, context.svgNS, "circle", {
+  var node = Common.AddTagNS(group, context.svgNS, "circle", {
     "cx": pos_x,
     "cy": pos_y,
     "r": context.knot_size / 2,
@@ -276,7 +276,7 @@ Shape.MoveRect = function(node, x, y)
 {
   var width = parseInt(node.getAttribute("width"));
   var height = parseInt(node.getAttribute("height"));
-  SetAttr(node, {
+  Common.SetAttr(node, {
     "x": Math.round(x - width / 2),
     "y": Math.round(y - height / 2),
   });
@@ -284,7 +284,7 @@ Shape.MoveRect = function(node, x, y)
 
 Shape.MoveCircle = function(node, x, y)
 {
-  SetAttr(node, {"cx": x, "cy": y});
+  Common.SetAttr(node, {"cx": x, "cy": y});
 };
 
 return Shape;
