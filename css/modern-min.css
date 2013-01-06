@@ -19,8 +19,11 @@ table { border-collapse: collapse; border-spacing: 0px; }
 body ,p { font-family: 'Segoe UI Semilight','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 300; font-size: 11pt; letter-spacing: 0.02em; line-height: 20px; }
 button,.button { font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 400; font-size: 9pt; min-width: 90px; min-height: 32px; height: 32px; background-color: rgb(204, 204, 204); border: 1px solid transparent; color: rgb(53, 53, 53); margin-right: 10px; margin-bottom: 10px; display: inline-block; text-align: center; vertical-align: middle; cursor: pointer; padding: 4px 10px; position: relative; }
 
-
-*,*:after,*:before { -moz-box-sizing: border-box; }
+*,*:after,*:before { 
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
 .toolbar-vertical { width: 33px; float: left; margin-right: 10px; }
 .toolbar-vertical a,.toolbar-vertical button { font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 400; font-size: 9pt; background-color: rgb(204, 204, 204); border: 1px solid transparent; color: rgb(53, 53, 53); margin-right: 10px; display: inline-block; vertical-align: middle; cursor: pointer; min-width: 32px; min-height: 32px; width: 32px; height: 32px; text-align: center; position: relative; padding: 0px; margin-bottom: 5px; }
