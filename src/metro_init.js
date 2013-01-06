@@ -21,8 +21,8 @@ require.config({
   },
 });
 
-requirejs(["colorpicker", "paper2", "control", "metro_toolbar", "common", "uuid"],
-  function (colorPicker, Paper, Control, Toolbar, Common, Uuid) {
+requirejs(["domReady!", "colorpicker", "paper2", "control", "metro_toolbar", "common", "uuid"],
+  function (domReady, colorPicker, Paper, Control, Toolbar, Common, Uuid) {
 
   if (navigator.appName == "Microsoft Internet Explorer")
   {

@@ -17,10 +17,12 @@
 
   <script type="text/javascript">
     requirejs.config({
-      baseUrl: 'src'  
+      baseUrl: 'src',
+      urlArgs: "bust=" + (new Date()).getTime(), // to prevent RequireJS .js caching in development
     });
     requirejs(
       [
+        "domReady!",
         "test/shape.js",
         "test/rect.js",
         "test/line.js",
