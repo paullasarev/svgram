@@ -1,0 +1,32 @@
+html { font-size: 100%; }
+
+html,button ,input,select,textarea{font-family: sans-serif; }
+
+body { margin: 0px; }
+
+img { border: 0px none; }
+svg:not(:root) { overflow: hidden; }
+
+button,input ,select,textarea { font-size: 100%; margin: 0px; vertical-align: baseline; }
+button,input { line-height: normal; }
+button,input[type="button"],input[type="reset"],input[type="submit"] { cursor: pointer; }
+
+table { border-collapse: collapse; border-spacing: 0px; }
+
+.fg-color-white { color: rgb(255, 255, 255) ! important; }
+.bg-color-blue { background-color: rgb(45, 137, 239) ! important; }
+
+body ,p { font-family: 'Segoe UI Semilight','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 300; font-size: 11pt; letter-spacing: 0.02em; line-height: 20px; }
+button,.button { font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 400; font-size: 9pt; min-width: 90px; min-height: 32px; height: 32px; background-color: rgb(204, 204, 204); border: 1px solid transparent; color: rgb(53, 
+
+.toolbar-vertical { width: 33px; float: left; margin-right: 10px; }
+.toolbar-vertical a,.toolbar-vertical button { font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 400; font-size: 9pt; background-color: rgb(204, 204, 204); border: 1px solid transparent; color: rgb(53, 53, 53); margin-right: 10px; display: inline-block; vertical-align: middle; cursor: pointer; min-width: 32px; min-height: 32px; width: 32px; height: 32px; text-align: center; position: relative; padding: 0px; margin-bottom: 5px; }
+
+.toolbar-vertical a img,.toolbar-vertical button img { width: 16px; height: 16px; position: absolute; top: 8px; left: 8px; }
+.toolbar-vertical .toolbar-group { margin-bottom: 20px; }
+
+table { width: 100%; border-collapse: separate; margin: 0px 0px 20px; }
+
+table tbody tr { border: 1px solid rgb(255, 255, 255); }
+table tbody tr td { font-family: 'Segoe UI Semilight','Open Sans',Verdana,Arial,Helvetica,sans-serif; font-weight: 300; font-size: 11pt; letter-spacing: 0.02em; line-height: 20px; padding: 3px 10px; border-right: 1px solid rgb(221, 221, 221); border-bottom: 1px solid rgb(221, 221, 221); }
+table tbody tr td:last-child { border-right: 1px solid transparent; }

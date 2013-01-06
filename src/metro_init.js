@@ -2,6 +2,7 @@
 // $Id$
 
 require.config({
+  urlArgs: "bust=" + (new Date()).getTime(), // to prevent RequireJS .js caching in development
   paths: {
     'dhtmlx' : '../lib/dhtmlx-message/codebase/message',
     'dhtmlx-css' : '../lib/dhtmlx-message/codebase/themes/message_skyblue',
