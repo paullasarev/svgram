@@ -13,49 +13,34 @@
   <script type="text/javascript" src="lib/jasmine/jasmine.js"></script>
   <script type="text/javascript" src="lib/jasmine/jasmine-html.js"></script>
 
-  <!-- include source files here... -->
-  <script src="src/common.js"></script>
-  <script src="src/control.js"></script>
-  <script src="src/paper.js"></script>
-  <script src="src/shape.js"></script>
-  <script src="src/rect.js"></script>
-  <script src="src/line.js"></script>
-  <script src="src/text.js"></script>
-
-  <!-- include spec files here... -->
-  <script src="test/shape.js"></script>
-  <script src="test/rect.js"></script>
-  <script src="test/line.js"></script>
-  <script src="test/text.js"></script>
+  <script src="src/require.js"></script>
 
   <script type="text/javascript">
-    (function() {
-      var jasmineEnv = jasmine.getEnv();
-      jasmineEnv.updateInterval = 1000;
+    requirejs.config({
+      baseUrl: 'src'  
+    });
+    requirejs(
+      [
+        "test/shape.js",
+        "test/rect.js",
+        "test/line.js",
+        "test/text.js",
+      ],
+      function() {
+        
+        var jasmineEnv = jasmine.getEnv();
+        jasmineEnv.updateInterval = 1000;
 
-      var reporter = new jasmine.TrivialReporter();
+        var reporter = new jasmine.TrivialReporter();
 
-      jasmineEnv.addReporter(reporter);
+        jasmineEnv.addReporter(reporter);
 
-      jasmineEnv.specFilter = function(spec) {
-        return reporter.specFilter(spec);
-      };
+        jasmineEnv.specFilter = function(spec) {
+            return reporter.specFilter(spec);
+        };
 
-      var currentWindowOnload = window.onload;
-
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
-        }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
-
-    })();
- 
+        jasmine.getEnv().execute();
+    });
    
   </script>
 

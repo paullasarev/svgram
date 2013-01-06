@@ -1,9 +1,12 @@
 // $Author$
 // $Id$
 
+define(["shape_context", "common", "shape", "rect", "line", "text"], 
+function(ShapeContext, Common, Shape, Rect, Line, Text) {
+
 describe("text shape", function() {
   beforeEach(function() {
-    InitTestShapeContext();
+    InitTestShapeContext(ShapeContext, Common, Shape, Rect, Line, Text);
     this.addMatchers(ShapeMatchers);
   });
   afterEach(function() {
@@ -88,6 +91,8 @@ it("resize should set font size", function() {
   expect(new_font_size).toBe(Math.round(font_size * (new_height/height)));
   
   checkTextPosition(shape, x, y);
+});
+
 });
 
 });

@@ -173,23 +173,23 @@ function clearNode(node) {
   }
 }
 
-function TestMakeSvg(width, height)
+function TestMakeSvg(Common, width, height)
 {
   var fixture = document.getElementById("qunit-fixture");
   clearNode(fixture);
-  var svg = AddTagNS(fixture, svgNS, "svg", {id:"diagram", "version":"1.1" , "width": width, "height": height, draggable:"false"});
-  SetAttr(svg, {"xmlns:xlink": xlinkNS, "xmlns": svgNS});
+  var svg = Common.AddTagNS(fixture, Common.svgNS, "svg", {id:"diagram", "version":"1.1" , "width": width, "height": height, draggable:"false"});
+  Common.SetAttr(svg, {"xmlns:xlink": Common.xlinkNS, "xmlns": Common.svgNS});
   return svg;
 }
 
-function InitTestShapeContext() {
+function InitTestShapeContext(ShapeContext, Common, Shape, Rect, Line, Text) {
   TestContext = new ShapeContext;
   
   TestContext.Register(Rect);
   TestContext.Register(Line);
   TestContext.Register(Text);
   
-  TestContext.root_shapes = TestMakeSvg(800, 600);
+  TestContext.root_shapes = TestMakeSvg(Common, 800, 600);
   TestContext.root_lines = TestContext.root_shapes;
   
   TestEvtCounter = 0;
@@ -205,9 +205,13 @@ var ShapeMatchers = {
   },
 };
 
+define(["shape_context", "common", "shape", "rect", "line", "text"], 
+function(ShapeContext, Common, Shape, Rect, Line, Text) {
+
 describe("shape context", function() {
+
   beforeEach(function() {
-    InitTestShapeContext();
+    InitTestShapeContext(ShapeContext, Common, Shape, Rect, Line, Text);
   });
   afterEach(function() {
     ClearTestShapeContext();
@@ -216,5 +220,7 @@ describe("shape context", function() {
   it("should create svg", function() {
     expect(TestContext.root).not.toBeNull();
   });
+
+});
 
 });

@@ -1,9 +1,12 @@
 // $Author$
 // $Id$
 
+define(["shape_context", "common", "shape", "rect", "line", "text"], 
+function(ShapeContext, Common, Shape, Rect, Line, Text) {
+
 describe("line shape", function() {
   beforeEach(function() {
-    InitTestShapeContext();
+    InitTestShapeContext(ShapeContext, Common, Shape, Rect, Line, Text);
     this.addMatchers(ShapeMatchers);
   });
   afterEach(function() {
@@ -105,6 +108,8 @@ it("resize by second resizer should move x2,y2", function() {
   var new_y1 = y1 + dy;
   
   checkLinePosition(line, new_x, new_y, new_x1, new_y1);
+});
+
 });
 
 });

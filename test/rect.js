@@ -1,9 +1,12 @@
 // $Author$
 // $Id$
 
+define(["shape_context", "common", "shape", "rect", "line", "text"], 
+function(ShapeContext, Common, Shape, Rect, Line, Text) {
+
 describe("rect shape", function() {
   beforeEach(function() {
-    InitTestShapeContext();
+    InitTestShapeContext(ShapeContext, Common, Shape, Rect, Line, Text);
     this.addMatchers(ShapeMatchers);
   });
   afterEach(function() {
@@ -330,6 +333,8 @@ it("resize for 1px should work correct", function() {
   rect.Resize(TestContext, dx, dy);
  
   checkRectPosition(rect, coords.x, coords.y, coords.width, coords.height, coords.left, coords.top, coords.right, coords.bottom);
+});
+
 });
 
 });
