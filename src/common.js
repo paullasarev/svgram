@@ -82,14 +82,5 @@ PrependTagNS: function(parent, namespace, name, attributes)
   return tag;
 },
 
-CreateShadowFilter: function(svg)
-{
-  var defs = this.AddTagNS(svg, this.svgNS, "defs");
-  var filter = this.AddTagNS(defs, this.svgNS, "filter", {id:"shadow", width:"200%", height:"200%"});
-  this.AddTagNS(filter, this.svgNS, "feOffset", {"in":"SourceAlpha", result:"offOut", dx:"8", dy:"8" });
-  this.AddTagNS(filter, this.svgNS, "feGaussianBlur", {"in":"offOut", result:"blurOut", stdDeviation:"8"});
-  this.AddTagNS(filter, this.svgNS, "feBlend", {"in":"SourceGraphic", in2:"blurOut", mode:"normal" });
-},
-
 });
 

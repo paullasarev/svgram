@@ -135,6 +135,17 @@ Control.prototype.ControlInDragMode = function ()
   return false;
 };
 
+Control.prototype.ControlDragToolActive = function ()
+{
+  if (this.ControlMode == "dragTool")
+  {
+    return true;
+  }
+
+  return false;
+};
+
+
 Control.prototype.ControlDragShapeStart = function()
 {
   if (this.ControlMode == "DblClick")

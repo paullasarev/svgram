@@ -2,7 +2,7 @@
 // $Id$
 
 require.config({
-  urlArgs: "bust=" + (new Date()).getTime(), // to prevent RequireJS .js caching in development
+  //urlArgs: "bust=" + (new Date()).getTime(), // to prevent RequireJS .js caching in development
   paths: {
     'dhtmlx' : '../lib/dhtmlx-message/codebase/message',
     'dhtmlx-css' : '../lib/dhtmlx-message/codebase/themes/message_skyblue',
@@ -22,7 +22,7 @@ require.config({
   },
 });
 
-requirejs(["domReady!", "colorpicker", "paper2", "control", "metro_toolbar", "common", "uuid"],
+requirejs(["domReady!", "colorpicker", "paper", "control", "metro_toolbar", "common", "uuid"],
   function (domReady, colorPicker, Paper, Control, Toolbar, Common, Uuid) {
 
   if (navigator.appName == "Microsoft Internet Explorer")
